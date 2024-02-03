@@ -1,0 +1,19 @@
+import path from 'path'
+
+export default {
+  name: 'proxyhub',
+  port: 8998,
+  proxyHeader: 'x-forwarded-from-proxy',
+  // kproxy请求对方服务器超时时间
+  serverRequestTimeout: 20000,
+
+  // https server 不活跃之后回收时长
+  httpsServerExpire: 500000,
+
+  // 密钥目录
+  sslDir: path.resolve(__dirname, '../.ssl'),
+  // jq 可执行文件路径
+  jqPath: path.resolve(__dirname, './bin/jq-osx-amd64'),
+  // CA 目录
+  caDir: path.resolve(__dirname, '../src/ca')
+}

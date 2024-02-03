@@ -1,0 +1,18 @@
+import { Context, Next } from 'koa'
+import { EditBodyType } from './contracts'
+import { responseBody } from './rules'
+
+export default async function doRules(ctx: Context, next: Next) {
+  // send request, get data
+  await next()
+
+  // mock res data
+  responseBody(ctx, {
+    type: EditBodyType.overwrite,
+    content: Buffer.from(
+      JSON.stringify({
+        data: 'mock data'
+      })
+    )
+  })
+}

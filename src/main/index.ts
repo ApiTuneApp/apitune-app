@@ -3,9 +3,9 @@ import { join } from 'path'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { startServer } from './server'
 import { RenderEvent } from '../common/contract'
 import { initCommunicator } from './communicator'
+import './server'
 
 function createWindow(): void {
   // Create the browser window.
@@ -58,9 +58,9 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on(RenderEvent.ping, () => console.log('pong'))
 
-  ipcMain.on(RenderEvent.startServer, () => {
-    startServer()
-  })
+  // ipcMain.on(RenderEvent.startServer, () => {
+  //   startServer()
+  // })
 
   createWindow()
 
