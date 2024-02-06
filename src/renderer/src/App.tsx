@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import Button from '@mui/material/Button'
-import SendIcon from '@mui/icons-material/Send'
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
 import { MainEvent, RenderEvent } from '../../common/contract'
+import Header from './components/header/header'
+import Sidebar from './components/sidebar/sidebar'
+import { Box } from '@mui/material'
 
 function App(): JSX.Element {
   const ipcHandle = (): void => window.electron.ipcRenderer.send(RenderEvent.ping)
@@ -24,21 +23,11 @@ function App(): JSX.Element {
 
   return (
     <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="proxy-log">
-        {proxyLog.map((log, index) => {
-          return <div key={index}>{log}</div>
-        })}
-      </div>
-      <div className="actions">
-        <div className="action">
-          <Button variant="contained" endIcon={<SendIcon />} onClick={ipcHandle}>
-            Send IPC
-          </Button>
-          <Button onClick={startServer}>Start server</Button>
-        </div>
-      </div>
-      <Versions></Versions>
+      <Header />
+      <Box sx={{ display: 'flex', flex: 1 }}>
+        <Sidebar />
+        <Box sx={{ flex: 1 }}></Box>
+      </Box>
     </>
   )
 }
