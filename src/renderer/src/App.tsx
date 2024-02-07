@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { MainEvent, RenderEvent } from '../../common/contract'
-import Header from './components/header/header'
-import Sidebar from './components/sidebar/sidebar'
 import { Box } from '@mui/material'
+import { Outlet } from 'react-router-dom'
+import { MainEvent, RenderEvent } from '../../common/contract'
+import Header from './components/header'
+import Sidebar from './components/sidebar'
 
 function App(): JSX.Element {
   const ipcHandle = (): void => window.electron.ipcRenderer.send(RenderEvent.ping)
@@ -26,7 +27,9 @@ function App(): JSX.Element {
       <Header />
       <Box sx={{ display: 'flex', flex: 1 }}>
         <Sidebar />
-        <Box sx={{ flex: 1 }}></Box>
+        <Box sx={{ flex: 1 }}>
+          <Outlet />
+        </Box>
       </Box>
     </>
   )
