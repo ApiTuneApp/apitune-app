@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 
 function SettingsPage(): JSX.Element {
   return (
-    <Box className="page-settings">
+    <Box className="app-page page-settings">
       <h2>settings</h2>
     </Box>
   )
