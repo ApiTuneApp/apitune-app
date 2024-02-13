@@ -15,5 +15,8 @@ export default {
   // jq 可执行文件路径
   jqPath: path.resolve(__dirname, './bin/jq-osx-amd64'),
   // CA 目录
-  caDir: path.resolve(__dirname, '../src/ca')
+  caDir: path.resolve(__dirname, '../src/ca'),
+  // 可展示的body限制 目前10MB
+  // MaxBodyLogSize: 10e6
+  MaxBodyLogSize: 0
 }

@@ -5,7 +5,7 @@ import { MainEvent } from '../common/contract'
 // Custom APIs for renderer
 const api = {
   onProxyLog: (callback): void => {
-    ipcRenderer.on(MainEvent.proxyLog, (_, message) => callback(message))
+    ipcRenderer.on(MainEvent.ProxyLog, (_, log) => callback(log))
   },
   clearupMainEvent: (event: MainEvent): void => {
     ipcRenderer.removeAllListeners(event)

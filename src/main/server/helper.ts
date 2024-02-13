@@ -1,6 +1,7 @@
-import { PassThrough, finished } from 'node:stream'
+import { PassThrough, Stream, finished } from 'node:stream'
 import { Socket } from 'node:net'
 import child_process from 'node:child_process'
+import config from './config'
 
 /*
  * Detect TLS from first bytes of data
@@ -126,4 +127,51 @@ export function execScriptSync(cmd: string) {
     stdout: stdout.toString(),
     status
   }
+}
+
+interface GetBase64Result {
+  length: number
+  base64: Buffer
+}
+
+const emptyBuffer = Buffer.from('')
+
+// 获取 stream buffer string 的 base64
+export function getBase64(arg: any) {
+  return new Promise<GetBase64Result>((resolve, reject) => {
+    if (arg instanceof Stream) {
+      const arr: Buffer[] = []
+      let length = 0
+      arg.on('data', (chunk) => {
+        length += chunk.length
+        if (config.MaxBodyLogSize) {
+          if (length < config.MaxBodyLogSize) {
+            arr.push(chunk)
+          } else {
+            arr.length = 0
+          }
+        } else {
+          arr.push(chunk)
+        }
+      })
+      arg.on('end', () => {
+        const buf = Buffer.concat(arr)
+        resolve({
+          base64: buf,
+          length: length
+        })
+      })
+    } else if (arg instanceof Buffer) {
+      resolve({
+        base64: arg.length > config.MaxBodyLogSize ? emptyBuffer : arg,
+        length: arg.length
+      })
+    } else {
+      const buf = Buffer.from(arg, 'utf-8')
+      resolve({
+        length: buf.length,
+        base64: buf.length > config.MaxBodyLogSize ? emptyBuffer : buf
+      })
+    }
+  })
 }

@@ -1,8 +1,8 @@
 import { Context, Next } from 'koa'
-import { EditBodyType } from './contracts'
-import { responseBody } from './rules'
+import { EditBodyType } from '../contracts'
+import { responseBody } from '../rules'
 
-export default async function doRules(ctx: Context, next: Next) {
+export default async function RulesMiddleware(ctx: Context, next: Next) {
   // send request, get data
   await next()
 

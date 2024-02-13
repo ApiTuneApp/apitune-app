@@ -1,7 +1,8 @@
 import Koa, { Context, Next } from 'koa'
 
 import httpClient from './http-client'
-import doRules from './rules-middleware'
+import RulesMiddleware from './middleware/rules'
+import LogsMiddleware from './middleware/log'
 import config from './config'
 
 // import RulesMiddleware from './middleware/rules'
@@ -72,6 +73,7 @@ app.use(async (ctx: Context, next: Next) => {
   ctx.body = ctx.responseBody
 })
 
-app.use(doRules)
+app.use(RulesMiddleware)
+app.use(LogsMiddleware)
 
 export const handleRequest = app.callback()

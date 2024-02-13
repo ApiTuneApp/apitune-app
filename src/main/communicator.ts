@@ -1,5 +1,5 @@
 import { BrowserWindow, WebContents } from 'electron'
-import { MainEvent } from '../common/contract'
+import { Log, MainEvent } from '../common/contract'
 
 let webContents: WebContents
 
@@ -9,12 +9,14 @@ export function initCommunicator(mainWindow: BrowserWindow): void {
   }
 }
 
-export function proxyLog(message: string): void {
+export function proxyLog(log: Log): void {
   if (!webContents) return
-  webContents.send(MainEvent.proxyLog, message)
+
+  console.log('start send log ===> ', log)
+  webContents.send(MainEvent.ProxyLog, log)
 }
 
 export function rendererLog(message: string): void {
   if (!webContents) return
-  webContents.send(MainEvent.rendererLog, message)
+  webContents.send(MainEvent.RendererLog, message)
 }
