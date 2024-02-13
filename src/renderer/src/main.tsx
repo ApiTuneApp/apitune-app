@@ -7,13 +7,17 @@ import NetworkPage from './pages/network'
 import RulesPage from './pages/rules'
 import SettingsPage from './pages/settings'
 
-import { RouterProvider, createHashRouter } from 'react-router-dom'
+import { Navigate, RouterProvider, createHashRouter } from 'react-router-dom'
 
 const router = createHashRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      {
+        path: '/',
+        element: <Navigate to="/network" />
+      },
       {
         path: 'network',
         element: <NetworkPage />
