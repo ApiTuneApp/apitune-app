@@ -101,5 +101,5 @@ export function getHttpsControl(hostname: string, socket: Socket): HttpsControl 
   //   }
   // }
 
-  return HttpsControl.ignore
+  return HttpsControl.decode
 }

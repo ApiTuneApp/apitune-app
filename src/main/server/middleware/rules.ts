@@ -7,12 +7,12 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
   await next()
 
   // mock res data
-  responseBody(ctx, {
-    type: EditBodyType.overwrite,
-    content: Buffer.from(
-      JSON.stringify({
-        data: 'mock data'
-      })
-    )
-  })
+  // responseBody(ctx, {
+  //   type: EditBodyType.overwrite,
+  //   content: Buffer.from(
+  //     JSON.stringify({
+  //       data: 'mock data'
+  //     })
+  //   )
+  // })
 }

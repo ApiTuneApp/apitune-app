@@ -45,7 +45,7 @@ export async function getCert(hostname: string): Promise<Cert> {
     if (cert) {
       resolve(cert)
     }
-    crtMgr.getCertificate(
+    crtMgr.mgr.getCertificate(
       hostname,
       (error: Error | CertErrors | null, keyContent: string, certContent: string) => {
         if (error) {
