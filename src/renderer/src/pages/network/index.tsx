@@ -2,12 +2,14 @@ import '@glideapps/glide-data-grid/dist/index.css'
 import './network.less'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Box, IconButton, Stack, TextField, Tooltip } from '@mui/material'
+
+import { DataEditor, GridCell, GridCellKind, GridColumn, Item } from '@glideapps/glide-data-grid'
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined'
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined'
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined'
-import { DataEditor, GridCell, GridCellKind, GridColumn, Item } from '@glideapps/glide-data-grid'
+import { IconButton, Stack, TextField, Tooltip } from '@mui/material'
+
 import { Log, MainEvent } from '../../../../common/contract'
 
 function NetworkPage(): JSX.Element {
@@ -90,58 +92,58 @@ function NetworkPage(): JSX.Element {
   )
 
   return (
-    <Box className="app-page page-network">
-      <Stack direction="column">
-        <Stack sx={{ pb: '10px' }} direction="row">
-          <TextField
-            size="small"
-            className="app-control app-input network-input"
-            label="Search URL"
-          />
-          <Tooltip title="Clear network log">
-            <IconButton aria-label="clear network log">
-              <BlockOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={pauseBtnText}>
-            <IconButton aria-label={pauseBtnText} onClick={onPauseClick}>
-              {recordPaused ? (
-                <PlayCircleFilledWhiteOutlinedIcon />
-              ) : (
-                <PauseCircleOutlineOutlinedIcon />
-              )}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Config network column">
-            <IconButton aria-label="Config network column">
-              <TuneOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-        </Stack>
-        {proxyLogs.length > 0 && (
-          <DataEditor
-            className="network-table"
-            theme={{
-              bgCell: '#222222',
-              bgHeader: '#222222',
-              fgIconHeader: '#282828',
-              bgHeaderHovered: 'rgba(235, 235, 245, 0.38)',
-              bgHeaderHasFocus: 'rgba(235, 235, 245, 0.38)',
-              textHeader: 'rgba(255, 255, 245, 0.86)',
-              textDark: 'rgba(255, 255, 245, 0.86)'
-            }}
-            getCellContent={getContent}
-            columns={columns}
-            rows={proxyLogs.length}
-            drawFocusRing={false}
-            width="100%"
-            smoothScrollX={true}
-            smoothScrollY={true}
-            onColumnResize={onColumnResize}
-          />
-        )}
+    <Stack className="app-page page-network" direction="column">
+      <Stack sx={{ pb: '10px' }} direction="row">
+        <TextField
+          size="small"
+          className="app-control app-input network-input"
+          label="Search URL"
+        />
+        <Tooltip title="Clear network log">
+          <IconButton aria-label="clear network log">
+            <BlockOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={pauseBtnText}>
+          <IconButton aria-label={pauseBtnText} onClick={onPauseClick}>
+            {recordPaused ? (
+              <PlayCircleFilledWhiteOutlinedIcon />
+            ) : (
+              <PauseCircleOutlineOutlinedIcon />
+            )}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Config network column">
+          <IconButton aria-label="Config network column">
+            <TuneOutlinedIcon />
+          </IconButton>
+        </Tooltip>
       </Stack>
-    </Box>
+      {proxyLogs.length > 0 && (
+        <DataEditor
+          className="network-table"
+          theme={{
+            bgCell: '#222222',
+            bgHeader: '#222222',
+            fgIconHeader: '#282828',
+            bgHeaderHovered: 'rgba(235, 235, 245, 0.38)',
+            bgHeaderHasFocus: 'rgba(235, 235, 245, 0.38)',
+            textHeader: 'rgba(255, 255, 245, 0.86)',
+            textDark: 'rgba(255, 255, 245, 0.86)'
+          }}
+          getCellContent={getContent}
+          columns={columns}
+          rows={proxyLogs.length}
+          drawFocusRing={false}
+          width="100%"
+          height="calc(100vh - 150px)"
+          smoothScrollX={true}
+          smoothScrollY={true}
+          onColumnResize={onColumnResize}
+          getCellsForSelection={true}
+        />
+      )}
+    </Stack>
   )
 }
 
