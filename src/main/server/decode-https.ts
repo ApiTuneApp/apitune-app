@@ -22,7 +22,7 @@ export async function decodeHttps(hostname: string, socket: Socket, head: Buffer
 }
 
 async function getMiddleHttpsServer(hostname: string) {
-  hostname = getWildcardDomain(hostname)
+  // hostname = getWildcardDomain(hostname)
   touchCloseServerCountdown(hostname)
   let httpsServer = httpsServerMap.get(hostname)
   if (httpsServer) {

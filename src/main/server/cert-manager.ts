@@ -21,7 +21,7 @@ class ExtendedCertManager {
 
   genRootCa(cb: CertManager.GenerateCallback): void {
     const rootOptions = {
-      commonName: 'ApiTune Root CA',
+      commonName: 'ApiTuneCA',
       overwrite: false
     }
 
