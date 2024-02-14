@@ -15,6 +15,15 @@ function NetworkPage(): JSX.Element {
   const stopRecordStr = 'Stop recording network log'
   const startRecordStr = 'Record network log'
   const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
+  const [columns, setColumns] = useState<GridColumn[]>([
+    { title: 'Protocol', id: 'protocol' },
+    { title: 'Host', id: 'host', width: 140 },
+    { title: 'Path', id: 'pathname' },
+    { title: 'Method', id: 'method', width: 90 },
+    { title: 'Status', id: 'status', width: 90 },
+    { title: 'MatchRules', id: 'matchedRules' },
+    { title: 'Time', id: 'time', width: 80 }
+  ])
 
   const [proxyLogs, setProxyLogs] = useState<Log[]>([])
 
@@ -31,17 +40,6 @@ function NetworkPage(): JSX.Element {
     }
   }, [])
 
-  // Grid columns may also provide icon, overlayIcon, menu, style, and theme overrides
-  const columns: GridColumn[] = [
-    { title: 'Id', width: 50, id: 'id' },
-    { title: 'Protocol', id: 'protocol', width: 60 },
-    { title: 'Host', id: 'host', width: 140 },
-    { title: 'Path', id: 'pathname' },
-    { title: 'Method', id: 'method', width: 90 },
-    { title: 'Status', id: 'status', width: 90 },
-    { title: 'MatchRules', id: 'matchedRules' },
-    { title: 'Time', id: 'time', width: 80 }
-  ]
   // If fetching data is slow you can use the DataEditor ref to send updates for cells
   // once data is loaded.
   const getContent = (cell: Item): GridCell => {
@@ -77,6 +75,19 @@ function NetworkPage(): JSX.Element {
     setPauseBtnText(!recordPaused ? startRecordStr : pauseBtnText)
     setRecordPaused(!recordPaused)
   }
+
+  const onColumnResize = useCallback(
+    (col: GridColumn, newSize: number) => {
+      const index = columns.indexOf(col)
+      const newCols = [...columns]
+      newCols[index] = {
+        ...newCols[index],
+        width: newSize
+      }
+      setColumns(newCols)
+    },
+    [columns]
+  )
 
   return (
     <Box className="app-page page-network">
@@ -122,6 +133,11 @@ function NetworkPage(): JSX.Element {
             getCellContent={getContent}
             columns={columns}
             rows={proxyLogs.length}
+            drawFocusRing={false}
+            width="100%"
+            smoothScrollX={true}
+            smoothScrollY={true}
+            onColumnResize={onColumnResize}
           />
         )}
       </Stack>

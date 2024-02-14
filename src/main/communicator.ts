@@ -11,8 +11,6 @@ export function initCommunicator(mainWindow: BrowserWindow): void {
 
 export function proxyLog(log: Log): void {
   if (!webContents) return
-
-  console.log('start send log ===> ', log)
   webContents.send(MainEvent.ProxyLog, log)
 }
 
