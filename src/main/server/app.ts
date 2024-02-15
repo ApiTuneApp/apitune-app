@@ -1,14 +1,9 @@
 import Koa, { Context, Next } from 'koa'
 
-import httpClient from './http-client'
-import RulesMiddleware from './middleware/rules'
-import LogsMiddleware from './middleware/log'
 import config from './config'
-
-// import RulesMiddleware from './middleware/rules'
-// import LogMiddleware from './middleware/log'
-// import PreMiddleware from './middleware/pre'
-// import RearMiddleware from './middleware/rear'
+import httpClient from './http-client'
+import LogsMiddleware from './middleware/log'
+import RulesMiddleware from './middleware/rules'
 
 export const app = new Koa()
 
@@ -34,16 +29,6 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
     ctx.body = 'Proxy Error: ' + err.message
   }
 })
-
-// == 代理服务 ====================================================
-// 前置中间件
-// app.use(PreMiddleware)
-// // 日志中间件
-// app.use(LogMiddleware)
-// // 规则中间件
-// app.use(RulesMiddleware)
-// // 后置中间件
-// app.use(RearMiddleware)
 
 app.use(async (ctx: Context, next: Next) => {
   // define custom ctx properties
