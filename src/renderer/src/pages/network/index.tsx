@@ -15,10 +15,15 @@ import {
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined'
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined'
+import DragIndicatorOutlinedIcon from '@mui/icons-material/DragIndicatorOutlined'
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined'
-import { IconButton, Stack, TextField, Tooltip } from '@mui/material'
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
+import { Drawer, IconButton, Stack, TextField, Tooltip } from '@mui/material'
 
 import { Log, MainEvent } from '../../../../common/contract'
+
+const minDrawerHeight = 30
+const maxDarwerHeight = 1000
 
 function NetworkPage(): JSX.Element {
   const [recordPaused, setRecordPaused] = useState(false)
@@ -36,6 +41,8 @@ function NetworkPage(): JSX.Element {
   ])
   const [highlightRegions, setHighlightRegions] = useState<Highlight[]>()
   const [proxyLogs, setProxyLogs] = useState<Log[]>([])
+  const [curLog, setCurLog] = useState<Log | undefined>()
+  const [drawerHeight, setDrawerHeight] = useState(0)
 
   const highlightColor = '#357edd'
 
@@ -111,9 +118,33 @@ function NetworkPage(): JSX.Element {
           }
         }
       ])
+      console.log('cur log', proxyLogs[newSelection.current.range.y])
+      setCurLog(proxyLogs[newSelection.current.range.y])
+      setDrawerHeight(400)
     } else {
       setHighlightRegions(undefined)
     }
+  }
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    document.addEventListener('mouseup', handleMouseUp, true)
+    document.addEventListener('mousemove', handleMouseMove, true)
+  }, [])
+
+  const handleMouseUp = () => {
+    document.removeEventListener('mouseup', handleMouseUp, true)
+    document.removeEventListener('mousemove', handleMouseMove, true)
+  }
+
+  const handleMouseMove = useCallback((e) => {
+    const newHeight = document.body.offsetHeight - e.clientY - 22
+    if (newHeight > minDrawerHeight && newHeight < maxDarwerHeight) {
+      setDrawerHeight(newHeight)
+    }
+  }, [])
+
+  const handleDrawerClose = () => {
+    setDrawerHeight(0)
   }
 
   return (
@@ -158,20 +189,50 @@ function NetworkPage(): JSX.Element {
           }}
           columns={columns}
           rows={proxyLogs.length}
+          rowMarkers="number"
           rangeSelect="none"
           rowSelect="single"
           columnSelect="none"
           drawFocusRing={false}
           width="100%"
-          height="calc(100vh - 150px)"
+          height="auto"
           smoothScrollX={true}
           smoothScrollY={true}
+          overscrollY={50}
           highlightRegions={highlightRegions}
           getCellContent={getContent}
           onColumnResize={onColumnResize}
           onGridSelectionChange={onGridSelectionChange}
         />
       )}
+      <Drawer
+        anchor="bottom"
+        open={!!curLog && drawerHeight > 0}
+        variant="persistent"
+        PaperProps={{
+          elevation: 2,
+          sx: {
+            position: 'relative',
+            height: drawerHeight
+          }
+        }}
+      >
+        <CloseOutlinedIcon className="bottom-drawer-close" onClick={handleDrawerClose} />
+        <Stack className="network-detail" direction="column">
+          <div className="bottom-resizer" onMouseDown={handleMouseDown}>
+            <DragIndicatorOutlinedIcon className="bottom-resizer-icon" fontSize="small" />
+          </div>
+          <div className="network-detail-content">
+            {curLog && (
+              <Stack direction="row">
+                <span>Request URL: {curLog.url}</span>
+                <span>Request Method: {curLog.method}</span>
+                <span>Request Status: {curLog.status}</span>
+              </Stack>
+            )}
+          </div>
+        </Stack>
+      </Drawer>
     </Stack>
   )
 }

@@ -1,9 +1,32 @@
 
 .network-table {
   width: 100%;
+  flex: 1;
 }
 
 .network-input {
   min-width: 400px;
   flex: 1;
+}
+
+.bottom-resizer {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  cursor: row-resize;
+  background-color: var(--color-background);
+  .bottom-resizer-icon {
+    rotate: 90deg;
+  }
+}
+
+.network-detail-content {
+  padding: 20px;
+}
+
+.bottom-drawer-close {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  cursor: pointer;
 }
