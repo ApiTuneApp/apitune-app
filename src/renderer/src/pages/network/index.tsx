@@ -21,8 +21,9 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 import { Drawer, IconButton, Stack, TextField, Tooltip } from '@mui/material'
 
 import { Log, MainEvent } from '../../../../common/contract'
+import LogDetail from '@renderer/components/log-detail'
 
-const minDrawerHeight = 30
+const minDrawerHeight = 20
 const maxDarwerHeight = 1000
 
 function NetworkPage(): JSX.Element {
@@ -217,21 +218,11 @@ function NetworkPage(): JSX.Element {
           }
         }}
       >
-        <CloseOutlinedIcon className="bottom-drawer-close" onClick={handleDrawerClose} />
-        <Stack className="network-detail" direction="column">
-          <div className="bottom-resizer" onMouseDown={handleMouseDown}>
-            <DragIndicatorOutlinedIcon className="bottom-resizer-icon" fontSize="small" />
-          </div>
-          <div className="network-detail-content">
-            {curLog && (
-              <Stack direction="row">
-                <span>Request URL: {curLog.url}</span>
-                <span>Request Method: {curLog.method}</span>
-                <span>Request Status: {curLog.status}</span>
-              </Stack>
-            )}
-          </div>
-        </Stack>
+        <div className="bottom-resizer" onMouseDown={handleMouseDown}>
+          <CloseOutlinedIcon className="bottom-drawer-close" onClick={handleDrawerClose} />
+          <DragIndicatorOutlinedIcon className="bottom-resizer-icon" fontSize="small" />
+        </div>
+        <div className="network-detail">{curLog && <LogDetail log={curLog} />}</div>
       </Drawer>
     </Stack>
   )
