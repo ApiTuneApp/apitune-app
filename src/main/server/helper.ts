@@ -1,6 +1,9 @@
-import { PassThrough, Stream, finished } from 'node:stream'
-import { Socket } from 'node:net'
 import child_process from 'node:child_process'
+import { Socket } from 'node:net'
+import { finished, PassThrough, Stream } from 'node:stream'
+import pako from 'pako'
+
+import { BodyInfo, Log } from '../../common/contract'
 import config from './config'
 
 /*
@@ -174,4 +177,69 @@ export function getBase64(arg: any) {
       })
     }
   })
+}
+
+export function isTextBody(headers: Record<string, string> | undefined) {
+  if (!headers) {
+    return false
+  }
+  const type = (headers['content-type'] || '').split(';', 1)[0]
+  if (!type) {
+    return false
+  }
+  if (type.startsWith('text/')) {
+    return true
+  }
+  if (
+    [
+      'application/javascript',
+      'application/json',
+      'application/x-javascript',
+      'application/x-www-form-urlencoded'
+    ].includes(type)
+  ) {
+    return true
+  }
+  return false
+}
+
+export function getBodyInfo(log: Log) {
+  const { responseHeaders, responseBody, responseBodyLength } = log
+  const type = responseHeaders ? (responseHeaders['content-type'] || '').split(';', 1)[0] : ''
+  const result = {
+    type
+  } as BodyInfo
+
+  if (responseBody) {
+    let bodyText
+    if (isTextBody(responseHeaders)) {
+      try {
+        const buf = Buffer.from(responseBody as unknown as string, 'base64')
+        const contentEncoding = responseHeaders['content-encoding']
+        if (!contentEncoding) {
+          bodyText = buf.toString()
+        } else if (contentEncoding === 'gzip') {
+          bodyText = pako.inflate(buf, { to: 'string' })
+        } else {
+          throw new Error('wrong content-encoding: ' + contentEncoding)
+        }
+      } catch (e) {
+        bodyText = '[ERROR] decode fail'
+      }
+      result.isTextBody = true
+    } else {
+      bodyText = `(binary body ${responseBodyLength} byte....)`
+      result.isTextBody = false
+    }
+    if (type === 'application/json') {
+      try {
+        result.data = JSON.parse(bodyText)
+        result.isJson = true
+      } catch (e) {
+        // json格式错误 直接展示原始string
+      }
+    }
+    result.bodyText = bodyText
+  }
+  return result
 }

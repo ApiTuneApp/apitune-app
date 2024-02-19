@@ -9,6 +9,14 @@ export enum MainEvent {
 }
 
 type Base64 = Buffer
+
+export interface BodyInfo {
+  isTextBody: boolean
+  bodyText: string
+  type: string
+  isJson: boolean
+  data: any
+}
 export interface Log {
   // 唯一ID
   id: number
@@ -36,6 +44,7 @@ export interface Log {
   responseHeaders?: any
   // 结果体 （超过5MB 值为空）
   responseBody?: Base64
+  responseBodyInfo?: BodyInfo
   // 结果体长度(byte)
   responseBodyLength?: number
   responeseType?: string

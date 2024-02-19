@@ -149,7 +149,9 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
           <AccordionSummary>
             <Typography>Response Body:</Typography>
           </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
+          <AccordionDetails>
+            <div className="raw-content">{log.responseBodyInfo?.bodyText}</div>
+          </AccordionDetails>
         </Accordion>
       </TabPanel>
       <TabPanel value={value} index={2}></TabPanel>

@@ -1,6 +1,6 @@
 import { Context, Next } from 'koa'
 import { Log } from '../../../common/contract'
-import { getBase64 } from '../helper'
+import { getBase64, getBodyInfo } from '../helper'
 import { proxyLog } from '../../communicator'
 
 let logId = 1
@@ -42,6 +42,7 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
     log.responseBody = base64
     log.responseBodyLength = length
     log.finishTime = Date.now()
+    log.responseBodyInfo = getBodyInfo(log)
 
     proxyLog(log)
   })
