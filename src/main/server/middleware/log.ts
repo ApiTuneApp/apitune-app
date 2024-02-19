@@ -35,6 +35,9 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
   log.remoteIp = ctx.remoteIp
   log.remotePort = ctx.remotePort
 
+  const type = ctx.responseHeaders['content-type'] || ''
+  log.responeseType = type.split(';', 1)[0]
+
   getBase64(ctx.responseBody).then(({ base64, length }) => {
     log.responseBody = base64
     log.responseBodyLength = length

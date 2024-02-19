@@ -38,6 +38,7 @@ export interface Log {
   responseBody?: Base64
   // 结果体长度(byte)
   responseBodyLength?: number
+  responeseType?: string
   // 收到请求时间
   startTime: number
   // 结束时间
