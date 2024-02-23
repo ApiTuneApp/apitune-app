@@ -29,6 +29,7 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@glideapps/glide-data-grid": "^6.0.3",
+    "@microlink/react-json-view": "^1.23.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
     "async": "^3.2.5",

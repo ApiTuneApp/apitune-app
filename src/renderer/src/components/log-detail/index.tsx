@@ -3,6 +3,7 @@ import './log-detail.less'
 import { SyntheticEvent, useState } from 'react'
 import { Log } from 'src/common/contract'
 
+import ReactJson from '@microlink/react-json-view'
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import { Box, Stack, Typography } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
@@ -154,7 +155,23 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
           </AccordionDetails>
         </Accordion>
       </TabPanel>
-      <TabPanel value={value} index={2}></TabPanel>
+      <TabPanel value={value} index={2}>
+        {log.responseBodyInfo?.isJson && (
+          <ReactJson src={log.responseBodyInfo?.data} theme="monokai" displayDataTypes={false} />
+        )}
+        {log.responseBodyInfo?.type === 'img' && (
+          <img src={log.responseBodyInfo?.data} alt="preview" />
+        )}
+        {log.responseBodyInfo?.type === 'html' && (
+          <iframe
+            className="iframe-preview"
+            sandbox=""
+            frameBorder={0}
+            srcDoc={log.responseBodyInfo?.data}
+            title="preview"
+          />
+        )}
+      </TabPanel>
     </>
   )
 }
