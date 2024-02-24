@@ -44,11 +44,13 @@ function NetworkPage(): JSX.Element {
   const [proxyLogs, setProxyLogs] = useState<Log[]>([])
   const [curLog, setCurLog] = useState<Log | undefined>()
   const [drawerHeight, setDrawerHeight] = useState(0)
+  const [searchValue, setSearchValue] = useState('')
 
   const highlightColor = '#357edd'
 
   useEffect(() => {
     window.api.onProxyLog((log) => {
+      if (recordPaused) return
       setProxyLogs((prev) => [...prev, log])
     })
 
@@ -88,7 +90,7 @@ function NetworkPage(): JSX.Element {
     }
   }
 
-  const onPauseClick = function () {
+  const handlePauseClick = function () {
     setPauseBtnText(!recordPaused ? startRecordStr : pauseBtnText)
     setRecordPaused(!recordPaused)
   }
@@ -148,6 +150,10 @@ function NetworkPage(): JSX.Element {
     setDrawerHeight(0)
   }
 
+  const handleClearLog = () => {
+    setProxyLogs([])
+  }
+
   return (
     <Stack className="app-page page-network" direction="column">
       <Stack sx={{ pb: '10px' }} direction="row">
@@ -155,14 +161,16 @@ function NetworkPage(): JSX.Element {
           size="small"
           className="app-control app-input network-input"
           label="Search URL"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
         />
         <Tooltip title="Clear network log">
-          <IconButton aria-label="clear network log">
+          <IconButton aria-label="clear network log" onClick={handleClearLog}>
             <BlockOutlinedIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title={pauseBtnText}>
-          <IconButton aria-label={pauseBtnText} onClick={onPauseClick}>
+          <IconButton aria-label={pauseBtnText} onClick={handlePauseClick}>
             {recordPaused ? (
               <PlayCircleFilledWhiteOutlinedIcon />
             ) : (
