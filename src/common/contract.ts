@@ -30,6 +30,7 @@ export interface Log {
   host: string
   // 整体url
   url: string
+  search?: string
   // 请求header
   requestHeaders: any
   // post参数（超过5MB 值为null）

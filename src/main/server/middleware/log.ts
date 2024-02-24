@@ -18,6 +18,7 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
     protocol: ctx.remoteRequestOptions.url?.protocol,
     host: ctx.host,
     url: ctx.href,
+    search: ctx.URL.searchParams.toString(),
     pathname: ctx.remoteRequestOptions.url?.pathname,
     clientIp: ctx.socket.localAddress,
     clientPort: ctx.socket.localPort,

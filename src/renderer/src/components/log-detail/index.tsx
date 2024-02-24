@@ -86,12 +86,83 @@ function LogObjBlock({ data }: LogObjBlockProps) {
   ))
 }
 
+function parseURLEncoded(query) {
+  if (!query) {
+    return {}
+  }
+
+  const search = new URLSearchParams(query)
+  const keys = search.keys()
+  const ret = {}
+  for (const k of keys) {
+    const values = search.getAll(k)
+    if (values.length === 0) {
+      ret[k] = ''
+    } else if (values.length === 1) {
+      ret[k] = values[0]
+    } else {
+      ret[k] = values
+    }
+  }
+
+  return ret
+}
+
+function getRequestParams(log: Log) {
+  const { method, requestBody, requestHeaders, search } = log
+  if (method === 'GET') {
+    const data = {}
+    if (search) {
+      const tmp = search.split('&')
+      if (tmp && tmp.length) {
+        tmp.forEach((i) => {
+          const p = i.split('=')
+          data[p[0]] = p[1]
+        })
+      }
+    }
+    return {
+      isJson: true,
+      data
+    }
+  } else {
+    if (requestHeaders['content-type'] === 'application/x-www-form-urlencoded') {
+      try {
+        return {
+          isJson: true,
+          data: parseURLEncoded(atob(requestBody!.toString()))
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+  let isJson = true,
+    result,
+    data
+  if (isJson && requestBody) {
+    try {
+      data = atob(requestBody.toString())
+      result = eval('(' + data + ')')
+    } catch (error) {
+      isJson = false
+      result = data
+    }
+  }
+  return {
+    isJson,
+    data: result
+  }
+}
+
 function LogDetail({ log }: LogDetailProps): JSX.Element {
   const [value, setValue] = useState(0)
 
   const handleTabChange = (_: SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
+
+  const requestParams = getRequestParams(log)
   return (
     <>
       <Tabs aria-label="log detail tab" onChange={handleTabChange} value={value}>
@@ -124,7 +195,17 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
           <AccordionSummary>
             <Typography>Request Parameters:</Typography>
           </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
+          <AccordionDetails>
+            {requestParams.isJson && (
+              <ReactJson
+                src={requestParams.data}
+                theme="monokai"
+                displayDataTypes={false}
+                name={false}
+              />
+            )}
+            {!requestParams.isJson && <div className="raw-content">{requestParams.data}</div>}
+          </AccordionDetails>
         </Accordion>
       </TabPanel>
       <TabPanel value={value} index={1}>
@@ -157,7 +238,12 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
       </TabPanel>
       <TabPanel value={value} index={2}>
         {log.responseBodyInfo?.isJson && (
-          <ReactJson src={log.responseBodyInfo?.data} theme="monokai" displayDataTypes={false} />
+          <ReactJson
+            src={log.responseBodyInfo?.data}
+            theme="monokai"
+            displayDataTypes={false}
+            name={false}
+          />
         )}
         {log.responseBodyInfo?.type === 'img' && (
           <img src={log.responseBodyInfo?.data} alt="preview" />
