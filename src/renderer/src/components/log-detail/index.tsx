@@ -155,6 +155,10 @@ function getRequestParams(log: Log) {
   }
 }
 
+function isImg(type: string | undefined) {
+  return type && type.startsWith('image/')
+}
+
 function LogDetail({ log }: LogDetailProps): JSX.Element {
   const [value, setValue] = useState(0)
 
@@ -245,8 +249,18 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
             name={false}
           />
         )}
-        {log.responseBodyInfo?.type === 'img' && (
-          <img src={log.responseBodyInfo?.data} alt="preview" />
+        {isImg(log.responseBodyInfo?.type) && (
+          <>
+            <img src={log.url} alt="preview" />
+            {/* <object
+              data={log.responseBodyInfo?.data}
+              type={log.responseHeaders['content-type'] || 'image/png'}
+              width={400}
+              height={400}
+            >
+              Preview not available
+            </object> */}
+          </>
         )}
         {log.responseBodyInfo?.type === 'html' && (
           <iframe
