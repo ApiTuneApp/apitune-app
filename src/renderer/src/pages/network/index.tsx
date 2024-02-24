@@ -13,15 +13,15 @@ import {
   Item
 } from '@glideapps/glide-data-grid'
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
+import DragIndicatorOutlinedIcon from '@mui/icons-material/DragIndicatorOutlined'
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined'
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined'
-import DragIndicatorOutlinedIcon from '@mui/icons-material/DragIndicatorOutlined'
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined'
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 import { Drawer, IconButton, Stack, TextField, Tooltip } from '@mui/material'
+import LogDetail from '@renderer/components/log-detail'
 
 import { Log, MainEvent } from '../../../../common/contract'
-import LogDetail from '@renderer/components/log-detail'
 
 const minDrawerHeight = 20
 const maxDarwerHeight = 1000
@@ -42,6 +42,7 @@ function NetworkPage(): JSX.Element {
   ])
   const [highlightRegions, setHighlightRegions] = useState<Highlight[]>()
   const [proxyLogs, setProxyLogs] = useState<Log[]>([])
+  const [resultLogs, setResultLogs] = useState<Log[]>([])
   const [curLog, setCurLog] = useState<Log | undefined>()
   const [drawerHeight, setDrawerHeight] = useState(0)
   const [searchValue, setSearchValue] = useState('')
@@ -52,6 +53,11 @@ function NetworkPage(): JSX.Element {
     window.api.onProxyLog((log) => {
       if (recordPaused) return
       setProxyLogs((prev) => [...prev, log])
+      if (searchValue && log.url.includes(searchValue)) {
+        setResultLogs((prev) => [...prev, log])
+      } else {
+        setResultLogs((prev) => [...prev, log])
+      }
     })
 
     return () => {
@@ -63,7 +69,7 @@ function NetworkPage(): JSX.Element {
   // once data is loaded.
   const getContent = (cell: Item): GridCell => {
     const [col, row] = cell
-    const dataRow = proxyLogs[row]
+    const dataRow = resultLogs[row]
     const column = columns[col]
     let data = ''
     if (column && dataRow) {
@@ -78,9 +84,6 @@ function NetworkPage(): JSX.Element {
           data = dataRow[column.id as string]
           break
       }
-    }
-    if (!data) {
-      data = ''
     }
     return {
       kind: GridCellKind.Text,
@@ -121,8 +124,8 @@ function NetworkPage(): JSX.Element {
           }
         }
       ])
-      console.log('cur log', proxyLogs[newSelection.current.range.y])
-      setCurLog(proxyLogs[newSelection.current.range.y])
+      console.log('cur log', resultLogs[newSelection.current.range.y])
+      setCurLog(resultLogs[newSelection.current.range.y])
       setDrawerHeight(400)
     } else {
       setHighlightRegions(undefined)
@@ -154,6 +157,15 @@ function NetworkPage(): JSX.Element {
     setProxyLogs([])
   }
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value)
+    if (e.target.value) {
+      setResultLogs(proxyLogs.filter((log) => log.url.includes(e.target.value)))
+    } else {
+      setResultLogs(proxyLogs)
+    }
+  }
+
   return (
     <Stack className="app-page page-network" direction="column">
       <Stack sx={{ pb: '10px' }} direction="row">
@@ -162,7 +174,7 @@ function NetworkPage(): JSX.Element {
           className="app-control app-input network-input"
           label="Search URL"
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={handleSearchChange}
         />
         <Tooltip title="Clear network log">
           <IconButton aria-label="clear network log" onClick={handleClearLog}>
@@ -197,7 +209,7 @@ function NetworkPage(): JSX.Element {
             textDark: 'rgba(255, 255, 245, 0.86)'
           }}
           columns={columns}
-          rows={proxyLogs.length}
+          rows={resultLogs.length}
           rowMarkers="number"
           rangeSelect="none"
           rowSelect="single"
