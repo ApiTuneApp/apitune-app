@@ -1,9 +1,18 @@
-import { Box } from '@mui/material'
+import { Box, Divider } from '@mui/material'
+import RulesSidebar from '@renderer/components/rules-sidebar'
 
 function RulesPage(): JSX.Element {
   return (
-    <Box className="app-page page-rules">
-      <h2>rules</h2>
+    <Box className="page-rules" sx={{ display: 'flex', height: '100%' }}>
+      <RulesSidebar />
+      <Divider
+        orientation="vertical"
+        flexItem
+        sx={{ ':hover': { cursor: 'col-resize', borderWidth: '1px' } }}
+      />
+      <Box className="rules-content" sx={{ flex: 1 }}>
+        API Rules
+      </Box>
     </Box>
   )
 }

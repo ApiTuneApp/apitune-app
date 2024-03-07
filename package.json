@@ -32,6 +32,7 @@
     "@microlink/react-json-view": "^1.23.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
+    "@mui/x-tree-view": "^6.17.0",
     "async": "^3.2.5",
     "cacheable-lookup": "^6.1.0",
     "electron-updater": "^6.1.7",
