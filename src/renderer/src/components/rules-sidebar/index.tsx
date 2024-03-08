@@ -4,7 +4,9 @@ import * as React from 'react'
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-import { Box, Switch, Typography } from '@mui/material'
+import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
+import { Box, Divider, IconButton, Stack, Switch, Tooltip, Typography } from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
 
 type RuleTreeItemProps = TreeItemProps & {
@@ -41,6 +43,19 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
 function RulesSidebar(): JSX.Element {
   return (
     <Box className="rules-sidebar" sx={{ backgroundColor: 'var(--color-background-mute)' }}>
+      <Stack direction="row" alignItems="center" sx={{ p: 1 }}>
+        <Tooltip title="Add Group" arrow>
+          <IconButton sx={{ fontSize: 18 }}>
+            <QueueOutlinedIcon fontSize="inherit" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Add Rule" arrow>
+          <IconButton sx={{ fontSize: 18 }}>
+            <AddBoxOutlinedIcon fontSize="inherit" />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+      <Divider />
       <TreeView
         aria-label="rules-tree"
         defaultCollapseIcon={<ExpandMore />}
