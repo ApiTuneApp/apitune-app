@@ -8,6 +8,7 @@ import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 import { Box, Divider, IconButton, Stack, Switch, Tooltip, Typography } from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
+import { NavLink } from 'react-router-dom'
 
 type RuleTreeItemProps = TreeItemProps & {
   labelText: string
@@ -50,9 +51,11 @@ function RulesSidebar(): JSX.Element {
           </IconButton>
         </Tooltip>
         <Tooltip title="Add Rule" arrow>
-          <IconButton sx={{ fontSize: 18 }}>
-            <AddBoxOutlinedIcon fontSize="inherit" />
-          </IconButton>
+          <NavLink to="/rules/new">
+            <IconButton sx={{ fontSize: 18 }}>
+              <AddBoxOutlinedIcon fontSize="inherit" />
+            </IconButton>
+          </NavLink>
         </Tooltip>
       </Stack>
       <Divider />

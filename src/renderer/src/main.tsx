@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import NetworkPage from './pages/network'
 import RulesPage from './pages/rules'
+import NewRulePage from './pages/rules/new-rule'
 import SettingsPage from './pages/settings'
 
 import { Navigate, RouterProvider, createHashRouter } from 'react-router-dom'
@@ -16,7 +17,7 @@ const router = createHashRouter([
     children: [
       {
         path: '/',
-        element: <Navigate to="/network" />
+        element: <Navigate to="/rules" />
       },
       {
         path: 'network',
@@ -24,7 +25,13 @@ const router = createHashRouter([
       },
       {
         path: 'rules',
-        element: <RulesPage />
+        element: <RulesPage />,
+        children: [
+          {
+            path: 'new',
+            element: <NewRulePage />
+          }
+        ]
       },
       {
         path: 'settings',
