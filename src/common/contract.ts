@@ -62,3 +62,57 @@ export interface Log {
   // remotePort
   remotePort?: number
 }
+
+export enum Rules {
+  ReWrite = 'rewrite',
+  SpeedLimit = 'speedLimit',
+  RequestHeader = 'requestHeader',
+  RequestBody = 'requestBody',
+  RequestBodyJq = 'requestBodyJq',
+  RequestFunction = 'requestFunction',
+  ResponseBody = 'responseBody',
+  ResponseBodyJq = 'responseBodyJq',
+  ResponseHeader = 'responseHeader',
+  ResponseStatus = 'responseStatus',
+  ResponseDelay = 'responseDelay',
+  ResponseFile = 'responseFile',
+  ResponseFunction = 'responseFunction',
+  Break = 'break'
+}
+
+export const RuleList = [
+  Rules.ReWrite,
+  Rules.SpeedLimit,
+  Rules.RequestHeader,
+  Rules.RequestBody,
+  Rules.RequestBodyJq,
+  Rules.RequestFunction,
+  Rules.ResponseBody,
+  Rules.ResponseBodyJq,
+  Rules.ResponseHeader,
+  Rules.ResponseStatus,
+  Rules.ResponseDelay,
+  Rules.ResponseFile,
+  Rules.ResponseFunction,
+  Rules.Break
+]
+
+export const RequestRules = [
+  Rules.ReWrite,
+  Rules.SpeedLimit,
+  Rules.RequestHeader,
+  Rules.RequestBody,
+  Rules.RequestBodyJq,
+  Rules.RequestFunction
+]
+
+export const ResponseRules = [
+  Rules.ResponseBody,
+  Rules.ResponseBodyJq,
+  Rules.ResponseHeader,
+  Rules.ResponseStatus,
+  Rules.ResponseDelay,
+  Rules.ResponseFile,
+  Rules.ResponseFunction,
+  Rules.Break
+]

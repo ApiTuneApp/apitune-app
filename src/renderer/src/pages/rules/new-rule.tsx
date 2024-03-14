@@ -1,14 +1,18 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { Rules } from '@common/contract'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
-import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import {
   Autocomplete,
   Box,
   Button,
   IconButton,
   Input,
+  Menu,
   MenuItem,
   Paper,
   Select,
@@ -17,7 +21,6 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
 
 const reqMethods = [
   { label: 'GET' },
@@ -30,9 +33,41 @@ const reqMethods = [
   { label: 'CONNECT' }
 ]
 
+const AddRulesMenu: RuleItem[] = [
+  { type: Rules.ReWrite, label: 'ReWrite' },
+  { type: Rules.RequestHeader, label: 'Change request headers' },
+  { type: Rules.RequestBody, label: 'Change request body' },
+  { type: Rules.RequestFunction, label: 'Add request function' },
+  { type: Rules.ResponseBody, label: 'Change response body' },
+  { type: Rules.ResponseDelay, label: 'Add response delay' },
+  { type: Rules.ResponseFile, label: 'Replace response with file' },
+  { type: Rules.ResponseFunction, label: 'Add response function' },
+  { type: Rules.ResponseStatus, label: 'Change response status' }
+]
+
+type RuleItem = {
+  type: Rules
+  label: string
+}
+
 function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
+  const [addRuleAnchorEl, setAddRuleAnchorEl] = useState<null | HTMLElement>(null)
+  const addRuleOpen = Boolean(addRuleAnchorEl)
+
+  const handleAddRuleClose = () => {
+    setAddRuleAnchorEl(null)
+  }
+
+  const showAddRuleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAddRuleAnchorEl(event.currentTarget)
+  }
+
+  const handleAddRuleClick = (rule: RuleItem) => {
+    setAddRuleAnchorEl(null)
+    console.log(rule)
+  }
 
   return (
     <Box className="page-new" sx={{ height: '100%', p: 2 }}>
@@ -110,6 +145,33 @@ function NewRulePage(): JSX.Element {
             </Paper>
           )}
         </Paper>
+        <Button
+          aria-haspopup="true"
+          aria-controls={addRuleOpen ? 'add-rule-menu' : undefined}
+          aria-expanded={addRuleOpen ? 'true' : undefined}
+          disableElevation
+          variant="contained"
+          sx={{ my: 2 }}
+          endIcon={<KeyboardArrowDownIcon />}
+          onClick={showAddRuleMenu}
+        >
+          Add Rules
+        </Button>
+        <Menu
+          id="add-rule-menu"
+          anchorEl={addRuleAnchorEl}
+          open={addRuleOpen}
+          onClose={handleAddRuleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button'
+          }}
+        >
+          {AddRulesMenu.map((rule) => (
+            <MenuItem onClick={() => handleAddRuleClick(rule)} key={rule.type}>
+              {rule.label}
+            </MenuItem>
+          ))}
+        </Menu>
       </Box>
     </Box>
   )
