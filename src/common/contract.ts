@@ -64,7 +64,7 @@ export interface Log {
 }
 
 export enum Rules {
-  ReWrite = 'rewrite',
+  Redirect = 'redirect',
   SpeedLimit = 'speedLimit',
   RequestHeader = 'requestHeader',
   RequestBody = 'requestBody',
@@ -81,7 +81,7 @@ export enum Rules {
 }
 
 export const RuleList = [
-  Rules.ReWrite,
+  Rules.Redirect,
   Rules.SpeedLimit,
   Rules.RequestHeader,
   Rules.RequestBody,
@@ -98,7 +98,7 @@ export const RuleList = [
 ]
 
 export const RequestRules = [
-  Rules.ReWrite,
+  Rules.Redirect,
   Rules.SpeedLimit,
   Rules.RequestHeader,
   Rules.RequestBody,

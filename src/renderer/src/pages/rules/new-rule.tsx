@@ -1,3 +1,5 @@
+import '@renderer/components/add-rule-item/index.less'
+
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,6 +12,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  FormControl,
   IconButton,
   Input,
   Menu,
@@ -21,6 +24,8 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
+import { RuleItem } from '@renderer/components/add-rule-item/contract'
+import Redirect from '@renderer/components/add-rule-item/redirect'
 
 const reqMethods = [
   { label: 'GET' },
@@ -33,8 +38,8 @@ const reqMethods = [
   { label: 'CONNECT' }
 ]
 
-const AddRulesMenu: RuleItem[] = [
-  { type: Rules.ReWrite, label: 'ReWrite' },
+const AddRulesMenu: RuleMenuItem[] = [
+  { type: Rules.Redirect, label: 'ReWrite' },
   { type: Rules.RequestHeader, label: 'Change request headers' },
   { type: Rules.RequestBody, label: 'Change request body' },
   { type: Rules.RequestFunction, label: 'Add request function' },
@@ -45,7 +50,7 @@ const AddRulesMenu: RuleItem[] = [
   { type: Rules.ResponseStatus, label: 'Change response status' }
 ]
 
-type RuleItem = {
+type RuleMenuItem = {
   type: Rules
   label: string
 }
@@ -55,6 +60,7 @@ function NewRulePage(): JSX.Element {
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
   const [addRuleAnchorEl, setAddRuleAnchorEl] = useState<null | HTMLElement>(null)
   const addRuleOpen = Boolean(addRuleAnchorEl)
+  const [addedRules, setAddedRules] = useState<RuleItem[]>([])
 
   const handleAddRuleClose = () => {
     setAddRuleAnchorEl(null)
@@ -64,9 +70,47 @@ function NewRulePage(): JSX.Element {
     setAddRuleAnchorEl(event.currentTarget)
   }
 
-  const handleAddRuleClick = (rule: RuleItem) => {
+  const handleAddRuleClick = (rule: RuleMenuItem) => {
     setAddRuleAnchorEl(null)
-    console.log(rule)
+    setAddedRules((prevRules) => [...prevRules, { type: rule.type, value: '', valid: false }])
+  }
+
+  // there should only one type in rule list
+  const getSetValueMethod = (rule: RuleItem) => {
+    return (value: RuleItem['value']) => {
+      const newRules = addedRules.map((r) => {
+        if (r.type === rule.type) {
+          return { ...r, value }
+        }
+        return r
+      })
+      setAddedRules(newRules)
+    }
+  }
+
+  const getAddRuleValueComponent = (rule: RuleItem) => {
+    const type = rule.type
+    const setValue = getSetValueMethod(rule)
+    switch (type) {
+      case Rules.Redirect:
+        return <Redirect rule={rule} setValue={setValue} />
+      default:
+        return <h2>{type} not accomplished yet!</h2>
+    }
+  }
+
+  const handleAddRuleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    addedRules.forEach((rule) => {
+      if (rule.validator) {
+        rule.validator(rule.value)
+      }
+    })
+    const formValid = addedRules.every((rule) => rule.valid)
+    if (formValid) {
+      console.log('form is valid')
+    }
+    console.log(addedRules)
   }
 
   return (
@@ -83,7 +127,7 @@ function NewRulePage(): JSX.Element {
           </Tooltip>
           <Typography ml={1}>Create New Rule</Typography>
         </Box>
-        <Button color="primary" variant="contained" size="small">
+        <Button color="primary" variant="contained" size="small" type="submit" form="addRuleForm">
           Save
         </Button>
       </Box>
@@ -95,7 +139,6 @@ function NewRulePage(): JSX.Element {
           multiline
           placeholder="Add Description (Optional)"
           size="small"
-          inputProps={{ disableUnderline: true }}
           disableUnderline
           sx={{ pb: 4 }}
         />
@@ -172,6 +215,13 @@ function NewRulePage(): JSX.Element {
             </MenuItem>
           ))}
         </Menu>
+        <Box component="form" onSubmit={handleAddRuleSubmit} id="addRuleForm" noValidate>
+          {addedRules.map((rule, index) => (
+            <FormControl key={index} fullWidth>
+              {getAddRuleValueComponent(rule)}
+            </FormControl>
+          ))}
+        </Box>
       </Box>
     </Box>
   )
