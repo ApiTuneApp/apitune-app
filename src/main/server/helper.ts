@@ -3,7 +3,7 @@ import { Socket } from 'node:net'
 import { finished, PassThrough, Stream } from 'node:stream'
 import pako from 'pako'
 
-import { BodyInfo, Log } from '../../common/contract'
+import { BodyInfo, Log } from '../../shared/contract'
 import config from './config'
 
 /*

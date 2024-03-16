@@ -1,7 +1,6 @@
 import './log-detail.less'
 
 import { SyntheticEvent, useState } from 'react'
-import { Log } from 'src/common/contract'
 
 import ReactJson from '@microlink/react-json-view'
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
@@ -12,6 +11,7 @@ import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/Accord
 import { styled } from '@mui/material/styles'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
+import { Log } from '@shared/contract'
 
 interface LogDetailProps {
   log: Log

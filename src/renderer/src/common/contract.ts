@@ -1,4 +1,4 @@
-import { Rules } from '@common/contract'
+import { Rules } from '@shared/contract'
 
 export interface RuleItem {
   type: Rules

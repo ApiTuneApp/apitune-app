@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { MainEvent } from '../common/contract'
+import { MainEvent } from '../shared/contract'
 
 // Custom APIs for renderer
 const api = {

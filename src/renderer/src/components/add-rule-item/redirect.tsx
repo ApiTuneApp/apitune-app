@@ -1,7 +1,8 @@
-import { Box, TextField } from '@mui/material'
 import { useState } from 'react'
-import { isURL } from '@common/utils'
-import { AddRuleValueProps } from './contract'
+
+import { Box, TextField } from '@mui/material'
+import { AddRuleValueProps } from '@renderer/common/contract'
+import { isURL } from '@shared/utils'
 
 function Redirect({ rule, setValue }: AddRuleValueProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')

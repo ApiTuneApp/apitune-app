@@ -3,7 +3,6 @@ import '@renderer/components/add-rule-item/index.less'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Rules } from '@common/contract'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -24,8 +23,9 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
-import { RuleItem } from '@renderer/components/add-rule-item/contract'
+import { RuleItem } from '@renderer/common/contract'
 import Redirect from '@renderer/components/add-rule-item/redirect'
+import { Rules } from '@shared/contract'
 
 const reqMethods = [
   { label: 'GET' },
@@ -215,13 +215,19 @@ function NewRulePage(): JSX.Element {
             </MenuItem>
           ))}
         </Menu>
-        <Box component="form" onSubmit={handleAddRuleSubmit} id="addRuleForm" noValidate>
+        <Paper
+          elevation={3}
+          component="form"
+          onSubmit={handleAddRuleSubmit}
+          id="addRuleForm"
+          noValidate
+        >
           {addedRules.map((rule, index) => (
             <FormControl key={index} fullWidth>
               {getAddRuleValueComponent(rule)}
             </FormControl>
           ))}
-        </Box>
+        </Paper>
       </Box>
     </Box>
   )

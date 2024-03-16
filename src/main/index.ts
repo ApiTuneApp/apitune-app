@@ -3,7 +3,7 @@ import { join } from 'path'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { RenderEvent } from '../common/contract'
+import { RenderEvent } from '../shared/contract'
 import { initCommunicator } from './communicator'
 import './server'
 

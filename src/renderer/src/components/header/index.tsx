@@ -1,5 +1,6 @@
-import { Box } from '@mui/material'
 import './header.less'
+
+import { Box } from '@mui/material'
 
 function Header(): JSX.Element {
   return (

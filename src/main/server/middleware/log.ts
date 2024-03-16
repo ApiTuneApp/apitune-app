@@ -1,5 +1,5 @@
 import { Context, Next } from 'koa'
-import { Log } from '../../../common/contract'
+import { Log } from '../../../shared/contract'
 import { getBase64, getBodyInfo } from '../helper'
 import { proxyLog } from '../../communicator'
 

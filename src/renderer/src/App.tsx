@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { Outlet } from 'react-router-dom'
-import { MainEvent, RenderEvent } from '../../common/contract'
+import { MainEvent, RenderEvent } from '../../shared/contract'
 import Header from './components/header'
 import Sidebar from './components/sidebar'
 

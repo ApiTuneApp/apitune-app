@@ -21,7 +21,7 @@ import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined'
 import { Drawer, IconButton, Stack, TextField, Tooltip } from '@mui/material'
 import LogDetail from '@renderer/components/log-detail'
 
-import { Log, MainEvent } from '../../../../common/contract'
+import { Log, MainEvent } from '../../../../shared/contract'
 
 const minDrawerHeight = 20
 const maxDarwerHeight = 1000

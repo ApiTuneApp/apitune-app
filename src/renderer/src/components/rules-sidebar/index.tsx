@@ -1,14 +1,14 @@
 import './rules-sidebar.less'
 
 import * as React from 'react'
+import { NavLink } from 'react-router-dom'
 
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 import { Box, Divider, IconButton, Stack, Switch, Tooltip, Typography } from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
-import { NavLink } from 'react-router-dom'
 
 type RuleTreeItemProps = TreeItemProps & {
   labelText: string

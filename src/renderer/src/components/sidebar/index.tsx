@@ -1,10 +1,11 @@
-import Stack from '@mui/material/Stack'
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
-import SpeedOutlinedIcon from '@mui/icons-material/SpeedOutlined'
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
+import './sidebar.less'
+
 import { NavLink } from 'react-router-dom'
 
-import './sidebar.less'
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
+import SpeedOutlinedIcon from '@mui/icons-material/SpeedOutlined'
+import Stack from '@mui/material/Stack'
 
 function Sidebar(): JSX.Element {
   return (

@@ -1,5 +1,5 @@
 import { BrowserWindow, WebContents } from 'electron'
-import { Log, MainEvent } from '../common/contract'
+import { Log, MainEvent } from '../shared/contract'
 
 let webContents: WebContents
 

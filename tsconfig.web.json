@@ -5,7 +5,7 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
-    "src/common/**/*",
+    "src/shared/**/*",
   ],
   "compilerOptions": {
     "composite": true,
@@ -15,7 +15,7 @@
       "@renderer/*": [
         "src/renderer/src/*"
       ],
-      "@common/*": ["src/common/*"]
+      "@shared/*": ["src/shared/*"]
     }
   }
 }
