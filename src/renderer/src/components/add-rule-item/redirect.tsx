@@ -1,8 +1,9 @@
 import { useState } from 'react'
 
-import { Box, TextField, Typography } from '@mui/material'
+import { TextField } from '@mui/material'
 import { AddRuleValueProps } from '@renderer/common/contract'
 import { isURL } from '@shared/utils'
+import RuleOutline from './rule-outline'
 
 function Redirect({ rule, setValue }: AddRuleValueProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')
@@ -28,22 +29,22 @@ function Redirect({ rule, setValue }: AddRuleValueProps): JSX.Element {
   }
 
   return (
-    <Box className="rule-value-item">
-      <Typography variant="subtitle1" gutterBottom>
-        Redirects to:
-      </Typography>
-      <TextField
-        hiddenLabel
-        fullWidth
-        required
-        placeholder="please input redirect url"
-        size="small"
-        error={!!errorMsg}
-        value={rule.value}
-        helperText={errorMsg}
-        onChange={onChange}
-      ></TextField>
-    </Box>
+    <RuleOutline
+      title="Redirects to:"
+      WrapComponent={
+        <TextField
+          hiddenLabel
+          fullWidth
+          required
+          placeholder="please input redirect url"
+          size="small"
+          error={!!errorMsg}
+          value={rule.value}
+          helperText={errorMsg}
+          onChange={onChange}
+        ></TextField>
+      }
+    />
   )
 }
 
