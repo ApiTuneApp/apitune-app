@@ -7,7 +7,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import {
   Autocomplete,
   Box,
@@ -27,6 +27,7 @@ import {
 import { RuleItem } from '@renderer/common/contract'
 import Redirect from '@renderer/components/add-rule-item/redirect'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
+import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import { Rules } from '@shared/contract'
 
 const reqMethods = [
@@ -41,16 +42,17 @@ const reqMethods = [
 ]
 
 const AddRulesMenu: RuleMenuItem[] = [
-  { type: Rules.Redirect, label: 'ReWrite' },
-  { type: Rules.SpeedLimit, label: 'Add speed limit' },
-  { type: Rules.RequestHeader, label: 'Change request headers' },
-  { type: Rules.RequestBody, label: 'Change request body' },
-  { type: Rules.RequestFunction, label: 'Add request function' },
-  { type: Rules.ResponseBody, label: 'Change response body' },
-  { type: Rules.ResponseDelay, label: 'Add response delay' },
-  { type: Rules.ResponseFile, label: 'Replace response with file' },
-  { type: Rules.ResponseFunction, label: 'Add response function' },
-  { type: Rules.ResponseStatus, label: 'Change response status' }
+  { type: Rules.Redirect, label: 'ReDirect' },
+  { type: Rules.SpeedLimit, label: 'Add Speed Limit' },
+  { type: Rules.RequestHeader, label: 'Modify Request Headers' },
+  { type: Rules.RequestBody, label: 'Modify Request Body' },
+  { type: Rules.RequestFunction, label: 'Add request Function' },
+  { type: Rules.ResponseHeader, label: 'Modify Response Headers' },
+  { type: Rules.ResponseBody, label: 'Modify Response Body' },
+  { type: Rules.ResponseDelay, label: 'Add Response Delay' },
+  { type: Rules.ResponseFile, label: 'Replace Response With File' },
+  { type: Rules.ResponseFunction, label: 'Add Response Function' },
+  { type: Rules.ResponseStatus, label: 'Modify Response Status' }
 ]
 
 type RuleMenuItem = {
@@ -99,6 +101,10 @@ function NewRulePage(): JSX.Element {
         return <Redirect rule={rule} setValue={setValue} />
       case Rules.SpeedLimit:
         return <SpeedLimit rule={rule} setValue={setValue} />
+      case Rules.RequestHeader:
+        return <HeaderEditor rule={rule} setValue={setValue} type="request" />
+      case Rules.ResponseHeader:
+        return <HeaderEditor rule={rule} setValue={setValue} type="response" />
       default:
         return <h2>{type} not accomplished yet!</h2>
     }
@@ -142,7 +148,7 @@ function NewRulePage(): JSX.Element {
         </Button>
       </Box>
 
-      <Box sx={{ px: 16 }}>
+      <Box sx={{ px: 8 }}>
         <TextField fullWidth label="Add Rule Name" size="small" sx={{ pb: 2 }} />
         <Input
           fullWidth
@@ -236,7 +242,7 @@ function NewRulePage(): JSX.Element {
             <FormControl key={index} fullWidth>
               <Tooltip title="remove rule" placement="top" arrow onClick={() => removeRule(index)}>
                 <IconButton size="small" sx={{ position: 'absolute', top: '10px', right: '10px' }}>
-                  <CloseOutlinedIcon fontSize="small" />
+                  <DeleteOutlinedIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               {getAddRuleValueComponent(rule)}

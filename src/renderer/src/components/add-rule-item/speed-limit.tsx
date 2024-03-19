@@ -40,7 +40,7 @@ function SpeedLimit({ rule, setValue }: AddRuleValueProps): JSX.Element {
             setValue(value)
           }}
           InputProps={{
-            endAdornment: <InputAdornment position="start">kg</InputAdornment>
+            endAdornment: <InputAdornment position="start">KB/s</InputAdornment>
           }}
         ></TextField>
       }
