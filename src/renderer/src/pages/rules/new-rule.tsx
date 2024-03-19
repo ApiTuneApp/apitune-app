@@ -7,6 +7,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 import {
   Autocomplete,
   Box,
@@ -25,6 +26,7 @@ import {
 } from '@mui/material'
 import { RuleItem } from '@renderer/common/contract'
 import Redirect from '@renderer/components/add-rule-item/redirect'
+import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import { Rules } from '@shared/contract'
 
 const reqMethods = [
@@ -40,6 +42,7 @@ const reqMethods = [
 
 const AddRulesMenu: RuleMenuItem[] = [
   { type: Rules.Redirect, label: 'ReWrite' },
+  { type: Rules.SpeedLimit, label: 'Add speed limit' },
   { type: Rules.RequestHeader, label: 'Change request headers' },
   { type: Rules.RequestBody, label: 'Change request body' },
   { type: Rules.RequestFunction, label: 'Add request function' },
@@ -94,6 +97,8 @@ function NewRulePage(): JSX.Element {
     switch (type) {
       case Rules.Redirect:
         return <Redirect rule={rule} setValue={setValue} />
+      case Rules.SpeedLimit:
+        return <SpeedLimit rule={rule} setValue={setValue} />
       default:
         return <h2>{type} not accomplished yet!</h2>
     }
@@ -111,6 +116,11 @@ function NewRulePage(): JSX.Element {
       console.log('form is valid')
     }
     console.log(addedRules)
+  }
+
+  const removeRule = (index: number) => {
+    const newRules = addedRules.filter((_, i) => i !== index)
+    setAddedRules(newRules)
   }
 
   return (
@@ -224,6 +234,11 @@ function NewRulePage(): JSX.Element {
         >
           {addedRules.map((rule, index) => (
             <FormControl key={index} fullWidth>
+              <Tooltip title="remove rule" placement="top" arrow onClick={() => removeRule(index)}>
+                <IconButton size="small" sx={{ position: 'absolute', top: '10px', right: '10px' }}>
+                  <CloseOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
               {getAddRuleValueComponent(rule)}
             </FormControl>
           ))}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Box, TextField } from '@mui/material'
+import { Box, TextField, Typography } from '@mui/material'
 import { AddRuleValueProps } from '@renderer/common/contract'
 import { isURL } from '@shared/utils'
 
@@ -29,7 +29,9 @@ function Redirect({ rule, setValue }: AddRuleValueProps): JSX.Element {
 
   return (
     <Box className="rule-value-item">
-      <div className="rule-value-title">Redirects to</div>
+      <Typography variant="subtitle1" gutterBottom>
+        Redirects to:
+      </Typography>
       <TextField
         hiddenLabel
         fullWidth
