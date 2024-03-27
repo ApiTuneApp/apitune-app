@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import {
   Autocomplete,
   Box,
@@ -25,9 +25,10 @@ import {
   Typography
 } from '@mui/material'
 import { RuleItem } from '@renderer/common/contract'
+import BodyEditor from '@renderer/components/add-rule-item/body-editor'
+import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import Redirect from '@renderer/components/add-rule-item/redirect'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
-import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import { Rules } from '@shared/contract'
 
 const reqMethods = [
@@ -105,6 +106,10 @@ function NewRulePage(): JSX.Element {
         return <HeaderEditor rule={rule} setValue={setValue} type="request" />
       case Rules.ResponseHeader:
         return <HeaderEditor rule={rule} setValue={setValue} type="response" />
+      case Rules.RequestBody:
+        return <BodyEditor rule={rule} setValue={setValue} type="request" />
+      case Rules.ResponseBody:
+        return <BodyEditor rule={rule} setValue={setValue} type="response" />
       default:
         return <h2>{type} not accomplished yet!</h2>
     }
