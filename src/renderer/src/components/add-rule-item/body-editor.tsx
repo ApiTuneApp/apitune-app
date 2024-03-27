@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import * as monaco from 'monaco-editor'
+import { useRef, useState } from 'react'
 
-import { TextField } from '@mui/material'
+import Editor, { loader } from '@monaco-editor/react'
 import { AddRuleValueProps } from '@renderer/common/contract'
 
 import RuleOutline from './rule-outline'
+
+loader.config({ monaco })
 
 type BodyEditorProps = {
   type: 'request' | 'response'
@@ -11,6 +14,12 @@ type BodyEditorProps = {
 
 function BodyEditor({ rule, setValue }: AddRuleValueProps & BodyEditorProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')
+  const editorRef = useRef(null)
+
+  function handleEditorDidMount(editor, monaco) {
+    editorRef.current = editor
+  }
+
   function validator(value: string) {
     let valid = true
     if (!value || !value.trim()) {
@@ -24,7 +33,19 @@ function BodyEditor({ rule, setValue }: AddRuleValueProps & BodyEditorProps): JS
   }
 
   rule.validator = validator
-  return <RuleOutline title="Body Rule:" WrapComponent={<TextField multiline />} />
+  return (
+    <RuleOutline
+      title="Body Rule:"
+      WrapComponent={
+        <Editor
+          theme="vs-dark"
+          height={400}
+          defaultLanguage="json"
+          onMount={handleEditorDidMount}
+        />
+      }
+    />
+  )
 }
 
 export default BodyEditor

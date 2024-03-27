@@ -16,6 +16,8 @@
         "src/renderer/src/*"
       ],
       "@shared/*": ["src/shared/*"]
-    }
+    },
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   }
 }
