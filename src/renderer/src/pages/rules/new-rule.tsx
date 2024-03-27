@@ -226,7 +226,11 @@ function NewRulePage(): JSX.Element {
           }}
         >
           {AddRulesMenu.map((rule) => (
-            <MenuItem onClick={() => handleAddRuleClick(rule)} key={rule.type}>
+            <MenuItem
+              onClick={() => handleAddRuleClick(rule)}
+              key={rule.type}
+              disabled={addedRules.some((item) => item.type === rule.type)}
+            >
               {rule.label}
             </MenuItem>
           ))}
