@@ -149,7 +149,10 @@ function NewRulePage(): JSX.Element {
   }
 
   return (
-    <Box className="page-new" sx={{ height: '100%', p: 2 }}>
+    <Box
+      className="page-new"
+      sx={{ height: '100%', p: 2, display: 'flex', flexDirection: 'column' }}
+    >
       <Box
         sx={{ pb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
         color="var(--ev-c-text-2)"
@@ -167,7 +170,7 @@ function NewRulePage(): JSX.Element {
         </Button>
       </Box>
 
-      <Box sx={{ px: 8 }}>
+      <Box sx={{ px: 8, overflowY: 'auto' }}>
         <TextField fullWidth label="Add Rule Name" size="small" sx={{ pb: 2 }} />
         <Input
           fullWidth
