@@ -5,7 +5,7 @@ import { AddRuleValueProps } from '@renderer/common/contract'
 import { isURL } from '@shared/utils'
 import RuleOutline from './rule-outline'
 
-function Redirect({ rule, setValue }: AddRuleValueProps): JSX.Element {
+function Redirect({ rule, setValue, setValid }: AddRuleValueProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')
   function validator(value: string) {
     let valid = true
@@ -19,7 +19,8 @@ function Redirect({ rule, setValue }: AddRuleValueProps): JSX.Element {
       setErrorMsg('')
       valid = true
     }
-    rule.valid = valid
+    // rule.valid = valid
+    setValid(valid)
   }
   rule.validator = validator
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {

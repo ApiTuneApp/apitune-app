@@ -34,7 +34,8 @@ type HeaderEditorProps = {
 function HeaderEditor({
   rule,
   setValue,
-  type
+  type,
+  setValid
 }: AddRuleValueProps & HeaderEditorProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')
   const [headerList, setHeaderList] = useState<HeaderItem[]>([{ type: 'add', name: '', value: '' }])
@@ -50,7 +51,8 @@ function HeaderEditor({
       valid = true
       setErrorMsg('')
     }
-    rule.valid = valid
+    // rule.valid = valid
+    setValid(valid)
   }
 
   rule.validator = validator

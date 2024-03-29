@@ -9,7 +9,11 @@ type BodyEditorProps = {
   type: 'request' | 'response'
 }
 
-function BodyEditor({ rule, setValue }: AddRuleValueProps & BodyEditorProps): JSX.Element {
+function BodyEditor({
+  rule,
+  setValue,
+  setValid
+}: AddRuleValueProps & BodyEditorProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')
 
   function validator(value: string) {
@@ -21,7 +25,8 @@ function BodyEditor({ rule, setValue }: AddRuleValueProps & BodyEditorProps): JS
       valid = true
       setErrorMsg('')
     }
-    rule.valid = valid
+    // rule.valid = valid
+    setValid(valid)
   }
 
   rule.validator = validator

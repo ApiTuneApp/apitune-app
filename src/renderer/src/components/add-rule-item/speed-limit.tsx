@@ -5,7 +5,7 @@ import { AddRuleValueProps } from '@renderer/common/contract'
 
 import RuleOutline from './rule-outline'
 
-function SpeedLimit({ rule, setValue }: AddRuleValueProps): JSX.Element {
+function SpeedLimit({ rule, setValue, setValid }: AddRuleValueProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')
   function validator(value: string) {
     let valid = true
@@ -16,7 +16,8 @@ function SpeedLimit({ rule, setValue }: AddRuleValueProps): JSX.Element {
       valid = true
       setErrorMsg('')
     }
-    rule.valid = valid
+    // rule.valid = valid
+    setValid(valid)
   }
 
   rule.validator = validator

@@ -10,4 +10,5 @@ export interface RuleItem {
 export interface AddRuleValueProps {
   rule: RuleItem
   setValue: (value: RuleItem['value']) => void
+  setValid: (valid: RuleItem['valid']) => void
 }

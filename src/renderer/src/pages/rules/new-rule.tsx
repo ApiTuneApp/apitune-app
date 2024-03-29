@@ -83,33 +83,47 @@ function NewRulePage(): JSX.Element {
 
   // there should only one type in rule list
   const getSetValueMethod = (rule: RuleItem) => {
-    return (value: RuleItem['value']) => {
-      const newRules = addedRules.map((r) => {
-        if (r.type === rule.type) {
-          return { ...r, value }
-        }
-        return r
-      })
-      setAddedRules(newRules)
+    return (value: RuleItem['value']) =>
+      setAddedRules((prevRules) =>
+        prevRules.map((r) => {
+          if (r.type === rule.type) {
+            return { ...r, value }
+          }
+          return r
+        })
+      )
+  }
+
+  const getSetValidMethod = (rule: RuleItem) => {
+    return (valid: RuleItem['valid']) => {
+      return setAddedRules((prevRules) =>
+        prevRules.map((r) => {
+          if (r.type === rule.type) {
+            return { ...r, valid }
+          }
+          return r
+        })
+      )
     }
   }
 
   const getAddRuleValueComponent = (rule: RuleItem) => {
     const type = rule.type
     const setValue = getSetValueMethod(rule)
+    const setValid = getSetValidMethod(rule)
     switch (type) {
       case Rules.Redirect:
-        return <Redirect rule={rule} setValue={setValue} />
+        return <Redirect rule={rule} setValue={setValue} setValid={setValid} />
       case Rules.SpeedLimit:
-        return <SpeedLimit rule={rule} setValue={setValue} />
+        return <SpeedLimit rule={rule} setValue={setValue} setValid={setValid} />
       case Rules.RequestHeader:
-        return <HeaderEditor rule={rule} setValue={setValue} type="request" />
+        return <HeaderEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
       case Rules.ResponseHeader:
-        return <HeaderEditor rule={rule} setValue={setValue} type="response" />
+        return <HeaderEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
       case Rules.RequestBody:
-        return <BodyEditor rule={rule} setValue={setValue} type="request" />
+        return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
       case Rules.ResponseBody:
-        return <BodyEditor rule={rule} setValue={setValue} type="response" />
+        return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
       default:
         return <h2>{type} not accomplished yet!</h2>
     }
