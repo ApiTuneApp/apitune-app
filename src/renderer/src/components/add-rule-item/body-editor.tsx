@@ -4,6 +4,7 @@ import { AddRuleValueProps } from '@renderer/common/contract'
 import MonacoEditor from '../monaco-editor'
 
 import RuleOutline from './rule-outline'
+import { Box, FormHelperText } from '@mui/material'
 
 type BodyEditorProps = {
   type: 'request' | 'response'
@@ -11,6 +12,7 @@ type BodyEditorProps = {
 
 function BodyEditor({
   rule,
+  type,
   setValue,
   setValid
 }: AddRuleValueProps & BodyEditorProps): JSX.Element {
@@ -29,11 +31,26 @@ function BodyEditor({
     setValid(valid)
   }
 
+  function onChange(value: string | undefined) {
+    value = value || ''
+    validator(value)
+    setValue(value)
+  }
+
   rule.validator = validator
   return (
     <RuleOutline
-      title="Body Rule:"
-      WrapComponent={<MonacoEditor height={400} defaultLanguage="json" />}
+      title={`Modify ${type === 'request' ? 'Request' : 'Response'} Body:`}
+      WrapComponent={
+        <Box>
+          <MonacoEditor height={400} defaultLanguage="json" onChange={onChange} />
+          {errorMsg && (
+            <FormHelperText error sx={{ mt: 1 }}>
+              {errorMsg}
+            </FormHelperText>
+          )}
+        </Box>
+      }
     />
   )
 }

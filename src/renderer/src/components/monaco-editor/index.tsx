@@ -1,6 +1,6 @@
 import * as monaco from 'monaco-editor'
 
-import Editor, { loader } from '@monaco-editor/react'
+import Editor, { EditorProps, loader } from '@monaco-editor/react'
 import { useRef } from 'react'
 import { useTheme } from '@mui/material/styles'
 
@@ -35,7 +35,7 @@ type MonacoEditorProps = {
   height: number | string
 }
 
-export default function MonacoEditor(props: MonacoEditorProps) {
+export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
   const theme = useTheme()
   const editorTheme = theme.palette.mode === 'dark' ? 'vs-dark' : ''
 
