@@ -15,11 +15,12 @@ import {
 import { AddRuleValueProps } from '@renderer/common/contract'
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 
-import { HTTP_REQUEST_HEADER } from '@shared/constants'
+import { HTTP_REQUEST_HEADER, HTTP_RESPONSE_HEADER } from '@shared/constants'
 
 import RuleOutline from './rule-outline'
 
-const reqHeaders = HTTP_REQUEST_HEADER.map((item) => ({ label: item }))
+const ReqHeaders = HTTP_REQUEST_HEADER.map((item) => ({ label: item }))
+const ResHeaders = HTTP_RESPONSE_HEADER.map((item) => ({ label: item }))
 
 type HeaderItem = {
   type: 'add' | 'override' | 'remove'
@@ -91,7 +92,7 @@ function HeaderEditor({
               <Autocomplete
                 size="small"
                 freeSolo
-                options={reqHeaders}
+                options={type === 'request' ? ReqHeaders : ResHeaders}
                 sx={{ flex: 1 }}
                 value={item.name}
                 onChange={(_, value) => handleChange('name', value as string, index)}

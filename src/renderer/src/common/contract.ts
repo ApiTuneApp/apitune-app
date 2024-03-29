@@ -2,7 +2,7 @@ import { Rules } from '@shared/contract'
 
 export interface RuleItem {
   type: Rules
-  value: string | object
+  value: string | object | number
   valid: boolean
   validator?: (value: any) => void
 }

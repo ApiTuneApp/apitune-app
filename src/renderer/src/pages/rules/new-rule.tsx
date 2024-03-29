@@ -29,6 +29,9 @@ import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import Redirect from '@renderer/components/add-rule-item/redirect'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
+import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
+import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
+import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import { Rules } from '@shared/contract'
 
 const reqMethods = [
@@ -47,11 +50,11 @@ const AddRulesMenu: RuleMenuItem[] = [
   { type: Rules.SpeedLimit, label: 'Add Speed Limit' },
   { type: Rules.RequestHeader, label: 'Modify Request Headers' },
   { type: Rules.RequestBody, label: 'Modify Request Body' },
-  { type: Rules.RequestFunction, label: 'Add request Function' },
+  { type: Rules.RequestFunction, label: 'Add Request Function' },
   { type: Rules.ResponseHeader, label: 'Modify Response Headers' },
   { type: Rules.ResponseBody, label: 'Modify Response Body' },
   { type: Rules.ResponseDelay, label: 'Add Response Delay' },
-  { type: Rules.ResponseFile, label: 'Replace Response With File' },
+  // { type: Rules.ResponseFile, label: 'Replace Response With File' },
   { type: Rules.ResponseFunction, label: 'Add Response Function' },
   { type: Rules.ResponseStatus, label: 'Modify Response Status' }
 ]
@@ -124,6 +127,16 @@ function NewRulePage(): JSX.Element {
         return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
       case Rules.ResponseBody:
         return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
+      case Rules.ResponseDelay:
+        return <ResponseDelay rule={rule} setValue={setValue} setValid={setValid} />
+      case Rules.RequestFunction:
+        return <FunctionEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
+      case Rules.ResponseFunction:
+        return (
+          <FunctionEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
+        )
+      case Rules.ResponseStatus:
+        return <ResponseStatus rule={rule} setValue={setValue} setValid={setValid} />
       default:
         return <h2>{type} not accomplished yet!</h2>
     }
