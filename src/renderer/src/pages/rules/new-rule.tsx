@@ -152,6 +152,11 @@ function NewRulePage(): JSX.Element {
     const formValid = addedRules.every((rule) => rule.valid)
     if (formValid) {
       console.log('form is valid')
+      window.api.saveRules(
+        JSON.stringify({
+          rules: addedRules
+        })
+      )
     }
     console.log(addedRules)
   }

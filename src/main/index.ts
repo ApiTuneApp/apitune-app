@@ -1,11 +1,15 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import './server'
+
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import Storage from 'electron-json-storage'
+import { join } from 'path'
+
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+
 import icon from '../../resources/icon.png?asset'
 import { RenderEvent } from '../shared/contract'
 import { initCommunicator } from './communicator'
-import './server'
 
 function createWindow(): void {
   // Create the browser window.
@@ -58,6 +62,22 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on(RenderEvent.ping, () => console.log('pong'))
+
+  ipcMain.on(RenderEvent.SaveRules, (event, rules: string) => {
+    console.log('SaveRules', rules)
+    // TODO: generate storage key with user name and workspace name
+    try {
+      const ruleObj = JSON.parse(rules)
+      Storage.set('user.default', ruleObj, (error) => {
+        if (error) console.error('SaveRules error', error)
+      })
+    } catch (error) {
+      console.error('SaveRules error', error)
+    }
+  })
+
+  const dataPath = Storage.getDataPath()
+  console.log('datapath =>> ', dataPath)
 
   // ipcMain.on(RenderEvent.startServer, () => {
   //   startServer()

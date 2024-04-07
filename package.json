@@ -26,6 +26,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "@electron/remote": "^2.1.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@glideapps/glide-data-grid": "^6.0.3",
@@ -36,6 +37,7 @@
     "@mui/x-tree-view": "^6.17.0",
     "async": "^3.2.5",
     "cacheable-lookup": "^6.1.0",
+    "electron-json-storage": "^4.6.0",
     "electron-updater": "^6.1.7",
     "koa": "^2.15.0",
     "lodash": "^4.17.21",

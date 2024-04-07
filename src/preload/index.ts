@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { MainEvent } from '../shared/contract'
+import { MainEvent, RenderEvent, StorageDataParams } from '../shared/contract'
 
 // Custom APIs for renderer
 const api = {
@@ -9,6 +9,9 @@ const api = {
   },
   clearupMainEvent: (event: MainEvent): void => {
     ipcRenderer.removeAllListeners(event)
+  },
+  saveRules: (rules: string): void => {
+    ipcRenderer.send(RenderEvent.SaveRules, rules)
   }
 }
 

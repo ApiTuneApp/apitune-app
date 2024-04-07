@@ -1,6 +1,7 @@
 export enum RenderEvent {
   ping = 'ping',
-  startServer = 'startServer'
+  startServer = 'startServer',
+  SaveRules = 'saveRules'
 }
 
 export enum MainEvent {
@@ -79,3 +80,14 @@ export enum Rules {
   ResponseFunction = 'responseFunction',
   Break = 'break'
 }
+
+export interface RuleData {
+  type: Rules
+  value: string | object | number
+}
+
+export interface StorageData {
+  rules: RuleData[]
+}
+
+export type StorageDataParams = Partial<StorageData>
