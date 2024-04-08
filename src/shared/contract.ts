@@ -64,7 +64,7 @@ export interface Log {
   remotePort?: number
 }
 
-export enum Rules {
+export enum RuleType {
   Redirect = 'redirect',
   SpeedLimit = 'speedLimit',
   RequestHeader = 'requestHeader',
@@ -81,14 +81,29 @@ export enum Rules {
   Break = 'break'
 }
 
+export interface Match {
+  value: string
+  matchType: 'url' | 'host' | 'path'
+  matchMode: 'contains' | 'equals' | 'matches'
+  methods: string[]
+}
 export interface RuleData {
-  type: Rules
+  name: string
+  description: string
+  matches: Match
+  type: RuleType
   value: string | object | number
   enable: boolean
 }
 
-export interface StorageData {
+export interface RuleGroup {
+  name: string
+  enable: boolean
   rules: RuleData[]
+}
+
+export interface StorageData {
+  rules: Array<RuleGroup | RuleData>
 }
 
 export type StorageDataParams = Partial<StorageData>

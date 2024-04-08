@@ -32,35 +32,29 @@ import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
 import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
-import { Rules } from '@shared/contract'
+import { RuleType } from '@shared/contract'
+import { ReqMethods } from '@shared/constants'
 
-const reqMethods = [
-  { label: 'GET' },
-  { label: 'POST' },
-  { label: 'PUT' },
-  { label: 'DELETE' },
-  { label: 'HEAD' },
-  { label: 'OPTIONS' },
-  { label: 'PATCH' },
-  { label: 'CONNECT' }
-]
+const reqMethods = ReqMethods.map((item) => ({
+  label: item
+}))
 
 const AddRulesMenu: RuleMenuItem[] = [
-  { type: Rules.Redirect, label: 'ReDirect' },
-  { type: Rules.SpeedLimit, label: 'Add Speed Limit' },
-  { type: Rules.RequestHeader, label: 'Modify Request Headers' },
-  { type: Rules.RequestBody, label: 'Modify Request Body' },
-  { type: Rules.RequestFunction, label: 'Add Request Function' },
-  { type: Rules.ResponseHeader, label: 'Modify Response Headers' },
-  { type: Rules.ResponseBody, label: 'Modify Response Body' },
-  { type: Rules.ResponseDelay, label: 'Add Response Delay' },
+  { type: RuleType.Redirect, label: 'ReDirect' },
+  { type: RuleType.SpeedLimit, label: 'Add Speed Limit' },
+  { type: RuleType.RequestHeader, label: 'Modify Request Headers' },
+  { type: RuleType.RequestBody, label: 'Modify Request Body' },
+  { type: RuleType.RequestFunction, label: 'Add Request Function' },
+  { type: RuleType.ResponseHeader, label: 'Modify Response Headers' },
+  { type: RuleType.ResponseBody, label: 'Modify Response Body' },
+  { type: RuleType.ResponseDelay, label: 'Add Response Delay' },
   // { type: Rules.ResponseFile, label: 'Replace Response With File' },
-  { type: Rules.ResponseFunction, label: 'Add Response Function' },
-  { type: Rules.ResponseStatus, label: 'Modify Response Status' }
+  { type: RuleType.ResponseFunction, label: 'Add Response Function' },
+  { type: RuleType.ResponseStatus, label: 'Modify Response Status' }
 ]
 
 type RuleMenuItem = {
-  type: Rules
+  type: RuleType
   label: string
 }
 
@@ -115,27 +109,27 @@ function NewRulePage(): JSX.Element {
     const setValue = getSetValueMethod(rule)
     const setValid = getSetValidMethod(rule)
     switch (type) {
-      case Rules.Redirect:
+      case RuleType.Redirect:
         return <Redirect rule={rule} setValue={setValue} setValid={setValid} />
-      case Rules.SpeedLimit:
+      case RuleType.SpeedLimit:
         return <SpeedLimit rule={rule} setValue={setValue} setValid={setValid} />
-      case Rules.RequestHeader:
+      case RuleType.RequestHeader:
         return <HeaderEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
-      case Rules.ResponseHeader:
+      case RuleType.ResponseHeader:
         return <HeaderEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
-      case Rules.RequestBody:
+      case RuleType.RequestBody:
         return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
-      case Rules.ResponseBody:
+      case RuleType.ResponseBody:
         return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
-      case Rules.ResponseDelay:
+      case RuleType.ResponseDelay:
         return <ResponseDelay rule={rule} setValue={setValue} setValid={setValid} />
-      case Rules.RequestFunction:
+      case RuleType.RequestFunction:
         return <FunctionEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
-      case Rules.ResponseFunction:
+      case RuleType.ResponseFunction:
         return (
           <FunctionEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
         )
-      case Rules.ResponseStatus:
+      case RuleType.ResponseStatus:
         return <ResponseStatus rule={rule} setValue={setValue} setValid={setValid} />
       default:
         return <h2>{type} not accomplished yet!</h2>

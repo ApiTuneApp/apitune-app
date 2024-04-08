@@ -1,7 +1,7 @@
-import { Rules } from '@shared/contract'
+import { RuleType } from '@shared/contract'
 
 export interface RuleItem {
-  type: Rules
+  type: RuleType
   value: string | object | number
   valid: boolean
   validator?: (value: any) => void

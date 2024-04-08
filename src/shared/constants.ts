@@ -1,40 +1,40 @@
-import { Rules } from './contract'
+import { RuleType } from './contract'
 
 export const RuleList = [
-  Rules.Redirect,
-  Rules.SpeedLimit,
-  Rules.RequestHeader,
-  Rules.RequestBody,
-  Rules.RequestBodyJq,
-  Rules.RequestFunction,
-  Rules.ResponseBody,
-  Rules.ResponseBodyJq,
-  Rules.ResponseHeader,
-  Rules.ResponseStatus,
-  Rules.ResponseDelay,
-  Rules.ResponseFile,
-  Rules.ResponseFunction,
-  Rules.Break
+  RuleType.Redirect,
+  RuleType.SpeedLimit,
+  RuleType.RequestHeader,
+  RuleType.RequestBody,
+  RuleType.RequestBodyJq,
+  RuleType.RequestFunction,
+  RuleType.ResponseBody,
+  RuleType.ResponseBodyJq,
+  RuleType.ResponseHeader,
+  RuleType.ResponseStatus,
+  RuleType.ResponseDelay,
+  RuleType.ResponseFile,
+  RuleType.ResponseFunction,
+  RuleType.Break
 ]
 
 export const RequestRules = [
-  Rules.Redirect,
-  Rules.SpeedLimit,
-  Rules.RequestHeader,
-  Rules.RequestBody,
-  Rules.RequestBodyJq,
-  Rules.RequestFunction
+  RuleType.Redirect,
+  RuleType.SpeedLimit,
+  RuleType.RequestHeader,
+  RuleType.RequestBody,
+  RuleType.RequestBodyJq,
+  RuleType.RequestFunction
 ]
 
 export const ResponseRules = [
-  Rules.ResponseBody,
-  Rules.ResponseBodyJq,
-  Rules.ResponseHeader,
-  Rules.ResponseStatus,
-  Rules.ResponseDelay,
-  Rules.ResponseFile,
-  Rules.ResponseFunction,
-  Rules.Break
+  RuleType.ResponseBody,
+  RuleType.ResponseBodyJq,
+  RuleType.ResponseHeader,
+  RuleType.ResponseStatus,
+  RuleType.ResponseDelay,
+  RuleType.ResponseFile,
+  RuleType.ResponseFunction,
+  RuleType.Break
 ]
 
 export const HTTP_REQUEST_HEADER = [
@@ -285,3 +285,5 @@ export const HTTP_STATUS_CODE = [
     label: 'Network Authentication Required'
   }
 ]
+
+export const ReqMethods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH', 'CONNECT']
