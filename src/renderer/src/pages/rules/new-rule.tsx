@@ -151,10 +151,14 @@ function NewRulePage(): JSX.Element {
     })
     const formValid = addedRules.every((rule) => rule.valid)
     if (formValid) {
-      console.log('form is valid')
+      // TODO: support rule enable feature
       window.api.saveRules(
         JSON.stringify({
-          rules: addedRules
+          rules: addedRules.map((rule) => ({
+            type: rule.type,
+            value: rule.value,
+            enable: true
+          }))
         })
       )
     }

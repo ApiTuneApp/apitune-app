@@ -84,6 +84,7 @@ export enum Rules {
 export interface RuleData {
   type: Rules
   value: string | object | number
+  enable: boolean
 }
 
 export interface StorageData {

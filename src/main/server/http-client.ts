@@ -147,7 +147,6 @@ export default function (ctx: Context) {
       reject('server req timeout')
     }, 120 * 1e3)
 
-    // TODO: what is this?
     ctx.remoteRequestBody.pipe(serverReq)
 
     //The request() method of the HTTP library will not automatically end requests, therefore they stay open, and time out

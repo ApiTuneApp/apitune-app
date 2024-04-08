@@ -1,9 +1,12 @@
+import Storage from 'electron-json-storage'
 import { Context } from 'koa'
-import { Transform, PassThrough, Readable, Stream, Writable } from 'stream'
-import { createGunzip, createBrotliDecompress } from 'zlib'
 import replaceStream from 'replacestream'
-import { toStream } from './helper'
+import { PassThrough, Readable, Stream, Transform, Writable } from 'stream'
+import { createBrotliDecompress, createGunzip } from 'zlib'
+
+import packageJson from '../../../package.json'
 import { EditBodyOption, EditBodyType } from './contracts'
+import { toStream } from './helper'
 
 export function requestBody(ctx: Context) {
   beforeModifyReqBody(ctx)
@@ -157,5 +160,26 @@ function beforeModifyResBody(ctx: Context) {
         }
       })
     }
+  }
+}
+
+export let curUserData = {
+  version: packageJson.version,
+  settings: {},
+  rules: []
+}
+
+export function initRuntimeRules() {
+  try {
+    // TODO: get storage key
+    const defaultData = Storage.getSync('user.default')
+    curUserData = {
+      ...curUserData,
+      settings: defaultData.settings || {},
+      rules: defaultData.rules || []
+    }
+    console.log('initRuntimeRules success', curUserData)
+  } catch (error) {
+    console.error('initRuntimeRules error', error)
   }
 }
