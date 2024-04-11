@@ -163,22 +163,28 @@ function beforeModifyResBody(ctx: Context) {
   }
 }
 
-export let curUserData = {
+export let DefaultUserData = {
   version: packageJson.version,
   settings: {},
-  rules: []
+  apiRules: []
 }
 
 export function initRuntimeRules() {
   try {
     // TODO: get storage key
-    const defaultData = Storage.getSync('user.default')
-    curUserData = {
-      ...curUserData,
-      settings: defaultData.settings || {},
-      rules: defaultData.rules || []
+    let defaultData = Storage.getSync('user.default')
+    if (!defaultData) {
+      defaultData = DefaultUserData
+      Storage.set('user.default', defaultData, (error) => {
+        if (error) console.error('SaveRules error', error)
+      })
     }
-    console.log('initRuntimeRules success', curUserData)
+    DefaultUserData = {
+      ...DefaultUserData,
+      settings: defaultData.settings || {},
+      apiRules: defaultData.apiRules || []
+    }
+    console.log('initRuntimeRules success', DefaultUserData)
   } catch (error) {
     console.error('initRuntimeRules error', error)
   }

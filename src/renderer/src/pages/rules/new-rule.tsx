@@ -34,6 +34,8 @@ import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import { RuleType } from '@shared/contract'
 import { ReqMethods } from '@shared/constants'
+import { describe } from 'node:test'
+import { match } from 'node:assert'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item
@@ -60,6 +62,14 @@ type RuleMenuItem = {
 
 function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
+
+  const [ruleName, setRuleName] = useState('')
+  const [ruleDesc, setRuleDesc] = useState('')
+  const [matchType, setMatchType] = useState('url')
+  const [matchValue, setMatchValue] = useState('')
+  const [matchMode, setMatchMode] = useState('contains')
+  const [matchMethods, setMatchMethods] = useState<string[]>([])
+
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
   const [addRuleAnchorEl, setAddRuleAnchorEl] = useState<null | HTMLElement>(null)
   const addRuleOpen = Boolean(addRuleAnchorEl)
@@ -146,8 +156,17 @@ function NewRulePage(): JSX.Element {
     const formValid = addedRules.every((rule) => rule.valid)
     if (formValid) {
       // TODO: support rule enable feature
-      window.api.saveRules(
+      window.api.addRule(
         JSON.stringify({
+          kind: 'rule',
+          name: ruleName,
+          describe: ruleDesc,
+          matches: {
+            value: matchValue,
+            matchType,
+            matchMode,
+            methods: matchMethods
+          },
           rules: addedRules.map((rule) => ({
             type: rule.type,
             value: rule.value,
@@ -187,7 +206,14 @@ function NewRulePage(): JSX.Element {
       </Box>
 
       <Box sx={{ px: 8, overflowY: 'auto' }}>
-        <TextField fullWidth label="Add Rule Name" size="small" sx={{ pb: 2 }} />
+        <TextField
+          fullWidth
+          label="Add Rule Name"
+          size="small"
+          sx={{ pb: 2 }}
+          value={ruleName}
+          onChange={(e) => setRuleName(e.target.value)}
+        />
         <Input
           fullWidth
           multiline
@@ -195,21 +221,38 @@ function NewRulePage(): JSX.Element {
           size="small"
           disableUnderline
           sx={{ pb: 4 }}
+          value={ruleDesc}
+          onChange={(e) => setRuleDesc(e.target.value)}
         />
         <Paper elevation={3} sx={{ px: 2, py: 1 }}>
           <Typography variant="subtitle1">If Request Match:</Typography>
           <Stack flexDirection="row" gap={1} sx={{ pt: 1 }}>
-            <Select size="small" defaultValue="url">
+            <Select
+              size="small"
+              defaultValue="url"
+              value={matchType}
+              onChange={(e) => setMatchType(e.target.value)}
+            >
               <MenuItem value="url">URL</MenuItem>
               <MenuItem value="host">Host</MenuItem>
               <MenuItem value="path">Path</MenuItem>
             </Select>
-            <Select size="small" defaultValue="contains">
+            <Select
+              size="small"
+              defaultValue="contains"
+              value={matchMode}
+              onChange={(e) => setMatchMode(e.target.value)}
+            >
               <MenuItem value="contains">Contains</MenuItem>
               <MenuItem value="equals">Equals</MenuItem>
               <MenuItem value="matches">Matches(Regex)</MenuItem>
             </Select>
-            <TextField size="small" sx={{ flex: 1 }} />
+            <TextField
+              size="small"
+              sx={{ flex: 1 }}
+              value={matchValue}
+              onChange={(e) => setMatchValue(e.target.value)}
+            />
             <Tooltip title="Test macth rules">
               <IconButton>
                 <ScienceOutlinedIcon />
@@ -229,6 +272,8 @@ function NewRulePage(): JSX.Element {
                 multiple
                 size="small"
                 options={reqMethods}
+                value={matchMethods.map((item) => ({ label: item }))}
+                onChange={(_, value) => setMatchMethods(value.map((item) => item.label))}
                 renderInput={(params) => (
                   <TextField
                     {...params}

@@ -1,7 +1,7 @@
 export enum RenderEvent {
   ping = 'ping',
   startServer = 'startServer',
-  SaveRules = 'saveRules'
+  AddRule = 'addRule'
 }
 
 export enum MainEvent {
@@ -87,23 +87,29 @@ export interface Match {
   matchMode: 'contains' | 'equals' | 'matches'
   methods: string[]
 }
+
+export interface RuleItem {
+  type: RuleType
+  value: string | object | number
+}
 export interface RuleData {
   name: string
   description: string
   matches: Match
-  type: RuleType
-  value: string | object | number
   enable: boolean
+  kind: 'rule'
+  rules: RuleItem[]
 }
 
 export interface RuleGroup {
   name: string
   enable: boolean
+  kind: 'group'
   rules: RuleData[]
 }
 
 export interface StorageData {
-  rules: Array<RuleGroup | RuleData>
+  apiRules: Array<RuleGroup | RuleData>
 }
 
 export type StorageDataParams = Partial<StorageData>

@@ -10,8 +10,8 @@ const api = {
   clearupMainEvent: (event: MainEvent): void => {
     ipcRenderer.removeAllListeners(event)
   },
-  saveRules: (rules: string): void => {
-    ipcRenderer.send(RenderEvent.SaveRules, rules)
+  addRule: (rules: string): void => {
+    ipcRenderer.send(RenderEvent.AddRule, rules)
   }
 }
 

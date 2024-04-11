@@ -7,7 +7,7 @@ declare global {
     api: {
       onProxyLog: (callback) => void
       clearupMainEvent: (event: MainEvent) => void
-      saveRules: (rules: string) => void
+      addRule: (ruleStr: string, storageKey?: string) => void
     }
   }
 }

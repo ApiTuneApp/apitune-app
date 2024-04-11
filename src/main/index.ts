@@ -10,6 +10,7 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { RenderEvent } from '../shared/contract'
 import { initCommunicator } from './communicator'
+import { DefaultUserData } from './server/rule-utils'
 
 function createWindow(): void {
   // Create the browser window.
@@ -63,12 +64,25 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on(RenderEvent.ping, () => console.log('pong'))
 
-  ipcMain.on(RenderEvent.SaveRules, (event, rules: string) => {
-    console.log('SaveRules', rules)
-    // TODO: generate storage key with user name and workspace name
+  ipcMain.on(RenderEvent.AddRule, (event, rules: string, storageKey?: string) => {
+    console.log('add rule ===> ', rules)
     try {
       const ruleObj = JSON.parse(rules)
-      Storage.set('user.default', ruleObj, (error) => {
+      // TODO: generate storage key with user name and workspace name
+      const key = storageKey || 'user.default'
+      let data = Storage.getSync(key)
+      if (data) {
+        if (data.rules) {
+          data.rules.push(ruleObj)
+        } else {
+          data.rules = [ruleObj]
+        }
+        ruleObj.id = data.rules.length
+      } else {
+        data = DefaultUserData
+        console.error('AddRule error => no data')
+      }
+      Storage.set('user.default', data, (error) => {
         if (error) console.error('SaveRules error', error)
       })
     } catch (error) {
