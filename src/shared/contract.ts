@@ -9,6 +9,16 @@ export enum MainEvent {
   ProxyLog = 'proxyLog'
 }
 
+export enum EventResultStatus {
+  Sucess = 'sucess',
+  Error = 'error'
+}
+
+export interface AddRuleResult {
+  status: EventResultStatus
+  error?: string
+}
+
 type Base64 = Buffer
 
 export interface BodyInfo {

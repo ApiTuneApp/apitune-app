@@ -9,6 +9,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import {
+  Alert,
   Autocomplete,
   Box,
   Button,
@@ -19,6 +20,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Snackbar,
   Stack,
   TextField,
   Tooltip,
@@ -32,10 +34,8 @@ import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
 import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
-import { RuleType } from '@shared/contract'
+import { AddRuleResult, EventResultStatus, RuleType } from '@shared/contract'
 import { ReqMethods } from '@shared/constants'
-import { describe } from 'node:test'
-import { match } from 'node:assert'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item
@@ -75,6 +75,8 @@ function NewRulePage(): JSX.Element {
   const addRuleOpen = Boolean(addRuleAnchorEl)
   const [addedRules, setAddedRules] = useState<RuleItem[]>([])
 
+  const [addRuleResult, setAddRuleResult] = useState<AddRuleResult>()
+
   const handleAddRuleClose = () => {
     setAddRuleAnchorEl(null)
   }
@@ -85,7 +87,11 @@ function NewRulePage(): JSX.Element {
 
   const handleAddRuleClick = (rule: RuleMenuItem) => {
     setAddRuleAnchorEl(null)
-    setAddedRules((prevRules) => [...prevRules, { type: rule.type, value: '', valid: false }])
+    const initValue: RuleItem = { type: rule.type, value: '', valid: false }
+    if (rule.type === RuleType.ResponseStatus) {
+      initValue.value = 200
+    }
+    setAddedRules((prevRules) => [...prevRules, initValue])
   }
 
   // there should only one type in rule list
@@ -146,7 +152,7 @@ function NewRulePage(): JSX.Element {
     }
   }
 
-  const handleAddRuleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddRuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     addedRules.forEach((rule) => {
       if (rule.validator) {
@@ -156,7 +162,7 @@ function NewRulePage(): JSX.Element {
     const formValid = addedRules.every((rule) => rule.valid)
     if (formValid) {
       // TODO: support rule enable feature
-      window.api.addRule(
+      const result = await window.api.addRule(
         JSON.stringify({
           kind: 'rule',
           name: ruleName,
@@ -174,13 +180,20 @@ function NewRulePage(): JSX.Element {
           }))
         })
       )
+      setAddRuleResult(result)
     }
-    console.log(addedRules)
   }
 
   const removeRule = (index: number) => {
     const newRules = addedRules.filter((_, i) => i !== index)
     setAddedRules(newRules)
+  }
+
+  const handleResultClose = () => {
+    setAddRuleResult(undefined)
+    if (addRuleResult?.status === EventResultStatus.Sucess) {
+      navigate(-1)
+    }
   }
 
   return (
@@ -204,6 +217,26 @@ function NewRulePage(): JSX.Element {
           Save
         </Button>
       </Box>
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={!!addRuleResult}
+        autoHideDuration={3000}
+        onClose={handleResultClose}
+      >
+        {addRuleResult && (
+          <Alert
+            onClose={handleResultClose}
+            severity={addRuleResult?.status === EventResultStatus.Sucess ? 'success' : 'error'}
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {addRuleResult?.status === EventResultStatus.Sucess
+              ? 'Rule added successfully'
+              : 'Error: ' + addRuleResult?.error}
+          </Alert>
+        )}
+      </Snackbar>
 
       <Box sx={{ pt: 1, px: 8, overflowY: 'auto' }}>
         <TextField

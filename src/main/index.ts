@@ -8,7 +8,7 @@ import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
 import icon from '../../resources/icon.png?asset'
-import { RenderEvent, StorageData } from '../shared/contract'
+import { RenderEvent, StorageData, EventResultStatus } from '../shared/contract'
 import { initCommunicator } from './communicator'
 import { DefaultUserData } from './server/rule-utils'
 
@@ -64,30 +64,43 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on(RenderEvent.ping, () => console.log('pong'))
 
-  ipcMain.on(RenderEvent.AddRule, (event, rules: string, storageKey?: string) => {
+  ipcMain.handle(RenderEvent.AddRule, (event, rules: string, storageKey?: string) => {
     console.log('add rule ===> ', rules)
-    try {
-      const ruleObj = JSON.parse(rules)
-      // TODO: generate storage key with user name and workspace name
-      const key = storageKey || 'user.default'
-      let data = Storage.getSync(key) as StorageData
-      if (data) {
-        if (data.apiRules) {
-          data.apiRules.push(ruleObj)
+    return new Promise((resolve, reject) => {
+      try {
+        const ruleObj = JSON.parse(rules)
+        // TODO: generate storage key with user name and workspace name
+        const key = storageKey || 'user.default'
+        let data = Storage.getSync(key) as StorageData
+        if (data) {
+          if (data.apiRules) {
+            data.apiRules.push(ruleObj)
+          } else {
+            data.apiRules = [ruleObj]
+          }
+          ruleObj.id = data.apiRules.length
         } else {
-          data.apiRules = [ruleObj]
+          data = DefaultUserData
         }
-        ruleObj.id = data.apiRules.length
-      } else {
-        data = DefaultUserData
-        console.error('AddRule error => no data')
+        Storage.set(key, data, (error) => {
+          if (error) {
+            reject({
+              status: EventResultStatus.Error,
+              error: error.message
+            })
+          } else {
+            resolve({
+              status: EventResultStatus.Sucess
+            })
+          }
+        })
+      } catch (error) {
+        reject({
+          status: EventResultStatus.Error,
+          error: error
+        })
       }
-      Storage.set('user.default', data, (error) => {
-        if (error) console.error('SaveRules error', error)
-      })
-    } catch (error) {
-      console.error('SaveRules error', error)
-    }
+    })
   })
 
   const dataPath = Storage.getDataPath()

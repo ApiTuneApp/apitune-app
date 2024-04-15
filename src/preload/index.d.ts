@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { MainEvent, StorageDataParams } from 'src/shared/contract'
+import { MainEvent, StorageDataParams, AddRuleResult } from 'src/shared/contract'
 
 declare global {
   interface Window {
@@ -7,7 +7,7 @@ declare global {
     api: {
       onProxyLog: (callback) => void
       clearupMainEvent: (event: MainEvent) => void
-      addRule: (ruleStr: string, storageKey?: string) => void
+      addRule: (ruleStr: string, storageKey?: string) => Promise<AddRuleResult>
     }
   }
 }
