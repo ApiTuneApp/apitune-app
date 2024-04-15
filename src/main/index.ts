@@ -8,7 +8,7 @@ import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
 import icon from '../../resources/icon.png?asset'
-import { RenderEvent } from '../shared/contract'
+import { RenderEvent, StorageData } from '../shared/contract'
 import { initCommunicator } from './communicator'
 import { DefaultUserData } from './server/rule-utils'
 
@@ -70,14 +70,14 @@ app.whenReady().then(() => {
       const ruleObj = JSON.parse(rules)
       // TODO: generate storage key with user name and workspace name
       const key = storageKey || 'user.default'
-      let data = Storage.getSync(key)
+      let data = Storage.getSync(key) as StorageData
       if (data) {
-        if (data.rules) {
-          data.rules.push(ruleObj)
+        if (data.apiRules) {
+          data.apiRules.push(ruleObj)
         } else {
-          data.rules = [ruleObj]
+          data.apiRules = [ruleObj]
         }
-        ruleObj.id = data.rules.length
+        ruleObj.id = data.apiRules.length
       } else {
         data = DefaultUserData
         console.error('AddRule error => no data')

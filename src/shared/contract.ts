@@ -108,7 +108,13 @@ export interface RuleGroup {
   rules: RuleData[]
 }
 
+export interface Settings {
+  proxyPort?: '8998'
+}
+
 export interface StorageData {
+  version: string
+  settings: Settings
   apiRules: Array<RuleGroup | RuleData>
 }
 
