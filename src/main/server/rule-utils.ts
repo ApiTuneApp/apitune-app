@@ -5,9 +5,10 @@ import { PassThrough, Readable, Stream, Transform, Writable } from 'stream'
 import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import packageJson from '../../../package.json'
+import { StorageData } from '../../shared/contract'
+import { initRules } from '../communicator'
 import { EditBodyOption, EditBodyType } from './contracts'
 import { toStream } from './helper'
-import { StorageData } from '../../shared/contract'
 
 export function requestBody(ctx: Context) {
   beforeModifyReqBody(ctx)

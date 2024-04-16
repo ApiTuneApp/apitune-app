@@ -1,17 +1,20 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { MainEvent, RenderEvent, AddRuleResult } from '../shared/contract'
+import { MainEvent, RenderEvent, AddRuleResult, ApiRules } from '../shared/contract'
 
 // Custom APIs for renderer
 const api = {
   onProxyLog: (callback): void => {
     ipcRenderer.on(MainEvent.ProxyLog, (_, log) => callback(log))
   },
-  clearupMainEvent: (event: MainEvent): void => {
+  clearupEvent: (event: MainEvent | RenderEvent): void => {
     ipcRenderer.removeAllListeners(event)
   },
   addRule: (rules: string): Promise<AddRuleResult> => {
     return ipcRenderer.invoke(RenderEvent.AddRule, rules)
+  },
+  getApiRules: (): Promise<ApiRules> => {
+    return ipcRenderer.invoke(RenderEvent.GetApiRules)
   }
 }
 

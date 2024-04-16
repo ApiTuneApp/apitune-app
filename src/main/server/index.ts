@@ -4,9 +4,6 @@ import { handleRequest } from './app'
 import { onConnect } from './on-connect'
 import { onUpgrade } from './on-upgrade'
 import config from './config'
-import { initRuntimeRules } from './rule-utils'
-
-initRuntimeRules()
 
 const httpServer = http.createServer({
   insecureHTTPParser: true

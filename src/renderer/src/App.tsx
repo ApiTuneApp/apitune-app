@@ -1,8 +1,10 @@
 import { Box, CssBaseline } from '@mui/material'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
 import darkScrollbar from '@mui/material/darkScrollbar'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { useStore } from '@renderer/store'
+import { MainEvent, RenderEvent } from '@shared/contract'
+import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
-import { RenderEvent } from '../../shared/contract'
 import Header from './components/header'
 import Sidebar from './components/sidebar'
 
@@ -22,6 +24,16 @@ const darkTheme = createTheme({
 function App(): JSX.Element {
   const ipcHandle = (): void => window.electron.ipcRenderer.send(RenderEvent.ping)
   const startServer = (): void => window.electron.ipcRenderer.send(RenderEvent.startServer)
+  const initApiRules = useStore((state) => state.initApiRules)
+
+  useEffect(() => {
+    window.api.getApiRules().then((apiRules) => {
+      initApiRules(apiRules)
+    })
+    return () => {
+      window.api.clearupEvent(RenderEvent.GetApiRules)
+    }
+  }, [])
 
   return (
     <ThemeProvider theme={darkTheme}>

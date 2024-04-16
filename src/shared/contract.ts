@@ -1,7 +1,8 @@
 export enum RenderEvent {
   ping = 'ping',
   startServer = 'startServer',
-  AddRule = 'addRule'
+  AddRule = 'addRule',
+  GetApiRules = 'getApiRules'
 }
 
 export enum MainEvent {
@@ -103,6 +104,7 @@ export interface RuleItem {
   value: string | object | number
 }
 export interface RuleData {
+  id: string
   name: string
   description: string
   matches: Match
@@ -112,6 +114,7 @@ export interface RuleData {
 }
 
 export interface RuleGroup {
+  id: string
   name: string
   enable: boolean
   kind: 'group'
@@ -122,10 +125,12 @@ export interface Settings {
   proxyPort?: '8998'
 }
 
+export type ApiRules = Array<RuleGroup | RuleData>
+
 export interface StorageData {
   version: string
   settings: Settings
-  apiRules: Array<RuleGroup | RuleData>
+  apiRules: ApiRules
 }
 
 export type StorageDataParams = Partial<StorageData>

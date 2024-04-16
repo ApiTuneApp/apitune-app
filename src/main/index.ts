@@ -7,10 +7,11 @@ import { join } from 'path'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
+import { v4 as uuidv4 } from 'uuid'
 import icon from '../../resources/icon.png?asset'
-import { RenderEvent, StorageData, EventResultStatus } from '../shared/contract'
+import { EventResultStatus, RenderEvent, StorageData } from '../shared/contract'
 import { initCommunicator } from './communicator'
-import { DefaultUserData } from './server/rule-utils'
+import { DefaultUserData, initRuntimeRules } from './server/rule-utils'
 
 function createWindow(): void {
   // Create the browser window.
@@ -37,6 +38,7 @@ function createWindow(): void {
   })
 
   initCommunicator(mainWindow)
+  initRuntimeRules()
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -65,7 +67,6 @@ app.whenReady().then(() => {
   ipcMain.on(RenderEvent.ping, () => console.log('pong'))
 
   ipcMain.handle(RenderEvent.AddRule, (event, rules: string, storageKey?: string) => {
-    console.log('add rule ===> ', rules)
     return new Promise((resolve, reject) => {
       try {
         const ruleObj = JSON.parse(rules)
@@ -78,7 +79,7 @@ app.whenReady().then(() => {
           } else {
             data.apiRules = [ruleObj]
           }
-          ruleObj.id = data.apiRules.length
+          ruleObj.id = uuidv4()
         } else {
           data = DefaultUserData
         }
@@ -99,6 +100,21 @@ app.whenReady().then(() => {
           status: EventResultStatus.Error,
           error: error
         })
+      }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.GetApiRules, (event) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const data = Storage.getSync('user.default') as StorageData
+        if (data) {
+          resolve(data.apiRules)
+        } else {
+          resolve([])
+        }
+      } catch (error) {
+        reject(error)
       }
     })
   })
