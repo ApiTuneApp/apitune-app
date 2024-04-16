@@ -7,7 +7,21 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
-import { Box, Divider, IconButton, Stack, Switch, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Stack,
+  Switch,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
 import { useStore } from '@renderer/store'
 
@@ -44,12 +58,21 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
 
 function RulesSidebar(): JSX.Element {
   const apiRules = useStore((state) => state.apiRules)
+  const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
+  const handleAddGroupClose = () => setAddGroupDialogOpen(false)
+  const handelAddGroupSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const formJson = Object.fromEntries((formData as any).entries())
+    const ruleGroupName = formJson.ruleGroupName
+    handleAddGroupClose()
+  }
 
   return (
     <Box className="rules-sidebar" sx={{ backgroundColor: 'var(--color-background-mute)' }}>
       <Stack direction="row" alignItems="center" sx={{ p: 1 }}>
         <Tooltip title="Add Group" arrow>
-          <IconButton sx={{ fontSize: 18 }}>
+          <IconButton sx={{ fontSize: 18 }} onClick={() => setAddGroupDialogOpen(true)}>
             <QueueOutlinedIcon fontSize="inherit" />
           </IconButton>
         </Tooltip>
@@ -62,6 +85,34 @@ function RulesSidebar(): JSX.Element {
         </Tooltip>
       </Stack>
       <Divider />
+      <Dialog
+        fullWidth={true}
+        open={addGroupDialogOpen}
+        onClose={() => handleAddGroupClose()}
+        maxWidth="xs"
+        PaperProps={{
+          component: 'form',
+          onSubmit: handelAddGroupSubmit
+        }}
+      >
+        <DialogTitle>New Rule Group</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="addRuleGroup"
+            name="ruleGroupName"
+            label="Add Rule Group Name"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddGroupClose}>Cancel</Button>
+          <Button type="submit">Save</Button>
+        </DialogActions>
+      </Dialog>
       <TreeView
         aria-label="rules-tree"
         defaultCollapseIcon={<ExpandMore />}
