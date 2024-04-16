@@ -1,12 +1,11 @@
 import { Box, CssBaseline } from '@mui/material'
 import darkScrollbar from '@mui/material/darkScrollbar'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import { useStore } from '@renderer/store'
-import { MainEvent, RenderEvent } from '@shared/contract'
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from './components/header'
 import Sidebar from './components/sidebar'
+import { getApiRules } from './services/rule'
 
 const darkTheme = createTheme({
   palette: {
@@ -22,17 +21,12 @@ const darkTheme = createTheme({
 })
 
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send(RenderEvent.ping)
-  const startServer = (): void => window.electron.ipcRenderer.send(RenderEvent.startServer)
-  const initApiRules = useStore((state) => state.initApiRules)
+  // const ipcHandle = (): void => window.electron.ipcRenderer.send(RenderEvent.ping)
+  // const startServer = (): void => window.electron.ipcRenderer.send(RenderEvent.startServer)
 
   useEffect(() => {
-    window.api.getApiRules().then((apiRules) => {
-      initApiRules(apiRules)
-    })
-    return () => {
-      window.api.clearupEvent(RenderEvent.GetApiRules)
-    }
+    const cancelFn = getApiRules()
+    return cancelFn
   }, [])
 
   return (

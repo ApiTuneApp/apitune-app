@@ -11,7 +11,7 @@ export enum MainEvent {
 }
 
 export enum EventResultStatus {
-  Sucess = 'sucess',
+  Success = 'Success',
   Error = 'error'
 }
 

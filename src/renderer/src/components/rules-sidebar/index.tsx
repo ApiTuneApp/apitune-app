@@ -24,6 +24,8 @@ import {
 } from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
 import { useStore } from '@renderer/store'
+import { EventResultStatus, RenderEvent } from '@shared/contract'
+import { getApiRules } from '@renderer/services/rule'
 
 type RuleTreeItemProps = TreeItemProps & {
   labelText: string
@@ -60,11 +62,17 @@ function RulesSidebar(): JSX.Element {
   const apiRules = useStore((state) => state.apiRules)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
   const handleAddGroupClose = () => setAddGroupDialogOpen(false)
-  const handelAddGroupSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handelAddGroupSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const formJson = Object.fromEntries((formData as any).entries())
     const ruleGroupName = formJson.ruleGroupName
+    const result = await window.api.addRule(
+      JSON.stringify({ kind: 'group', name: ruleGroupName, rules: [] })
+    )
+    if (result.status === EventResultStatus.Success) {
+      getApiRules()
+    }
     handleAddGroupClose()
   }
 
@@ -119,12 +127,6 @@ function RulesSidebar(): JSX.Element {
         defaultExpandIcon={<ChevronRightIcon />}
         sx={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
       >
-        {/* <RuleTreeItem nodeId="1" labelText="Group1" className="rule-item rule-group">
-          <RuleTreeItem nodeId="1.1" labelText="rule1" className="rule-item" />
-        </RuleTreeItem>
-        <RuleTreeItem nodeId="2" labelText="Group2" className="rule-item rule-group">
-          <RuleTreeItem nodeId="2.2" labelText="rule2" className="rule-item" />
-        </RuleTreeItem> */}
         {apiRules.map((rule) => {
           if (rule.kind === 'group') {
             return (
@@ -134,9 +136,15 @@ function RulesSidebar(): JSX.Element {
                 labelText={rule.name}
                 className="rule-item rule-group"
               >
-                {rule.rules.map((r) => (
-                  <RuleTreeItem key={r.id} nodeId={r.id} labelText={r.name} className="rule-item" />
-                ))}
+                {rule.rules &&
+                  rule.rules.map((r) => (
+                    <RuleTreeItem
+                      key={r.id}
+                      nodeId={r.id}
+                      labelText={r.name}
+                      className="rule-item"
+                    />
+                  ))}
               </RuleTreeItem>
             )
           } else {

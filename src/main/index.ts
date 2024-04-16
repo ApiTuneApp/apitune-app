@@ -91,7 +91,7 @@ app.whenReady().then(() => {
             })
           } else {
             resolve({
-              status: EventResultStatus.Sucess
+              status: EventResultStatus.Success
             })
           }
         })

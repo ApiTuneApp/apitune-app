@@ -191,7 +191,7 @@ function NewRulePage(): JSX.Element {
 
   const handleResultClose = () => {
     setAddRuleResult(undefined)
-    if (addRuleResult?.status === EventResultStatus.Sucess) {
+    if (addRuleResult?.status === EventResultStatus.Success) {
       navigate(-1)
     }
   }
@@ -227,11 +227,11 @@ function NewRulePage(): JSX.Element {
         {addRuleResult && (
           <Alert
             onClose={handleResultClose}
-            severity={addRuleResult?.status === EventResultStatus.Sucess ? 'success' : 'error'}
+            severity={addRuleResult?.status === EventResultStatus.Success ? 'success' : 'error'}
             variant="filled"
             sx={{ width: '100%' }}
           >
-            {addRuleResult?.status === EventResultStatus.Sucess
+            {addRuleResult?.status === EventResultStatus.Success
               ? 'Rule added successfully'
               : 'Error: ' + addRuleResult?.error}
           </Alert>
