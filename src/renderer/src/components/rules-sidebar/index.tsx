@@ -8,6 +8,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined'
+import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined'
 import {
   Box,
   Button,
@@ -17,6 +18,8 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  Menu,
+  MenuItem,
   Stack,
   Switch,
   TextField,
@@ -27,10 +30,12 @@ import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
 import { useStore } from '@renderer/store'
 import { EventResultStatus, RenderEvent, RuleData, RuleGroup } from '@shared/contract'
 import { getApiRules } from '@renderer/services/rule'
+import { group } from 'console'
 
 type RuleTreeItemProps = TreeItemProps & {
   labelText: string
   rule: RuleGroup | RuleData
+  onMenuClick?: (event: React.MouseEvent<HTMLElement>) => void
 }
 
 const RuleTreeItem = React.forwardRef(function RuleTreeItem(
@@ -53,7 +58,23 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
           <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
             {labelText}
           </Typography>
-          <Switch defaultChecked size="small" onClick={(e) => handleSwitchClick(e, props.nodeId)} />
+          {rule.kind === 'group' ? (
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation()
+                props.onMenuClick && props.onMenuClick(e)
+              }}
+            >
+              <MoreHorizOutlinedIcon fontSize="small" />
+            </IconButton>
+          ) : (
+            <Switch
+              defaultChecked
+              size="small"
+              onClick={(e) => handleSwitchClick(e, props.nodeId)}
+            />
+          )}
         </Box>
       }
       ref={ref}
@@ -78,6 +99,15 @@ function RulesSidebar(): JSX.Element {
       getApiRules()
     }
     handleAddGroupClose()
+  }
+
+  const [ruleGroupMenuAnchorEl, setRuleGroupMenuAnchorEl] = React.useState<null | HTMLElement>(null)
+  const groupMenuOpen = Boolean(ruleGroupMenuAnchorEl)
+  const handleGroupMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setRuleGroupMenuAnchorEl(event.currentTarget)
+  }
+  const handleGroupMenuClose = () => {
+    setRuleGroupMenuAnchorEl(null)
   }
 
   return (
@@ -125,6 +155,19 @@ function RulesSidebar(): JSX.Element {
           <Button type="submit">Save</Button>
         </DialogActions>
       </Dialog>
+      <Menu
+        id="ruleGroupMenu"
+        anchorEl={ruleGroupMenuAnchorEl}
+        open={groupMenuOpen}
+        onClose={handleGroupMenuClose}
+        MenuListProps={{
+          'aria-labelledby': 'rule-group-button'
+        }}
+      >
+        <MenuItem onClick={handleGroupMenuClose}>Add Rule</MenuItem>
+        <MenuItem onClick={handleGroupMenuClose}>Rename</MenuItem>
+        <MenuItem onClick={handleGroupMenuClose}>Delete</MenuItem>
+      </Menu>
       <TreeView
         aria-label="rules-tree"
         defaultCollapseIcon={<ExpandMore />}
@@ -140,6 +183,7 @@ function RulesSidebar(): JSX.Element {
                 labelText={rule.name}
                 rule={rule}
                 className="rule-item rule-group"
+                onMenuClick={handleGroupMenuClick}
               >
                 {rule.rules &&
                   rule.rules.map((r) => (
