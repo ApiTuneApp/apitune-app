@@ -9,6 +9,7 @@ declare global {
       getApiRules: () => Promise<ApiRules>
       clearupEvent: (event: MainEvent | RenderEvent) => void
       addRule: (ruleStr: string, storageKey?: string) => Promise<AddRuleResult>
+      updateRuleGroupName: (id: string, ruleName: string) => Promise<AddRuleResult>
     }
   }
 }

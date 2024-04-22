@@ -95,11 +95,18 @@ function RulesSidebar(): JSX.Element {
     const formData = new FormData(event.currentTarget)
     const formJson = Object.fromEntries((formData as any).entries())
     const ruleGroupName = formJson.ruleGroupName
-    const result = await window.api.addRule(
-      JSON.stringify({ kind: 'group', name: ruleGroupName, rules: [] })
-    )
-    if (result.status === EventResultStatus.Success) {
-      getApiRules()
+    if (editGroupId) {
+      const result = await window.api.updateRuleGroupName(editGroupId, ruleGroupName)
+      if (result.status === EventResultStatus.Success) {
+        getApiRules()
+      }
+    } else {
+      const result = await window.api.addRule(
+        JSON.stringify({ kind: 'group', name: ruleGroupName, rules: [] })
+      )
+      if (result.status === EventResultStatus.Success) {
+        getApiRules()
+      }
     }
     handleAddGroupClose()
   }
@@ -164,7 +171,7 @@ function RulesSidebar(): JSX.Element {
             id="addRuleGroup"
             name="ruleGroupName"
             hiddenLabel
-            value={editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : ''}
+            defaultValue={editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : ''}
             fullWidth
             variant="standard"
           />

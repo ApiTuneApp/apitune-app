@@ -15,6 +15,9 @@ const api = {
   },
   getApiRules: (): Promise<ApiRules> => {
     return ipcRenderer.invoke(RenderEvent.GetApiRules)
+  },
+  updateRuleGroupName: (id: string, ruleName: string): Promise<AddRuleResult> => {
+    return ipcRenderer.invoke(RenderEvent.UpdateRuleGroupName, id, ruleName)
   }
 }
 
