@@ -28,9 +28,8 @@ import {
 } from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
 import { useStore } from '@renderer/store'
-import { EventResultStatus, RenderEvent, RuleData, RuleGroup } from '@shared/contract'
+import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 import { getApiRules } from '@renderer/services/rule'
-import { group } from 'console'
 
 type RuleTreeItemProps = TreeItemProps & {
   labelText: string
@@ -42,7 +41,7 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   props: RuleTreeItemProps,
   ref: React.Ref<HTMLLIElement>
 ) {
-  const { labelText, rule, ...others } = props
+  const { labelText, rule, onMenuClick, ...others } = props
 
   const handleSwitchClick = (e: React.MouseEvent, nodeId: string) => {
     e.stopPropagation()
@@ -61,9 +60,10 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
           {rule.kind === 'group' ? (
             <IconButton
               size="small"
+              data-rule-id={rule.id}
               onClick={(e) => {
                 e.stopPropagation()
-                props.onMenuClick && props.onMenuClick(e)
+                onMenuClick && onMenuClick(e)
               }}
             >
               <MoreHorizOutlinedIcon fontSize="small" />
@@ -86,7 +86,10 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
 function RulesSidebar(): JSX.Element {
   const apiRules = useStore((state) => state.apiRules)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
-  const handleAddGroupClose = () => setAddGroupDialogOpen(false)
+  const handleAddGroupClose = () => {
+    setAddGroupDialogOpen(false)
+    setEditGroupId(null)
+  }
   const handelAddGroupSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
@@ -109,6 +112,21 @@ function RulesSidebar(): JSX.Element {
   const handleGroupMenuClose = () => {
     setRuleGroupMenuAnchorEl(null)
   }
+
+  const handleGroupMenuItemClick = (event: React.MouseEvent<HTMLElement>) => {
+    const menuItem = event.currentTarget.textContent
+    if (menuItem === 'Add Rule') {
+      console.log('Add Rule')
+    } else if (menuItem === 'Rename') {
+      setEditGroupId((ruleGroupMenuAnchorEl as HTMLElement).getAttribute('data-rule-id'))
+      setAddGroupDialogOpen(true)
+    } else if (menuItem === 'Delete') {
+      console.log('Delete')
+    }
+    handleGroupMenuClose()
+  }
+
+  const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
 
   return (
     <Box className="rules-sidebar" sx={{ backgroundColor: 'var(--color-background-mute)' }}>
@@ -137,7 +155,7 @@ function RulesSidebar(): JSX.Element {
           onSubmit: handelAddGroupSubmit
         }}
       >
-        <DialogTitle>New Rule Group</DialogTitle>
+        <DialogTitle>{editGroupId ? 'Edit' : 'New'} Rule Group Name</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -145,7 +163,8 @@ function RulesSidebar(): JSX.Element {
             margin="dense"
             id="addRuleGroup"
             name="ruleGroupName"
-            label="Add Rule Group Name"
+            hiddenLabel
+            value={editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : ''}
             fullWidth
             variant="standard"
           />
@@ -164,9 +183,9 @@ function RulesSidebar(): JSX.Element {
           'aria-labelledby': 'rule-group-button'
         }}
       >
-        <MenuItem onClick={handleGroupMenuClose}>Add Rule</MenuItem>
-        <MenuItem onClick={handleGroupMenuClose}>Rename</MenuItem>
-        <MenuItem onClick={handleGroupMenuClose}>Delete</MenuItem>
+        <MenuItem onClick={handleGroupMenuItemClick}>Add Rule</MenuItem>
+        <MenuItem onClick={handleGroupMenuItemClick}>Rename</MenuItem>
+        <MenuItem onClick={handleGroupMenuItemClick}>Delete</MenuItem>
       </Menu>
       <TreeView
         aria-label="rules-tree"
