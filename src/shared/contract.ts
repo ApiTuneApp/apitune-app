@@ -3,7 +3,8 @@ export enum RenderEvent {
   startServer = 'startServer',
   AddRule = 'addRule',
   UpdateRuleGroupName = 'updateRuleGroupName',
-  GetApiRules = 'getApiRules'
+  GetApiRules = 'getApiRules',
+  DeleteRule = 'deleteRule'
 }
 
 export enum MainEvent {
@@ -16,7 +17,7 @@ export enum EventResultStatus {
   Error = 'error'
 }
 
-export interface AddRuleResult {
+export interface IpcResult {
   status: EventResultStatus
   error?: string
 }

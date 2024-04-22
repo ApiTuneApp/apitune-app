@@ -6,9 +6,9 @@ import { NavLink } from 'react-router-dom'
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined'
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined'
+import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
 import {
   Box,
   Button,
@@ -27,9 +27,10 @@ import {
   Typography
 } from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
+import ConfirmDialog from '@renderer/components/confirm-dialog'
+import * as RuleService from '@renderer/services/rule'
 import { useStore } from '@renderer/store'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
-import { getApiRules } from '@renderer/services/rule'
 
 type RuleTreeItemProps = TreeItemProps & {
   labelText: string
@@ -98,14 +99,14 @@ function RulesSidebar(): JSX.Element {
     if (editGroupId) {
       const result = await window.api.updateRuleGroupName(editGroupId, ruleGroupName)
       if (result.status === EventResultStatus.Success) {
-        getApiRules()
+        RuleService.getApiRules()
       }
     } else {
       const result = await window.api.addRule(
         JSON.stringify({ kind: 'group', name: ruleGroupName, rules: [] })
       )
       if (result.status === EventResultStatus.Success) {
-        getApiRules()
+        RuleService.getApiRules()
       }
     }
     handleAddGroupClose()
@@ -120,15 +121,30 @@ function RulesSidebar(): JSX.Element {
     setRuleGroupMenuAnchorEl(null)
   }
 
+  const [delConfirmOpen, setDelConfirmOpen] = React.useState(false)
+  const handleDelConfirmClose = () => {
+    setDelConfirmOpen(false)
+  }
+  const handleDelConfirmOpen = () => {
+    setDelConfirmOpen(true)
+  }
+  const handleDelConfirm = async () => {
+    const result = await window.api.deleteRule(editGroupId as string)
+    if (result.status === EventResultStatus.Success) {
+      RuleService.getApiRules()
+    }
+    handleDelConfirmClose()
+  }
+
   const handleGroupMenuItemClick = (event: React.MouseEvent<HTMLElement>) => {
     const menuItem = event.currentTarget.textContent
+    setEditGroupId((ruleGroupMenuAnchorEl as HTMLElement).getAttribute('data-rule-id'))
     if (menuItem === 'Add Rule') {
       console.log('Add Rule')
     } else if (menuItem === 'Rename') {
-      setEditGroupId((ruleGroupMenuAnchorEl as HTMLElement).getAttribute('data-rule-id'))
       setAddGroupDialogOpen(true)
     } else if (menuItem === 'Delete') {
-      console.log('Delete')
+      handleDelConfirmOpen()
     }
     handleGroupMenuClose()
   }
@@ -194,6 +210,13 @@ function RulesSidebar(): JSX.Element {
         <MenuItem onClick={handleGroupMenuItemClick}>Rename</MenuItem>
         <MenuItem onClick={handleGroupMenuItemClick}>Delete</MenuItem>
       </Menu>
+      <ConfirmDialog
+        title={`Delete "${apiRules.find((r) => r.id === editGroupId)?.name}"?`}
+        content="Your will not be able to recover this rule group!"
+        open={delConfirmOpen}
+        onClose={handleDelConfirmClose}
+        onConfirm={handleDelConfirm}
+      />
       <TreeView
         aria-label="rules-tree"
         defaultCollapseIcon={<ExpandMore />}

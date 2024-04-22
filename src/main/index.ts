@@ -152,6 +152,54 @@ app.whenReady().then(() => {
     })
   })
 
+  ipcMain.handle(RenderEvent.DeleteRule, (event, id: string) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const data = Storage.getSync('user.default') as StorageData
+        if (data) {
+          if (data.apiRules) {
+            const index = data.apiRules.findIndex((r) => r.id === id)
+            if (index >= 0) {
+              data.apiRules.splice(index, 1)
+              Storage.set('user.default', data, (error) => {
+                if (error) {
+                  reject({
+                    status: EventResultStatus.Error,
+                    error: error.message
+                  })
+                } else {
+                  resolve({
+                    status: EventResultStatus.Success
+                  })
+                }
+              })
+            } else {
+              reject({
+                status: EventResultStatus.Error,
+                error: 'Rule not found'
+              })
+            }
+          } else {
+            reject({
+              status: EventResultStatus.Error,
+              error: 'Rules not found'
+            })
+          }
+        } else {
+          reject({
+            status: EventResultStatus.Error,
+            error: 'User data not found'
+          })
+        }
+      } catch (error) {
+        reject({
+          status: EventResultStatus.Error,
+          error: error
+        })
+      }
+    })
+  })
+
   ipcMain.handle(RenderEvent.GetApiRules, (event) => {
     return new Promise((resolve, reject) => {
       try {

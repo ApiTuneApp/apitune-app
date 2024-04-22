@@ -34,7 +34,7 @@ import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
 import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
-import { AddRuleResult, EventResultStatus, RuleType } from '@shared/contract'
+import { IpcResult, EventResultStatus, RuleType } from '@shared/contract'
 import { ReqMethods } from '@shared/constants'
 
 const reqMethods = ReqMethods.map((item) => ({
@@ -75,7 +75,7 @@ function NewRulePage(): JSX.Element {
   const addRuleOpen = Boolean(addRuleAnchorEl)
   const [addedRules, setAddedRules] = useState<RuleItem[]>([])
 
-  const [addRuleResult, setAddRuleResult] = useState<AddRuleResult>()
+  const [addRuleResult, setAddRuleResult] = useState<IpcResult>()
 
   const handleAddRuleClose = () => {
     setAddRuleAnchorEl(null)
