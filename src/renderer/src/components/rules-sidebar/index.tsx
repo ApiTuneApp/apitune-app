@@ -7,6 +7,7 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined'
 import {
   Box,
   Button,
@@ -24,28 +25,31 @@ import {
 } from '@mui/material'
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
 import { useStore } from '@renderer/store'
-import { EventResultStatus, RenderEvent } from '@shared/contract'
+import { EventResultStatus, RenderEvent, RuleData, RuleGroup } from '@shared/contract'
 import { getApiRules } from '@renderer/services/rule'
 
 type RuleTreeItemProps = TreeItemProps & {
   labelText: string
+  rule: RuleGroup | RuleData
 }
 
 const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   props: RuleTreeItemProps,
   ref: React.Ref<HTMLLIElement>
 ) {
-  const { labelText, ...others } = props
+  const { labelText, rule, ...others } = props
 
   const handleSwitchClick = (e: React.MouseEvent, nodeId: string) => {
     e.stopPropagation()
-    console.log('Switch clicked:', nodeId)
   }
 
   return (
     <TreeItem
       label={
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {rule.kind === 'group' ? (
+            <FolderOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+          ) : undefined}
           <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
             {labelText}
           </Typography>
@@ -134,6 +138,7 @@ function RulesSidebar(): JSX.Element {
                 key={rule.id}
                 nodeId={rule.id}
                 labelText={rule.name}
+                rule={rule}
                 className="rule-item rule-group"
               >
                 {rule.rules &&
@@ -142,6 +147,7 @@ function RulesSidebar(): JSX.Element {
                       key={r.id}
                       nodeId={r.id}
                       labelText={r.name}
+                      rule={r}
                       className="rule-item"
                     />
                   ))}
@@ -153,6 +159,7 @@ function RulesSidebar(): JSX.Element {
                 key={rule.id}
                 nodeId={rule.id}
                 labelText={rule.name}
+                rule={rule}
                 className="rule-item"
               />
             )

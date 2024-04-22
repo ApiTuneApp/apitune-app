@@ -61,7 +61,7 @@ function NetworkPage(): JSX.Element {
     })
 
     return () => {
-      window.api.clearupMainEvent(MainEvent.ProxyLog)
+      window.api.clearupEvent(MainEvent.ProxyLog)
     }
   }, [])
 
