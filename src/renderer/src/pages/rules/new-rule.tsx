@@ -1,7 +1,7 @@
 import '@renderer/components/add-rule-item/index.less'
 
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
@@ -28,14 +28,16 @@ import {
 } from '@mui/material'
 import { RuleItem } from '@renderer/common/contract'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
+import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import Redirect from '@renderer/components/add-rule-item/redirect'
-import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
-import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
-import { IpcResult, EventResultStatus, RuleType } from '@shared/contract'
+import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
+import * as RuleService from '@renderer/services/rule'
+import { useStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
+import { EventResultStatus, IpcResult, RuleType } from '@shared/contract'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item
@@ -62,6 +64,11 @@ type RuleMenuItem = {
 
 function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const groupId = searchParams.get('groupId')
+
+  const apiRules = useStore((state) => state.apiRules)
+  const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
 
   const [ruleName, setRuleName] = useState('')
   const [ruleDesc, setRuleDesc] = useState('')
@@ -178,7 +185,8 @@ function NewRulePage(): JSX.Element {
             value: rule.value,
             enable: true
           }))
-        })
+        }),
+        { groupId: groupId as string }
       )
       setAddRuleResult(result)
     }
@@ -192,6 +200,7 @@ function NewRulePage(): JSX.Element {
   const handleResultClose = () => {
     setAddRuleResult(undefined)
     if (addRuleResult?.status === EventResultStatus.Success) {
+      RuleService.getApiRules()
       navigate(-1)
     }
   }
@@ -211,7 +220,7 @@ function NewRulePage(): JSX.Element {
               <ArrowBackIosNewIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Typography ml={1}>Create New Rule</Typography>
+          <Typography ml={1}>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</Typography>
         </Box>
         <Button color="primary" variant="contained" size="small" type="submit" form="addRuleForm">
           Save

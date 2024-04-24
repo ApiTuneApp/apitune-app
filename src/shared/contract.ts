@@ -136,3 +136,8 @@ export interface StorageData {
 }
 
 export type StorageDataParams = Partial<StorageData>
+
+export type AddGroupOpts = {
+  groupId?: string
+  storageKey?: string
+}

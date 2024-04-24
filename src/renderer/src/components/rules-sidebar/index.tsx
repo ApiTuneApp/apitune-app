@@ -1,7 +1,7 @@
 import './rules-sidebar.less'
 
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -85,6 +85,7 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
 })
 
 function RulesSidebar(): JSX.Element {
+  const navigate = useNavigate()
   const apiRules = useStore((state) => state.apiRules)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
   const handleAddGroupClose = () => {
@@ -138,9 +139,10 @@ function RulesSidebar(): JSX.Element {
 
   const handleGroupMenuItemClick = (event: React.MouseEvent<HTMLElement>) => {
     const menuItem = event.currentTarget.textContent
-    setEditGroupId((ruleGroupMenuAnchorEl as HTMLElement).getAttribute('data-rule-id'))
+    const gId = (ruleGroupMenuAnchorEl as HTMLElement).getAttribute('data-rule-id')
+    setEditGroupId(gId)
     if (menuItem === 'Add Rule') {
-      console.log('Add Rule')
+      navigate('/rules/new?groupId=' + gId)
     } else if (menuItem === 'Rename') {
       setAddGroupDialogOpen(true)
     } else if (menuItem === 'Delete') {

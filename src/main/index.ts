@@ -9,7 +9,7 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
 import { v4 as uuidv4 } from 'uuid'
 import icon from '../../resources/icon.png?asset'
-import { EventResultStatus, RenderEvent, StorageData } from '../shared/contract'
+import { AddGroupOpts, EventResultStatus, RenderEvent, StorageData } from '../shared/contract'
 import { initCommunicator } from './communicator'
 import { DefaultUserData, initRuntimeRules } from './server/rule-utils'
 
@@ -66,16 +66,28 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on(RenderEvent.ping, () => console.log('pong'))
 
-  ipcMain.handle(RenderEvent.AddRule, (event, rules: string, storageKey?: string) => {
+  ipcMain.handle(RenderEvent.AddRule, (event, rules: string, opts?: AddGroupOpts) => {
     return new Promise((resolve, reject) => {
       try {
         const ruleObj = JSON.parse(rules)
         // TODO: generate storage key with user name and workspace name
-        const key = storageKey || 'user.default'
+        const key = opts?.storageKey || 'user.default'
         let data = Storage.getSync(key) as StorageData
         if (data) {
           if (data.apiRules) {
-            data.apiRules.push(ruleObj)
+            if (opts?.groupId) {
+              const group = data.apiRules.find((g) => g.id === opts.groupId)
+              if (group) {
+                group.rules.push(ruleObj)
+              } else {
+                reject({
+                  status: EventResultStatus.Error,
+                  error: 'Group not found'
+                })
+              }
+            } else {
+              data.apiRules.push(ruleObj)
+            }
           } else {
             data.apiRules = [ruleObj]
           }
