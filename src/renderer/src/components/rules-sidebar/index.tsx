@@ -42,10 +42,17 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   props: RuleTreeItemProps,
   ref: React.Ref<HTMLLIElement>
 ) {
+  const navigate = useNavigate()
   const { labelText, rule, onMenuClick, ...others } = props
 
   const handleSwitchClick = (e: React.MouseEvent, nodeId: string) => {
     e.stopPropagation()
+  }
+
+  const handleTreeItemClick = (rule: RuleGroup | RuleData) => {
+    if (rule.kind === 'rule') {
+      navigate('/rules/edit/' + rule.id)
+    }
   }
 
   return (
@@ -78,6 +85,7 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
           )}
         </Box>
       }
+      onClick={(e) => handleTreeItemClick(rule)}
       ref={ref}
       {...others}
     />

@@ -127,6 +127,8 @@ export interface Settings {
   proxyPort?: '8998'
 }
 
+export type ApiRuleItem = RuleGroup | RuleData
+
 export type ApiRules = Array<RuleGroup | RuleData>
 
 export interface StorageData {

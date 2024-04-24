@@ -35,6 +35,10 @@ const router = createHashRouter([
           {
             path: 'list',
             element: <RuleListPage />
+          },
+          {
+            path: 'edit/:id',
+            element: <NewRulePage />
           }
         ]
       },
