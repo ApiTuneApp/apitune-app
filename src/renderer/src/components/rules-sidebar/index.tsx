@@ -29,7 +29,7 @@ import {
 import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
 import ConfirmDialog from '@renderer/components/confirm-dialog'
 import * as RuleService from '@renderer/services/rule'
-import { useStore } from '@renderer/store'
+import { useRuleStore } from '@renderer/store'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 
 type RuleTreeItemProps = TreeItemProps & {
@@ -86,7 +86,7 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
 
 function RulesSidebar(): JSX.Element {
   const navigate = useNavigate()
-  const apiRules = useStore((state) => state.apiRules)
+  const apiRules = useRuleStore((state) => state.apiRules)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
   const handleAddGroupClose = () => {
     setAddGroupDialogOpen(false)

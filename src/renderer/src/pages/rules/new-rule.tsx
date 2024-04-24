@@ -35,7 +35,7 @@ import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import * as RuleService from '@renderer/services/rule'
-import { useStore } from '@renderer/store'
+import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, RuleType } from '@shared/contract'
 
@@ -67,7 +67,7 @@ function NewRulePage(): JSX.Element {
   const [searchParams] = useSearchParams()
   const groupId = searchParams.get('groupId')
 
-  const apiRules = useStore((state) => state.apiRules)
+  const apiRules = useRuleStore((state) => state.apiRules)
   const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
 
   const [ruleName, setRuleName] = useState('')

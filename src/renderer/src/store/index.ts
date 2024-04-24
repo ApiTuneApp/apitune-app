@@ -10,7 +10,7 @@ type Action = {
   initApiRules: (rules: ApiRules) => void
 }
 
-export const useStore = create<State & Action>((set) => ({
+export const useRuleStore = create<State & Action>((set) => ({
   apiRules: [],
   addRule: (rule) => set((state) => ({ apiRules: [...state.apiRules, rule] })),
   initApiRules: (rules) => set(() => ({ apiRules: rules }))

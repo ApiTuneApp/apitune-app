@@ -1,8 +1,8 @@
 import { RenderEvent } from '@shared/contract'
-import { useStore } from '@renderer/store'
+import { useRuleStore } from '@renderer/store'
 
 export function getApiRules() {
-  const initApiRules = useStore.getState().initApiRules
+  const initApiRules = useRuleStore.getState().initApiRules
   window.api.getApiRules().then((apiRules) => {
     initApiRules(apiRules)
   })
