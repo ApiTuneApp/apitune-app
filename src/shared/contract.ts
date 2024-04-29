@@ -2,6 +2,7 @@ export enum RenderEvent {
   ping = 'ping',
   startServer = 'startServer',
   AddRule = 'addRule',
+  EnableRule = 'enableRule',
   UpdateRuleGroupName = 'updateRuleGroupName',
   GetApiRules = 'getApiRules',
   DeleteRule = 'deleteRule'

@@ -14,8 +14,9 @@ import {
   TableHead,
   TableRow
 } from '@mui/material'
+import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
-import { RuleData, ApiRuleItem, RuleGroup } from '@shared/contract'
+import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 import { NavLink } from 'react-router-dom'
 
 interface RowProps {
@@ -103,7 +104,11 @@ function RuleListPage(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
 
   function triggerRuleEnable(rule, enabled) {
-    console.log(rule, enabled)
+    window.api.enableRule(rule.id, enabled).then((result) => {
+      if (result.status === EventResultStatus.Success) {
+        RuleService.getApiRules()
+      }
+    })
   }
 
   return (

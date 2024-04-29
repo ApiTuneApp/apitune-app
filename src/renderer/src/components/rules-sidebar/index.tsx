@@ -45,8 +45,13 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   const navigate = useNavigate()
   const { labelText, rule, onMenuClick, ...others } = props
 
-  const handleSwitchClick = (e: React.MouseEvent, nodeId: string) => {
+  const handleSwitchClick = (e: React.MouseEvent, ruleId: string) => {
     e.stopPropagation()
+    window.api.enableRule(ruleId, !rule.enable).then((result) => {
+      if (result.status === EventResultStatus.Success) {
+        RuleService.getApiRules()
+      }
+    })
   }
 
   const handleTreeItemClick = (rule: RuleGroup | RuleData) => {
@@ -77,11 +82,13 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
               <MoreHorizOutlinedIcon fontSize="small" />
             </IconButton>
           ) : (
-            <Switch
-              defaultChecked
-              size="small"
-              onClick={(e) => handleSwitchClick(e, props.nodeId)}
-            />
+            <Tooltip title={rule.enable ? 'Disable rule' : 'Enable rule'} arrow>
+              <Switch
+                checked={rule.enable}
+                size="small"
+                onClick={(e) => handleSwitchClick(e, rule.id)}
+              />
+            </Tooltip>
           )}
         </Box>
       }
