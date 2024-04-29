@@ -1,12 +1,11 @@
 import Storage from 'electron-json-storage'
 import { Context } from 'koa'
 import replaceStream from 'replacestream'
-import { PassThrough, Readable, Stream, Transform, Writable } from 'stream'
+import { PassThrough, Readable, Stream, Transform } from 'stream'
 import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import packageJson from '../../../package.json'
 import { StorageData } from '../../shared/contract'
-import { initRules } from '../communicator'
 import { EditBodyOption, EditBodyType } from './contracts'
 import { toStream } from './helper'
 
@@ -186,7 +185,6 @@ export function initRuntimeRules() {
       settings: defaultData.settings || {},
       apiRules: defaultData.apiRules || []
     }
-    console.log('initRuntimeRules success', DefaultUserData)
   } catch (error) {
     console.error('initRuntimeRules error', error)
   }

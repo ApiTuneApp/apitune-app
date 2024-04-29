@@ -8,7 +8,6 @@ import {
   Collapse,
   IconButton,
   Switch,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -109,7 +108,7 @@ function RuleListPage(): JSX.Element {
 
   return (
     <Box className="page-list" sx={{ py: 2, px: 6, height: '100%' }}>
-      <Table>
+      <Table size="small">
         <colgroup>
           <col width="5%" />
           <col width="20%" />
