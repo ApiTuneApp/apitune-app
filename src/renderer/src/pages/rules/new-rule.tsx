@@ -14,6 +14,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
   IconButton,
   Input,
   Menu,
@@ -22,6 +23,7 @@ import {
   Select,
   Snackbar,
   Stack,
+  Switch,
   TextField,
   Tooltip,
   Typography
@@ -72,6 +74,7 @@ function NewRulePage(): JSX.Element {
 
   const [ruleName, setRuleName] = useState('')
   const [ruleDesc, setRuleDesc] = useState('')
+  const [ruleEnable, setRuleEnable] = useState(true)
   const [matchType, setMatchType] = useState('url')
   const [matchValue, setMatchValue] = useState('')
   const [matchMode, setMatchMode] = useState('contains')
@@ -80,7 +83,7 @@ function NewRulePage(): JSX.Element {
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
   const [addRuleAnchorEl, setAddRuleAnchorEl] = useState<null | HTMLElement>(null)
   const addRuleOpen = Boolean(addRuleAnchorEl)
-  const [addedRules, setAddedRules] = useState<RuleItem[]>([])
+  const [changeList, setChangeList] = useState<RuleItem[]>([])
 
   const [addRuleResult, setAddRuleResult] = useState<IpcResult>()
 
@@ -98,13 +101,13 @@ function NewRulePage(): JSX.Element {
     if (rule.type === RuleType.ResponseStatus) {
       initValue.value = 200
     }
-    setAddedRules((prevRules) => [...prevRules, initValue])
+    setChangeList((prevRules) => [...prevRules, initValue])
   }
 
   // there should only one type in rule list
   const getSetValueMethod = (rule: RuleItem) => {
     return (value: RuleItem['value']) =>
-      setAddedRules((prevRules) =>
+      setChangeList((prevRules) =>
         prevRules.map((r) => {
           if (r.type === rule.type) {
             return { ...r, value }
@@ -116,7 +119,7 @@ function NewRulePage(): JSX.Element {
 
   const getSetValidMethod = (rule: RuleItem) => {
     return (valid: RuleItem['valid']) => {
-      return setAddedRules((prevRules) =>
+      return setChangeList((prevRules) =>
         prevRules.map((r) => {
           if (r.type === rule.type) {
             return { ...r, valid }
@@ -161,12 +164,19 @@ function NewRulePage(): JSX.Element {
 
   const handleAddRuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    addedRules.forEach((rule) => {
+    changeList.forEach((rule) => {
       if (rule.validator) {
         rule.validator(rule.value)
       }
     })
-    const formValid = addedRules.every((rule) => rule.valid)
+    const formValid = changeList.every((rule) => rule.valid)
+    if (!ruleName) {
+      setAddRuleResult({
+        status: EventResultStatus.Error,
+        error: 'Rule name is required'
+      })
+      return
+    }
     if (formValid) {
       // TODO: support rule enable feature
       const result = await window.api.addRule(
@@ -174,13 +184,14 @@ function NewRulePage(): JSX.Element {
           kind: 'rule',
           name: ruleName,
           describe: ruleDesc,
+          enable: ruleEnable,
           matches: {
             value: matchValue,
             matchType,
             matchMode,
             methods: matchMethods
           },
-          rules: addedRules.map((rule) => ({
+          changeList: changeList.map((rule) => ({
             type: rule.type,
             value: rule.value,
             enable: true
@@ -193,8 +204,8 @@ function NewRulePage(): JSX.Element {
   }
 
   const removeRule = (index: number) => {
-    const newRules = addedRules.filter((_, i) => i !== index)
-    setAddedRules(newRules)
+    const newRules = changeList.filter((_, i) => i !== index)
+    setChangeList(newRules)
   }
 
   const handleResultClose = () => {
@@ -222,9 +233,22 @@ function NewRulePage(): JSX.Element {
           </Tooltip>
           <Typography ml={1}>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</Typography>
         </Box>
-        <Button color="primary" variant="contained" size="small" type="submit" form="addRuleForm">
-          Save
-        </Button>
+        <Box>
+          <FormControlLabel
+            sx={{ pr: 2 }}
+            control={
+              <Switch
+                checked={ruleEnable}
+                onChange={(e) => setRuleEnable(e.target.checked)}
+              ></Switch>
+            }
+            labelPlacement="start"
+            label={ruleEnable ? 'Enabled' : 'Disabled'}
+          />
+          <Button color="primary" variant="contained" size="small" type="submit" form="addRuleForm">
+            Save
+          </Button>
+        </Box>
       </Box>
 
       <Snackbar
@@ -354,7 +378,7 @@ function NewRulePage(): JSX.Element {
             <MenuItem
               onClick={() => handleAddRuleClick(rule)}
               key={rule.type}
-              disabled={addedRules.some((item) => item.type === rule.type)}
+              disabled={changeList.some((item) => item.type === rule.type)}
             >
               {rule.label}
             </MenuItem>
@@ -367,7 +391,7 @@ function NewRulePage(): JSX.Element {
           id="addRuleForm"
           noValidate
         >
-          {addedRules.map((rule, index) => (
+          {changeList.map((rule, index) => (
             <FormControl key={index} fullWidth>
               <Tooltip title="remove rule" placement="top" arrow onClick={() => removeRule(index)}>
                 <IconButton size="small" sx={{ position: 'absolute', top: '10px', right: '10px' }}>

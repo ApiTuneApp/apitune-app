@@ -112,7 +112,12 @@ function RulesSidebar(): JSX.Element {
       }
     } else {
       const result = await window.api.addRule(
-        JSON.stringify({ kind: 'group', name: ruleGroupName, rules: [] })
+        JSON.stringify({
+          kind: 'group',
+          name: ruleGroupName,
+          ruleList: [],
+          enable: true
+        })
       )
       if (result.status === EventResultStatus.Success) {
         RuleService.getApiRules()
@@ -244,8 +249,8 @@ function RulesSidebar(): JSX.Element {
                 className="rule-item rule-group"
                 onMenuClick={handleGroupMenuClick}
               >
-                {rule.rules &&
-                  rule.rules.map((r) => (
+                {rule.ruleList &&
+                  rule.ruleList.map((r) => (
                     <RuleTreeItem
                       key={r.id}
                       nodeId={r.id}

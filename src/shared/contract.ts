@@ -101,7 +101,7 @@ export interface Match {
   methods: string[]
 }
 
-export interface RuleItem {
+export interface RuleChangeItem {
   type: RuleType
   value: string | object | number
 }
@@ -112,7 +112,7 @@ export interface RuleData {
   matches: Match
   enable: boolean
   kind: 'rule'
-  rules: RuleItem[]
+  changeList: RuleChangeItem[]
 }
 
 export interface RuleGroup {
@@ -120,7 +120,7 @@ export interface RuleGroup {
   name: string
   enable: boolean
   kind: 'group'
-  rules: RuleData[]
+  ruleList: RuleData[]
 }
 
 export interface Settings {

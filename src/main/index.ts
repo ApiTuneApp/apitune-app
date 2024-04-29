@@ -9,7 +9,14 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
 import { v4 as uuidv4 } from 'uuid'
 import icon from '../../resources/icon.png?asset'
-import { AddGroupOpts, EventResultStatus, RenderEvent, StorageData } from '../shared/contract'
+import {
+  AddGroupOpts,
+  EventResultStatus,
+  RenderEvent,
+  RuleData,
+  RuleGroup,
+  StorageData
+} from '../shared/contract'
 import { initCommunicator } from './communicator'
 import { DefaultUserData, initRuntimeRules } from './server/rule-utils'
 
@@ -69,16 +76,19 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.AddRule, (event, rules: string, opts?: AddGroupOpts) => {
     return new Promise((resolve, reject) => {
       try {
-        const ruleObj = JSON.parse(rules)
+        const ruleObj = JSON.parse(rules) as RuleData
+        if (typeof ruleObj.enable === 'undefined') {
+          ruleObj.enable = true
+        }
         // TODO: generate storage key with user name and workspace name
         const key = opts?.storageKey || 'user.default'
         let data = Storage.getSync(key) as StorageData
         if (data) {
           if (data.apiRules) {
             if (opts?.groupId) {
-              const group = data.apiRules.find((g) => g.id === opts.groupId)
+              const group = data.apiRules.find((g) => g.id === opts.groupId) as RuleGroup
               if (group) {
-                group.rules.push(ruleObj)
+                group.ruleList.push(ruleObj)
               } else {
                 reject({
                   status: EventResultStatus.Error,
@@ -217,7 +227,7 @@ app.whenReady().then(() => {
       try {
         const data = Storage.getSync('user.default') as StorageData
         if (data) {
-          resolve(data.apiRules)
+          resolve(data.apiRules || [])
         } else {
           resolve([])
         }
@@ -229,10 +239,6 @@ app.whenReady().then(() => {
 
   const dataPath = Storage.getDataPath()
   console.log('datapath =>> ', dataPath)
-
-  // ipcMain.on(RenderEvent.startServer, () => {
-  //   startServer()
-  // })
 
   createWindow()
 

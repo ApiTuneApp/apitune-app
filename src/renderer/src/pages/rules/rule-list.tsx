@@ -30,7 +30,7 @@ function Row({ rule, triggerRuleEnable }: RowProps) {
     <React.Fragment>
       <TableRow>
         <TableCell>
-          {rule.rules.length > 0 ? (
+          {rule.kind === 'group' && rule.ruleList.length > 0 ? (
             <IconButton aria-label="expand rule" size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
@@ -66,7 +66,7 @@ function Row({ rule, triggerRuleEnable }: RowProps) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(rule as RuleGroup).rules.map((r: RuleData) => (
+                  {(rule as RuleGroup).ruleList.map((r: RuleData) => (
                     <TableRow key={r.id}>
                       <TableCell>
                         <NavLink to={`/rules/edit/${r.id}`}>{r.name}</NavLink>

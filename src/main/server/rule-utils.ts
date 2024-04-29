@@ -174,7 +174,8 @@ export function initRuntimeRules() {
   try {
     // TODO: get storage key
     let defaultData = Storage.getSync('user.default')
-    if (!defaultData) {
+    if (!defaultData || !defaultData.version) {
+      // if there is no version string, we treat that something is wrong in config, so we set it to default value
       defaultData = DefaultUserData
       Storage.set('user.default', defaultData, (error) => {
         if (error) console.error('SaveRules error', error)
