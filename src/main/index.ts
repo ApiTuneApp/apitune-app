@@ -127,6 +127,55 @@ app.whenReady().then(() => {
     })
   })
 
+  ipcMain.handle(RenderEvent.UpdateRule, (event, id: string, rules: string) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const ruleObj = JSON.parse(rules) as RuleData
+        const data = Storage.getSync('user.default') as StorageData
+        if (data) {
+          if (data.apiRules) {
+            const rule = findGroupOrRule(data.apiRules, id)
+            if (rule) {
+              Object.assign(rule, ruleObj)
+              Storage.set('user.default', data, (error) => {
+                if (error) {
+                  reject({
+                    status: EventResultStatus.Error,
+                    error: error.message
+                  })
+                } else {
+                  resolve({
+                    status: EventResultStatus.Success
+                  })
+                }
+              })
+            } else {
+              reject({
+                status: EventResultStatus.Error,
+                error: 'Rule not found'
+              })
+            }
+          } else {
+            reject({
+              status: EventResultStatus.Error,
+              error: 'Rules not found'
+            })
+          }
+        } else {
+          reject({
+            status: EventResultStatus.Error,
+            error: 'User data not found'
+          })
+        }
+      } catch (error) {
+        reject({
+          status: EventResultStatus.Error,
+          error: error
+        })
+      }
+    })
+  })
+
   ipcMain.handle(RenderEvent.EnableRule, (event, id: string, enable: boolean) => {
     return new Promise((resolve, reject) => {
       try {

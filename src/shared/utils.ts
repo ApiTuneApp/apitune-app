@@ -7,7 +7,13 @@ export function isURL(url: string): boolean {
   return regex.test(url)
 }
 
-export function findGroupOrRule(rules: ApiRules, id: string): RuleData | RuleGroup | null {
+export function findGroupOrRule(
+  rules: ApiRules,
+  id: string | undefined
+): RuleData | RuleGroup | null {
+  if (!id) {
+    return null
+  }
   for (const item of rules) {
     if (item.id === id) return item
     if ((item as RuleGroup).ruleList) {

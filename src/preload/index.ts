@@ -13,6 +13,9 @@ const api = {
   addRule: (rules: string, opts?: AddGroupOpts): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.AddRule, rules, opts)
   },
+  updateRule: (id: string, rules: string): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.UpdateRule, id, rules)
+  },
   enableRule: (id: string, enable: boolean): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.EnableRule, id, enable)
   },

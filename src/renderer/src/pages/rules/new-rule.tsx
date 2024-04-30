@@ -1,7 +1,7 @@
 import '@renderer/components/add-rule-item/index.less'
 
-import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
@@ -39,7 +39,9 @@ import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
-import { EventResultStatus, IpcResult, RuleType } from '@shared/contract'
+import { EventResultStatus, IpcResult, RuleData, RuleType } from '@shared/contract'
+import { findGroupOrRule } from '@shared/utils'
+import { use } from 'marked'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item
@@ -71,6 +73,29 @@ function NewRulePage(): JSX.Element {
 
   const apiRules = useRuleStore((state) => state.apiRules)
   const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
+
+  const { id: editRuleId } = useParams()
+  const editRule = useRuleStore((state) => findGroupOrRule(state.apiRules, editRuleId)) as RuleData
+
+  // init rule data when editRuleId changes:
+  useEffect(() => {
+    if (editRule) {
+      setRuleName(editRule.name)
+      setRuleDesc(editRule.description)
+      setRuleEnable(editRule.enable)
+      setMatchType(editRule.matches.matchType)
+      setMatchValue(editRule.matches.value)
+      setMatchMode(editRule.matches.matchMode)
+      setMatchMethods(editRule.matches.methods)
+      setChangeList(
+        editRule.changeList.map((rule) => ({
+          type: rule.type,
+          value: rule.value,
+          valid: true
+        }))
+      )
+    }
+  }, [editRuleId])
 
   const [ruleName, setRuleName] = useState('')
   const [ruleDesc, setRuleDesc] = useState('')
@@ -178,28 +203,58 @@ function NewRulePage(): JSX.Element {
       return
     }
     if (formValid) {
-      // TODO: support rule enable feature
-      const result = await window.api.addRule(
-        JSON.stringify({
-          kind: 'rule',
-          name: ruleName,
-          describe: ruleDesc,
-          enable: ruleEnable,
-          matches: {
-            value: matchValue,
-            matchType,
-            matchMode,
-            methods: matchMethods
-          },
-          changeList: changeList.map((rule) => ({
-            type: rule.type,
-            value: rule.value,
-            enable: true
-          }))
-        }),
-        { groupId: groupId as string }
-      )
-      setAddRuleResult(result)
+      if (editRuleId) {
+        if (!editRule) {
+          setAddRuleResult({
+            status: EventResultStatus.Error,
+            error: 'Rule not found'
+          })
+          return
+        }
+        const result = await window.api.updateRule(
+          editRuleId,
+          JSON.stringify({
+            kind: 'rule',
+            name: ruleName,
+            describe: ruleDesc,
+            enable: ruleEnable,
+            matches: {
+              value: matchValue,
+              matchType,
+              matchMode,
+              methods: matchMethods
+            },
+            changeList: changeList.map((rule) => ({
+              type: rule.type,
+              value: rule.value,
+              enable: true
+            }))
+          })
+        )
+        setAddRuleResult(result)
+      } else {
+        const result = await window.api.addRule(
+          JSON.stringify({
+            kind: 'rule',
+            name: ruleName,
+            describe: ruleDesc,
+            enable: ruleEnable,
+            matches: {
+              value: matchValue,
+              matchType,
+              matchMode,
+              methods: matchMethods
+            },
+            changeList: changeList.map((rule) => ({
+              type: rule.type,
+              value: rule.value,
+              enable: true
+            }))
+          }),
+          { groupId: groupId as string }
+        )
+        setAddRuleResult(result)
+      }
     }
   }
 
@@ -231,7 +286,13 @@ function NewRulePage(): JSX.Element {
               <ArrowBackIosNewIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Typography ml={1}>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</Typography>
+          {editRuleId ? (
+            <Typography ml={1}>Edit Rule / {editRule?.name}</Typography>
+          ) : (
+            <Typography ml={1}>
+              {groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule
+            </Typography>
+          )}
         </Box>
         <Box>
           <FormControlLabel
@@ -254,7 +315,7 @@ function NewRulePage(): JSX.Element {
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={!!addRuleResult}
-        autoHideDuration={3000}
+        autoHideDuration={1500}
         onClose={handleResultClose}
       >
         {addRuleResult && (
@@ -265,7 +326,7 @@ function NewRulePage(): JSX.Element {
             sx={{ width: '100%' }}
           >
             {addRuleResult?.status === EventResultStatus.Success
-              ? 'Rule added successfully'
+              ? `Rule ${editRuleId ? 'edited' : 'added'} successfully`
               : 'Error: ' + addRuleResult?.error}
           </Alert>
         )}
