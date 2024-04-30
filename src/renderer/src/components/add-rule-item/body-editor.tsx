@@ -43,7 +43,12 @@ function BodyEditor({
       title={`Modify ${type === 'request' ? 'Request' : 'Response'} Body:`}
       WrapComponent={
         <Box>
-          <MonacoEditor height={400} defaultLanguage="json" onChange={onChange} />
+          <MonacoEditor
+            height={200}
+            defaultLanguage="json"
+            value={rule.value as string}
+            onChange={onChange}
+          />
           {errorMsg && (
             <FormHelperText error sx={{ mt: 1 }}>
               {errorMsg}

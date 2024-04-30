@@ -42,7 +42,12 @@ function FunctionEditor({
       title={`Add ${type === 'request' ? 'Request' : 'Response'} Function:`}
       WrapComponent={
         <Box>
-          <MonacoEditor height={400} defaultLanguage="javascript" onChange={onChange} />
+          <MonacoEditor
+            height={200}
+            defaultLanguage="javascript"
+            onChange={onChange}
+            value={rule.value as string}
+          />
           {errorMsg && (
             <FormHelperText error sx={{ mt: 1 }}>
               {errorMsg}

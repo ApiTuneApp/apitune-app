@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import {
-  Alert,
   Autocomplete,
   Box,
   Button,
@@ -19,8 +18,8 @@ import { HTTP_REQUEST_HEADER, HTTP_RESPONSE_HEADER } from '@shared/constants'
 
 import RuleOutline from './rule-outline'
 
-const ReqHeaders = HTTP_REQUEST_HEADER.map((item) => ({ label: item }))
-const ResHeaders = HTTP_RESPONSE_HEADER.map((item) => ({ label: item }))
+const ReqHeaders = HTTP_REQUEST_HEADER
+const ResHeaders = HTTP_RESPONSE_HEADER
 
 type HeaderItem = {
   type: 'add' | 'override' | 'remove'
@@ -39,7 +38,9 @@ function HeaderEditor({
   setValid
 }: AddRuleValueProps & HeaderEditorProps): JSX.Element {
   const [errorMsg, setErrorMsg] = useState('')
-  const [headerList, setHeaderList] = useState<HeaderItem[]>([{ type: 'add', name: '', value: '' }])
+  const [headerList, setHeaderList] = useState<HeaderItem[]>(
+    (rule.value as HeaderItem[]) || [{ type: 'add', name: '', value: '' }]
+  )
   function validator(value: HeaderItem[]) {
     let valid = true
     if (value.length === 0) {
@@ -66,7 +67,7 @@ function HeaderEditor({
     setHeaderList([...headerList, { type: 'add', name: '', value: '' }])
   }
 
-  function handleChange(type: 'name' | 'value', value: string, index: number) {
+  function handleChange(type: 'type' | 'name' | 'value', value: string, index: number) {
     const list = headerList.map((item, i) => {
       if (i === index) {
         return { ...item, [type]: value }
@@ -84,7 +85,11 @@ function HeaderEditor({
         <Box>
           {headerList.map((item, index) => (
             <Box sx={{ display: 'flex', gap: 1, mb: 1 }} key={index}>
-              <Select defaultValue={'add'} size="small">
+              <Select
+                value={item.type}
+                size="small"
+                onChange={(e) => handleChange('type', e.target.value, index)}
+              >
                 <MenuItem value="add">Add</MenuItem>
                 <MenuItem value="override">Override</MenuItem>
                 <MenuItem value="remove">Remove</MenuItem>

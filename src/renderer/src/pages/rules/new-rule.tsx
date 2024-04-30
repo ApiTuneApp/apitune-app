@@ -267,7 +267,7 @@ function NewRulePage(): JSX.Element {
     setAddRuleResult(undefined)
     if (addRuleResult?.status === EventResultStatus.Success) {
       RuleService.getApiRules()
-      navigate(-1)
+      navigate('/rules/list')
     }
   }
 
