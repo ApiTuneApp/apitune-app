@@ -46,7 +46,7 @@ function Row({ rule, triggerRuleEnable }: RowProps) {
           />
         </TableCell>
         <TableCell>Jan 04, 2024</TableCell>
-        <TableCell>
+        <TableCell align="center">
           <Button>Rename</Button>
           <Button>Edit</Button>
           <Button color="error">Delete</Button>
@@ -63,7 +63,7 @@ function Row({ rule, triggerRuleEnable }: RowProps) {
                     <TableCell>description</TableCell>
                     <TableCell>Enable</TableCell>
                     <TableCell>Updated on</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableCell align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -81,8 +81,7 @@ function Row({ rule, triggerRuleEnable }: RowProps) {
                         />
                       </TableCell>
                       <TableCell>Jan 04, 2024</TableCell>
-                      <TableCell>
-                        <Button size="small">Rename</Button>
+                      <TableCell align="center">
                         <Button size="small">Edit</Button>
                         <Button color="error" size="small">
                           Delete
@@ -127,7 +126,7 @@ function RuleListPage(): JSX.Element {
             <TableCell>Name</TableCell>
             <TableCell>Enabled</TableCell>
             <TableCell>Updated on</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
