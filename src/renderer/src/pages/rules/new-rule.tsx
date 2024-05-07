@@ -281,8 +281,8 @@ function NewRulePage(): JSX.Element {
         color="var(--ev-c-text-2)"
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Go back">
-            <IconButton onClick={() => navigate(-1)} color="inherit" size="small">
+          <Tooltip title="Go back to rule list">
+            <IconButton onClick={() => navigate('/rules/list')} color="inherit" size="small">
               <ArrowBackIosNewIcon fontSize="small" />
             </IconButton>
           </Tooltip>

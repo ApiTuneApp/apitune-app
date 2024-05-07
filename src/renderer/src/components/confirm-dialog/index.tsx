@@ -1,9 +1,18 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
+import {
+  Button,
+  ButtonOwnProps,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from '@mui/material'
 
 interface ConfirmDialogProps {
   title: string
   content?: string | JSX.Element
   open: boolean
+  onOKProps?: ButtonOwnProps
+  okText?: string
   onClose: () => void
   onConfirm: () => void
 }
@@ -18,8 +27,8 @@ function ConfirmDialog(props: ConfirmDialogProps) {
         <Button size="small" onClick={onClose}>
           Cancel
         </Button>
-        <Button size="small" variant="contained" onClick={onConfirm}>
-          Ok
+        <Button size="small" variant="contained" {...props.onOKProps} onClick={onConfirm}>
+          {props.okText || 'OK'}
         </Button>
       </DialogActions>
     </Dialog>

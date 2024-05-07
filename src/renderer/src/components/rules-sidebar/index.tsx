@@ -235,7 +235,9 @@ function RulesSidebar(): JSX.Element {
       <ConfirmDialog
         title={`Delete "${apiRules.find((r) => r.id === editGroupId)?.name}"?`}
         content="Your will not be able to recover this rule group!"
+        okText="Delete"
         open={delConfirmOpen}
+        onOKProps={{ color: 'error' }}
         onClose={handleDelConfirmClose}
         onConfirm={handleDelConfirm}
       />
