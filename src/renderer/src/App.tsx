@@ -1,8 +1,9 @@
 import { Box, CssBaseline } from '@mui/material'
 import darkScrollbar from '@mui/material/darkScrollbar'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import KeepAlive from 'keepalive-for-react'
+import { useEffect, useMemo } from 'react'
+import { useLocation, useOutlet } from 'react-router-dom'
 import Header from './components/header'
 import Sidebar from './components/sidebar'
 import { getApiRules } from './services/rule'
@@ -21,13 +22,20 @@ const darkTheme = createTheme({
 })
 
 function App(): JSX.Element {
-  // const ipcHandle = (): void => window.electron.ipcRenderer.send(RenderEvent.ping)
-  // const startServer = (): void => window.electron.ipcRenderer.send(RenderEvent.startServer)
+  const outlet = useOutlet()
+  const location = useLocation()
 
   useEffect(() => {
     const cancelFn = getApiRules()
     return cancelFn
   }, [])
+
+  /**
+   * to distinguish different pages to cache
+   */
+  const cacheKey = useMemo(() => {
+    return location.pathname + location.hash
+  }, [location])
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -36,7 +44,7 @@ function App(): JSX.Element {
       <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar />
         <Box sx={{ flex: 1 }}>
-          <Outlet />
+          <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
         </Box>
       </Box>
     </ThemeProvider>
