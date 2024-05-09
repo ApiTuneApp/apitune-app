@@ -1,14 +1,13 @@
 import { Context, Next } from 'koa'
 
 import { RuleData } from '../../../shared/contract'
-import { EditBodyType } from '../contracts'
-import { DefaultUserData, isRuleMatch, responseBody } from '../rule-utils'
+import { isRuleMatch } from '../../helper'
+import { DefaultUserData } from '../../storage'
 
 export default async function RulesMiddleware(ctx: Context, next: Next) {
-  // console.log('current api rules =>', DefaultUserData.apiRules)
   const curApiRules = DefaultUserData.apiRules
 
-  // find enabled flated rule list
+  // find enabled rule list
   const enableRuleDataList: RuleData[] = []
   for (const rule of curApiRules) {
     if (rule.kind === 'group' && rule.enable) {
@@ -24,6 +23,10 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
 
   const matchedRules = enableRuleDataList.filter((rule) => isRuleMatch(ctx, rule))
   console.log('matched rules =>', matchedRules)
+
+  for (const rule of matchedRules) {
+    // run rule handler
+  }
   // send request, get data
   await next()
 

@@ -287,3 +287,21 @@ export const HTTP_STATUS_CODE = [
 ]
 
 export const ReqMethods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH', 'CONNECT']
+
+export const RequestRuleKeys: RuleType[] = [
+  RuleType.Redirect,
+  RuleType.RequestHeader,
+  RuleType.RequestBody,
+  RuleType.RequestBodyJq,
+  RuleType.RequestFunction
+]
+
+export const ResponseRuleKeys: RuleType[] = [
+  RuleType.ResponseStatus,
+  RuleType.ResponseHeader,
+  RuleType.ResponseFunction,
+  RuleType.ResponseBody,
+  RuleType.ResponseBodyJq,
+  RuleType.ResponseDelay,
+  RuleType.SpeedLimit
+]

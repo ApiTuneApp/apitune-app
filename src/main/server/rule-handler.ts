@@ -1,11 +1,8 @@
-import Storage from 'electron-json-storage'
 import { Context } from 'koa'
 import replaceStream from 'replacestream'
 import { PassThrough, Readable, Stream, Transform } from 'stream'
 import { createBrotliDecompress, createGunzip } from 'zlib'
 
-import packageJson from '../../../package.json'
-import { ApiRules, RuleData, StorageData } from '../../shared/contract'
 import { EditBodyOption, EditBodyType } from './contracts'
 import { toStream } from './helper'
 
@@ -162,65 +159,4 @@ function beforeModifyResBody(ctx: Context) {
       })
     }
   }
-}
-
-export let DefaultUserData: StorageData = {
-  version: packageJson.version,
-  settings: {},
-  apiRules: []
-}
-
-export function initRuntimeRules() {
-  try {
-    // TODO: get storage key
-    let defaultData = Storage.getSync('user.default')
-    if (!defaultData || !defaultData.version) {
-      // if there is no version string, we treat that something is wrong in config, so we set it to default value
-      defaultData = DefaultUserData
-      Storage.set('user.default', defaultData, (error) => {
-        if (error) console.error('SaveRules error', error)
-      })
-    }
-    DefaultUserData = {
-      ...DefaultUserData,
-      settings: defaultData.settings || {},
-      apiRules: defaultData.apiRules || []
-    }
-  } catch (error) {
-    console.error('initRuntimeRules error', error)
-  }
-}
-
-export function updateMemeoryRules(apiRules: ApiRules) {
-  DefaultUserData.apiRules = apiRules
-}
-
-export function isRuleMatch(ctx: Context, rule: RuleData) {
-  const { matches } = rule
-  const { method, href, host, path } = ctx
-  const { matchType, matchMode, methods } = matches
-  let value = matches.value
-  let matchValue = ''
-  if (matchType === 'url') {
-    matchValue = href
-  } else if (matchType === 'host') {
-    matchValue = host
-  } else if (matchType === 'path') {
-    // remove first caracter '/'
-    matchValue = path.length > 1 ? path.slice(1) : path
-    value = value.startsWith('/') ? value.slice(1) : value
-  }
-
-  const methodValue = method.toUpperCase()
-  if (methods.length > 0 && !methods.includes(methodValue)) {
-    return false
-  }
-  if (matchMode === 'contains') {
-    return matchValue.includes(value)
-  } else if (matchMode === 'equals') {
-    return matchValue === value
-  } else if (matchMode === 'matches') {
-    return new RegExp(value).test(matchValue)
-  }
-  return false
 }

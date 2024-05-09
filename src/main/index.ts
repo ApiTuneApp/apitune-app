@@ -18,7 +18,7 @@ import {
   StorageData
 } from '../shared/contract'
 import { initCommunicator } from './communicator'
-import { DefaultUserData, initRuntimeRules, updateMemeoryRules } from './server/rule-utils'
+import { DefaultUserData, initRuntimeRules, updateRuntimeRules } from './storage'
 import { findGroupOrRule } from '../shared/utils'
 
 function createWindow(): void {
@@ -113,7 +113,7 @@ app.whenReady().then(() => {
               error: error.message
             })
           } else {
-            updateMemeoryRules(data.apiRules)
+            updateRuntimeRules(data.apiRules)
             resolve({
               status: EventResultStatus.Success
             })
@@ -145,7 +145,7 @@ app.whenReady().then(() => {
                     error: error.message
                   })
                 } else {
-                  updateMemeoryRules(data.apiRules)
+                  updateRuntimeRules(data.apiRules)
                   resolve({
                     status: EventResultStatus.Success
                   })
@@ -194,7 +194,7 @@ app.whenReady().then(() => {
                     error: error.message
                   })
                 } else {
-                  updateMemeoryRules(data.apiRules)
+                  updateRuntimeRules(data.apiRules)
                   resolve({
                     status: EventResultStatus.Success
                   })
@@ -243,7 +243,7 @@ app.whenReady().then(() => {
                     error: error.message
                   })
                 } else {
-                  updateMemeoryRules(data.apiRules)
+                  updateRuntimeRules(data.apiRules)
                   resolve({
                     status: EventResultStatus.Success
                   })
@@ -292,7 +292,7 @@ app.whenReady().then(() => {
                     error: error.message
                   })
                 } else {
-                  updateMemeoryRules(data.apiRules)
+                  updateRuntimeRules(data.apiRules)
                   resolve({
                     status: EventResultStatus.Success
                   })
