@@ -148,8 +148,5 @@ export default function (ctx: Context) {
     }, 120 * 1e3)
 
     ctx.remoteRequestBody.pipe(serverReq)
-
-    //The request() method of the HTTP library will not automatically end requests, therefore they stay open, and time out
-    serverReq.end()
   })
 }

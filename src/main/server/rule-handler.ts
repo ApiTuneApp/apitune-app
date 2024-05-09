@@ -5,6 +5,32 @@ import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import { EditBodyOption, EditBodyType } from './contracts'
 import { toStream } from './helper'
+import { RuleChangeItem, RuleData } from '../../shared/contract'
+
+// keep origin infor
+function saveOriginInfo(ctx: Context, item: object) {
+  if (!ctx.originInfo) {
+    ctx.originInfo = {}
+  }
+  ctx.originInfo = {
+    ...ctx.originInfo,
+    ...item
+  }
+}
+
+export function rewrite(ctx: Context, changeItem: RuleChangeItem) {
+  saveOriginInfo(ctx, {
+    href: ctx.href
+  })
+  const newUrl = new URL(changeItem.value as string)
+  ctx.remoteRequestOptions.headers.host = newUrl.host
+  const url = ctx.remoteRequestOptions.url
+  if (newUrl.protocol) {
+    url.protocol = newUrl.protocol.replace(':', '')
+  }
+  url.host = newUrl.host
+  url.pathname = newUrl.pathname
+}
 
 export function requestBody(ctx: Context) {
   beforeModifyReqBody(ctx)

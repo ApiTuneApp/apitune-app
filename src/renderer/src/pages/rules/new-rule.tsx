@@ -226,8 +226,7 @@ function NewRulePage(): JSX.Element {
             },
             changeList: changeList.map((rule) => ({
               type: rule.type,
-              value: rule.value,
-              enable: true
+              value: rule.value
             }))
           })
         )
@@ -247,8 +246,7 @@ function NewRulePage(): JSX.Element {
             },
             changeList: changeList.map((rule) => ({
               type: rule.type,
-              value: rule.value,
-              enable: true
+              value: rule.value
             }))
           }),
           { groupId: groupId as string }

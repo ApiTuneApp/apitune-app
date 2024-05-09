@@ -1,8 +1,15 @@
 import { Context, Next } from 'koa'
 
-import { RuleData } from '../../../shared/contract'
+import { RuleData, RuleType } from '../../../shared/contract'
 import { isRuleMatch } from '../../helper'
 import { DefaultUserData } from '../../storage'
+import * as ruleHandlers from '../rule-handler'
+
+const requestHandlerMap = {
+  [RuleType.Redirect]: {
+    handler: ruleHandlers.rewrite
+  }
+}
 
 export default async function RulesMiddleware(ctx: Context, next: Next) {
   const curApiRules = DefaultUserData.apiRules
@@ -22,10 +29,16 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
   }
 
   const matchedRules = enableRuleDataList.filter((rule) => isRuleMatch(ctx, rule))
-  console.log('matched rules =>', matchedRules)
 
   for (const rule of matchedRules) {
     // run rule handler
+    for (const changes of rule.changeList) {
+      const handler = requestHandlerMap[changes.type]
+      if (handler) {
+        console.log('start handle rule ===>', rule, changes)
+        handler.handler(ctx, changes)
+      }
+    }
   }
   // send request, get data
   await next()

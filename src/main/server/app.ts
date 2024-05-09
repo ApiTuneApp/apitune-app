@@ -50,8 +50,6 @@ app.use(async (ctx: Context, next: Next) => {
   ctx.responseBody = null
 
   console.log('[Start Request] ===> ', ctx.href)
-  await httpClient(ctx)
-
   await next()
 
   ctx.set(ctx.responseHeaders)
@@ -60,5 +58,9 @@ app.use(async (ctx: Context, next: Next) => {
 
 app.use(RulesMiddleware)
 app.use(LogsMiddleware)
+app.use(async (ctx: Context, next: Next) => {
+  await httpClient(ctx)
+  await next()
+})
 
 export const handleRequest = app.callback()
