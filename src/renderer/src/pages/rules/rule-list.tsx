@@ -59,9 +59,9 @@ function Row({ rule, triggerRuleEnable }: RowProps) {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>description</TableCell>
-                    <TableCell>Enable</TableCell>
+                    <TableCell>Rule Name</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Rule Enable</TableCell>
                     <TableCell>Updated on</TableCell>
                     <TableCell align="center">Actions</TableCell>
                   </TableRow>
@@ -75,7 +75,7 @@ function Row({ rule, triggerRuleEnable }: RowProps) {
                       <TableCell>{r.description}</TableCell>
                       <TableCell>
                         <Switch
-                          checked={rule.enable}
+                          checked={r.enable}
                           size="small"
                           onChange={(e) => triggerRuleEnable(rule, e.target.checked)}
                         />
@@ -123,8 +123,8 @@ function RuleListPage(): JSX.Element {
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell>Name</TableCell>
-            <TableCell>Enabled</TableCell>
+            <TableCell>Group Name</TableCell>
+            <TableCell>Group Enabled</TableCell>
             <TableCell>Updated on</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>

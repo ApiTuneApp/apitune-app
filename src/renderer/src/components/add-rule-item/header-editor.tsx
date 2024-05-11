@@ -41,7 +41,7 @@ function HeaderEditor({
     if (value.length === 0) {
       valid = false
       setErrorMsg('Header rule is required')
-    } else if (value.some((item) => !item.name || !item.value)) {
+    } else if (value.some((item) => !item.name || (item.type !== 'remove' && !item.value))) {
       valid = false
       setErrorMsg('Header name and value is required')
     } else {
@@ -111,7 +111,8 @@ function HeaderEditor({
                 hiddenLabel
                 placeholder="Header Value"
                 size="small"
-                value={item.value}
+                disabled={item.type === 'remove'}
+                value={item.type === 'remove' ? '*' : item.value}
                 error={!item.value}
                 onChange={(e) => handleChange('value', e.target.value, index)}
               />
