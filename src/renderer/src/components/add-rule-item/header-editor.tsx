@@ -106,16 +106,17 @@ function HeaderEditor({
                   />
                 )}
               />
-              <TextField
-                sx={{ flex: 1 }}
-                hiddenLabel
-                placeholder="Header Value"
-                size="small"
-                disabled={item.type === 'remove'}
-                value={item.type === 'remove' ? '*' : item.value}
-                error={!item.value}
-                onChange={(e) => handleChange('value', e.target.value, index)}
-              />
+              {item.type !== 'remove' && (
+                <TextField
+                  sx={{ flex: 1 }}
+                  hiddenLabel
+                  placeholder="Header Value"
+                  size="small"
+                  value={item.value}
+                  error={!item.value}
+                  onChange={(e) => handleChange('value', e.target.value, index)}
+                />
+              )}
               <Tooltip title="Remove" placement="right" arrow>
                 <IconButton
                   size="small"
