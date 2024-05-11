@@ -88,7 +88,7 @@ function NewRulePage(): JSX.Element {
       setMatchMode(editRule.matches.matchMode)
       setMatchMethods(editRule.matches.methods)
       setChangeList(
-        editRule.changeList.map((rule) => ({
+        editRule.modifyList.map((rule) => ({
           type: rule.type,
           value: rule.value,
           valid: true
@@ -108,7 +108,7 @@ function NewRulePage(): JSX.Element {
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
   const [addRuleAnchorEl, setAddRuleAnchorEl] = useState<null | HTMLElement>(null)
   const addRuleOpen = Boolean(addRuleAnchorEl)
-  const [changeList, setChangeList] = useState<RuleItem[]>([])
+  const [modifyList, setChangeList] = useState<RuleItem[]>([])
 
   const [addRuleResult, setAddRuleResult] = useState<IpcResult>()
 
@@ -189,12 +189,12 @@ function NewRulePage(): JSX.Element {
 
   const handleAddRuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    changeList.forEach((rule) => {
+    modifyList.forEach((rule) => {
       if (rule.validator) {
         rule.validator(rule.value)
       }
     })
-    const formValid = changeList.every((rule) => rule.valid)
+    const formValid = modifyList.every((rule) => rule.valid)
     if (!ruleName) {
       setAddRuleResult({
         status: EventResultStatus.Error,
@@ -224,7 +224,7 @@ function NewRulePage(): JSX.Element {
               matchMode,
               methods: matchMethods
             },
-            changeList: changeList.map((rule) => ({
+            modifyList: modifyList.map((rule) => ({
               type: rule.type,
               value: rule.value
             }))
@@ -244,7 +244,7 @@ function NewRulePage(): JSX.Element {
               matchMode,
               methods: matchMethods
             },
-            changeList: changeList.map((rule) => ({
+            modifyList: modifyList.map((rule) => ({
               type: rule.type,
               value: rule.value
             }))
@@ -257,7 +257,7 @@ function NewRulePage(): JSX.Element {
   }
 
   const removeRule = (index: number) => {
-    const newRules = changeList.filter((_, i) => i !== index)
+    const newRules = modifyList.filter((_, i) => i !== index)
     setChangeList(newRules)
   }
 
@@ -437,7 +437,7 @@ function NewRulePage(): JSX.Element {
             <MenuItem
               onClick={() => handleAddRuleClick(rule)}
               key={rule.type}
-              disabled={changeList.some((item) => item.type === rule.type)}
+              disabled={modifyList.some((item) => item.type === rule.type)}
             >
               {rule.label}
             </MenuItem>
@@ -450,7 +450,7 @@ function NewRulePage(): JSX.Element {
           id="addRuleForm"
           noValidate
         >
-          {changeList.map((rule, index) => (
+          {modifyList.map((rule, index) => (
             <FormControl key={index} fullWidth>
               <Tooltip title="remove rule" placement="top" arrow onClick={() => removeRule(index)}>
                 <IconButton size="small" sx={{ position: 'absolute', top: '10px', right: '10px' }}>

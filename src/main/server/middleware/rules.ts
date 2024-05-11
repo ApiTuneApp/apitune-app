@@ -35,7 +35,7 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
 
   for (const rule of matchedRules) {
     // run rule handler
-    for (const changes of rule.changeList) {
+    for (const changes of rule.modifyList) {
       const handler = requestHandlerMap[changes.type]
       if (handler) {
         console.log('start handle rule ===>', rule, changes)

@@ -1,3 +1,5 @@
+import exp from 'constants'
+
 export enum RenderEvent {
   ping = 'ping',
   startServer = 'startServer',
@@ -103,9 +105,17 @@ export interface Match {
   methods: string[]
 }
 
-export interface RuleChangeItem {
+export interface Modify {
   type: RuleType
   value: string | object | number
+}
+
+export interface RedirectModify extends Modify {
+  value: string
+}
+
+export interface HeaderModify extends Modify {
+  value: HeaderItem[]
 }
 export interface RuleData {
   id: string
@@ -114,7 +124,7 @@ export interface RuleData {
   matches: Match
   enable: boolean
   kind: 'rule'
-  changeList: RuleChangeItem[]
+  modifyList: Array<Modify | RedirectModify | HeaderModify>
 }
 
 export interface RuleGroup {

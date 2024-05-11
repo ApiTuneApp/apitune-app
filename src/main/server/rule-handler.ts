@@ -5,7 +5,7 @@ import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import { EditBodyOption, EditBodyType } from './contracts'
 import { toStream } from './helper'
-import { HeaderItem, RuleChangeItem, RuleData } from '../../shared/contract'
+import { HeaderModify, RedirectModify } from '../../shared/contract'
 
 // keep origin infor
 function saveOriginInfo(ctx: Context, item: object) {
@@ -18,11 +18,11 @@ function saveOriginInfo(ctx: Context, item: object) {
   }
 }
 
-export function rewrite(ctx: Context, changeItem: RuleChangeItem) {
+export function rewrite(ctx: Context, modify: RedirectModify) {
   saveOriginInfo(ctx, {
     href: ctx.href
   })
-  const newUrl = new URL(changeItem.value as string)
+  const newUrl = new URL(modify.value as string)
   ctx.remoteRequestOptions.headers.host = newUrl.host
   const url = ctx.remoteRequestOptions.url
   if (newUrl.protocol) {
@@ -32,13 +32,13 @@ export function rewrite(ctx: Context, changeItem: RuleChangeItem) {
   url.pathname = newUrl.pathname
 }
 
-export function requestHeaders(ctx: Context, changeItem: RuleChangeItem) {
+export function requestHeaders(ctx: Context, modify: HeaderModify) {
   saveOriginInfo(ctx, {
     headers: ctx.remoteRequestOptions.headers
   })
   const origHeaders = ctx.remoteRequestOptions.headers
 
-  for (const { name, value, type } of changeItem.value as HeaderItem[]) {
+  for (const { name, value, type } of modify.value) {
     if (type === 'add') {
       origHeaders[name] = value
     } else if (type === 'override') {
