@@ -14,18 +14,13 @@ import {
 import { AddRuleValueProps } from '@renderer/common/contract'
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 
+import { HeaderItem } from '@shared/contract'
 import { HTTP_REQUEST_HEADER, HTTP_RESPONSE_HEADER } from '@shared/constants'
 
 import RuleOutline from './rule-outline'
 
 const ReqHeaders = HTTP_REQUEST_HEADER
 const ResHeaders = HTTP_RESPONSE_HEADER
-
-type HeaderItem = {
-  type: 'add' | 'override' | 'remove'
-  name: string
-  value: string
-}
 
 type HeaderEditorProps = {
   type: 'request' | 'response'

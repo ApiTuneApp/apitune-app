@@ -145,3 +145,9 @@ export type AddGroupOpts = {
   groupId?: string
   storageKey?: string
 }
+
+export type HeaderItem = {
+  type: 'add' | 'override' | 'remove'
+  name: string
+  value: string
+}

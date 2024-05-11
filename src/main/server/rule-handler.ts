@@ -5,7 +5,7 @@ import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import { EditBodyOption, EditBodyType } from './contracts'
 import { toStream } from './helper'
-import { RuleChangeItem, RuleData } from '../../shared/contract'
+import { HeaderItem, RuleChangeItem, RuleData } from '../../shared/contract'
 
 // keep origin infor
 function saveOriginInfo(ctx: Context, item: object) {
@@ -30,6 +30,23 @@ export function rewrite(ctx: Context, changeItem: RuleChangeItem) {
   }
   url.host = newUrl.host
   url.pathname = newUrl.pathname
+}
+
+export function requestHeaders(ctx: Context, changeItem: RuleChangeItem) {
+  saveOriginInfo(ctx, {
+    headers: ctx.remoteRequestOptions.headers
+  })
+  const origHeaders = ctx.remoteRequestOptions.headers
+
+  for (const { name, value, type } of changeItem.value as HeaderItem[]) {
+    if (type === 'add') {
+      origHeaders[name] = value
+    } else if (type === 'override') {
+      origHeaders[name] = value
+    } else if (type === 'remove') {
+      delete origHeaders[name]
+    }
+  }
 }
 
 export function requestBody(ctx: Context) {

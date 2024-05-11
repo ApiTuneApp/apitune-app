@@ -8,6 +8,9 @@ import * as ruleHandlers from '../rule-handler'
 const requestHandlerMap = {
   [RuleType.Redirect]: {
     handler: ruleHandlers.rewrite
+  },
+  [RuleType.RequestHeader]: {
+    handler: ruleHandlers.requestHeaders
   }
 }
 
