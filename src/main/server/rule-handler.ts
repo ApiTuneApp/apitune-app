@@ -5,7 +5,7 @@ import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import { EditBodyOption, EditBodyType } from './contracts'
 import { toStream } from './helper'
-import { HeaderModify, RedirectModify } from '../../shared/contract'
+import { BodyModify, HeaderModify, RedirectModify } from '../../shared/contract'
 
 // keep origin infor
 function saveOriginInfo(ctx: Context, item: object) {
@@ -49,8 +49,13 @@ export function requestHeaders(ctx: Context, modify: HeaderModify) {
   }
 }
 
-export function requestBody(ctx: Context) {
+export function requestBody(ctx: Context, modify: BodyModify) {
   beforeModifyReqBody(ctx)
+  // TODO: support other EditBodyType
+  ctx.remoteRequestBody = editStream(ctx.remoteRequestBody, {
+    type: EditBodyType.overwrite,
+    content: modify.value
+  })
 }
 
 export function responseStatus(ctx: Context, status: number) {

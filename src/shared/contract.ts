@@ -117,6 +117,11 @@ export interface RedirectModify extends Modify {
 export interface HeaderModify extends Modify {
   value: HeaderItem[]
 }
+
+export interface BodyModify extends Modify {
+  value: string
+}
+
 export interface RuleData {
   id: string
   name: string
@@ -124,7 +129,7 @@ export interface RuleData {
   matches: Match
   enable: boolean
   kind: 'rule'
-  modifyList: Array<Modify | RedirectModify | HeaderModify>
+  modifyList: Array<Modify | RedirectModify | HeaderModify | BodyModify>
 }
 
 export interface RuleGroup {

@@ -11,6 +11,9 @@ const requestHandlerMap = {
   },
   [RuleType.RequestHeader]: {
     handler: ruleHandlers.requestHeaders
+  },
+  [RuleType.RequestBody]: {
+    handler: ruleHandlers.requestBody
   }
 }
 
