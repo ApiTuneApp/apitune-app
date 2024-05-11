@@ -111,14 +111,22 @@ export interface Modify {
 }
 
 export interface RedirectModify extends Modify {
+  type: RuleType.Redirect
   value: string
 }
 
 export interface HeaderModify extends Modify {
+  type: RuleType.RequestHeader | RuleType.ResponseHeader
   value: HeaderItem[]
 }
 
 export interface BodyModify extends Modify {
+  type: RuleType.RequestBody | RuleType.ResponseBody
+  value: string
+}
+
+export interface FunctionMoidfy extends Modify {
+  type: RuleType.RequestFunction | RuleType.ResponseFunction
   value: string
 }
 
@@ -129,7 +137,7 @@ export interface RuleData {
   matches: Match
   enable: boolean
   kind: 'rule'
-  modifyList: Array<Modify | RedirectModify | HeaderModify | BodyModify>
+  modifyList: Array<Modify | RedirectModify | HeaderModify | BodyModify | FunctionMoidfy>
 }
 
 export interface RuleGroup {

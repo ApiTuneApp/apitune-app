@@ -4,8 +4,15 @@ import { PassThrough, Readable, Stream, Transform } from 'stream'
 import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import { EditBodyOption, EditBodyType } from './contracts'
-import { toStream } from './helper'
-import { BodyModify, HeaderModify, RedirectModify } from '../../shared/contract'
+import { getBase64, toStream, sandbox, getJson } from './helper'
+import {
+  BodyModify,
+  FunctionMoidfy,
+  HeaderModify,
+  RedirectModify,
+  RuleType
+} from '../../shared/contract'
+import * as lodash from 'lodash'
 
 // keep origin infor
 function saveOriginInfo(ctx: Context, item: object) {
@@ -58,12 +65,58 @@ export function requestBody(ctx: Context, modify: BodyModify) {
   })
 }
 
+export function _requestBodyWithOpt(ctx: Context, option: EditBodyOption) {
+  beforeModifyReqBody(ctx)
+  ctx.remoteRequestBody = editStream(ctx.remoteRequestBody, option)
+}
+
+export async function requestFunction(ctx: Context, modify: FunctionMoidfy) {
+  const reqBase = await getBase64(ctx.req)
+  const bodyStr = reqBase ? reqBase.base64.toString() : null
+  const reqBody = getJson(bodyStr)
+
+  let params = {}
+  if (ctx.method === 'GET') {
+    params = ctx.request.query
+  } else {
+    params = reqBody
+  }
+
+  const result = await sandbox(
+    {
+      __ctx: ctx,
+      lodash: lodash,
+      request: {
+        url: ctx.request.URL,
+        ip: ctx.request.ip,
+        headers: ctx.request.headers,
+        query: ctx.request.query
+      },
+      params,
+      requestBody: reqBody,
+      requestHeaders: ctx.remoteRequestOptions.headers
+    },
+    modify.value
+  )
+  if (result) {
+    if (result.headers) {
+      ctx.remoteRequestOptions.headers = result.headers
+    }
+    requestBody(ctx, {
+      type: RuleType.RequestBody,
+      value: JSON.stringify(result.requestBody)
+    })
+  }
+}
+
 export function responseStatus(ctx: Context, status: number) {
   ctx.status = +status
 }
 
 function beforeModifyReqBody(ctx: Context) {
-  delete ctx.remoteRequestOptions.headers['content-length']
+  if (ctx.remoteRequestOptions.headers) {
+    delete ctx.remoteRequestOptions.headers['content-length']
+  }
 }
 
 export function responseBody(ctx: Context, option: EditBodyOption) {

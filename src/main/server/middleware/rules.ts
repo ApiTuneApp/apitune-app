@@ -14,6 +14,9 @@ const requestHandlerMap = {
   },
   [RuleType.RequestBody]: {
     handler: ruleHandlers.requestBody
+  },
+  [RuleType.RequestFunction]: {
+    handler: ruleHandlers.requestFunction
   }
 }
 
@@ -42,7 +45,7 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
       const handler = requestHandlerMap[changes.type]
       if (handler) {
         console.log('start handle rule ===>', rule, changes)
-        handler.handler(ctx, changes)
+        await handler.handler(ctx, changes)
       }
     }
   }

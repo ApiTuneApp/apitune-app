@@ -14,7 +14,7 @@ interface SimpleEditBodyOption {
    */
   type: EditBodyType.prepend | EditBodyType.overwrite | EditBodyType.append
   // 追加的内容或者替换成的内容
-  content: string
+  content: string | Buffer
 }
 
 /**

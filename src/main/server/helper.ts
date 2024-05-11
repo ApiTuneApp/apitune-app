@@ -6,6 +6,8 @@ import pako from 'pako'
 import { BodyInfo, Log } from '../../shared/contract'
 import config from './config'
 
+const vm = require('vm')
+
 /*
  * Detect TLS from first bytes of data
  * Inspired from https://gist.github.com/tg-x/835636
@@ -240,6 +242,34 @@ export function getBodyInfo(log: Log) {
       }
     }
     result.bodyText = bodyText
+  }
+  return result
+}
+
+export async function sandbox(sandbox: any, script: string) {
+  try {
+    sandbox = sandbox || {}
+    const vmScript = new vm.Script(script)
+    const context = new vm.createContext(sandbox)
+    vmScript.runInContext(context, {
+      timeout: 10000,
+      displayErrors: true
+    })
+    return sandbox
+  } catch (error) {
+    console.log('sandbox error', error)
+  }
+}
+
+export function getJson(data: string | null): any {
+  if (!data) {
+    return null
+  }
+  let result = data
+  try {
+    result = JSON.parse(data)
+  } catch (error) {
+    // console.log('getJson error', error)
   }
   return result
 }
