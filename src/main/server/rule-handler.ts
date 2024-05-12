@@ -1,10 +1,10 @@
+import Axios from 'axios'
 import { Context } from 'koa'
+import * as lodash from 'lodash'
 import replaceStream from 'replacestream'
 import { PassThrough, Readable, Stream, Transform } from 'stream'
 import { createBrotliDecompress, createGunzip } from 'zlib'
 
-import { EditBodyOption, EditBodyType } from './contracts'
-import { getBase64, toStream, sandbox, getJson } from './helper'
 import {
   BodyModify,
   FunctionMoidfy,
@@ -12,7 +12,8 @@ import {
   RedirectModify,
   RuleType
 } from '../../shared/contract'
-import * as lodash from 'lodash'
+import { EditBodyOption, EditBodyType } from './contracts'
+import { getBase64, getJson, sandbox, toBuffer, toStream } from './helper'
 
 // keep origin infor
 function saveOriginInfo(ctx: Context, item: object) {
@@ -46,17 +47,21 @@ export function requestHeaders(ctx: Context, modify: HeaderModify) {
   const origHeaders = ctx.remoteRequestOptions.headers
 
   for (const { name, value, type } of modify.value) {
+    const key = name.toLowerCase()
     if (type === 'add') {
-      origHeaders[name] = value
+      origHeaders[key] = value
     } else if (type === 'override') {
-      origHeaders[name] = value
+      origHeaders[key] = value
     } else if (type === 'remove') {
-      delete origHeaders[name]
+      delete origHeaders[key]
     }
   }
 }
 
 export function requestBody(ctx: Context, modify: BodyModify) {
+  saveOriginInfo(ctx, {
+    requestBody: ctx.remoteRequestBody
+  })
   beforeModifyReqBody(ctx)
   // TODO: support other EditBodyType
   ctx.remoteRequestBody = editStream(ctx.remoteRequestBody, {
@@ -106,6 +111,29 @@ export async function requestFunction(ctx: Context, modify: FunctionMoidfy) {
       type: RuleType.RequestBody,
       value: JSON.stringify(result.requestBody)
     })
+  }
+}
+
+export function responseHeaders(ctx: Context, modify: HeaderModify) {
+  const origHeaders = ctx.responseHeaders
+
+  for (const { name, value, type } of modify.value) {
+    const key = name.toLowerCase()
+    if (key === 'set-cookie') {
+      let cookies = origHeaders[key]
+      if (!cookies) {
+        cookies = origHeaders[key] = []
+      }
+      cookies.push(value)
+    } else {
+      if (type === 'add') {
+        origHeaders[key] = value
+      } else if (type === 'override') {
+        origHeaders[key] = value
+      } else if (type === 'remove') {
+        delete origHeaders[key]
+      }
+    }
   }
 }
 
@@ -209,6 +237,66 @@ export function requestDelay(ctx: Context, to: number) {
  */
 export function responseDelay(ctx: Context, to: number) {
   ctx.responseBody = streamDelay(ctx.responseBody, to)
+}
+
+const vmAxios = Axios.create({
+  timeout: 10000
+})
+
+export async function responseFunction(ctx: Context, funStr: string) {
+  if (!funStr) {
+    return
+  }
+  beforeModifyResBody(ctx)
+
+  const oldStream = ctx.responseBody
+  const newStream = new PassThrough()
+
+  ctx.responseBody = newStream
+
+  try {
+    const resBuf = await toBuffer(oldStream)
+    let response = resBuf.toString()
+
+    if (ctx.responseHeaders['content-type']?.startsWith('application/json')) {
+      response = getJson(response)
+    }
+
+    // 从log 中间件获取request信息
+    const requestBody = ctx.log?.requestBody?.toString()
+    const params = ctx.method === 'GET' ? ctx.request.query : getJson(requestBody)
+
+    const result = await sandbox(
+      {
+        __ctx: ctx,
+        lodash: lodash,
+        axios: vmAxios,
+        request: {
+          url: ctx.request.URL,
+          ip: ctx.request.ip,
+          headers: ctx.request.headers,
+          query: ctx.request.query,
+          body: requestBody
+        },
+        params: params,
+        responseBody: response,
+        responseHeaders: ctx.responseHeaders,
+        responseStatus: ctx.status
+      },
+      funStr
+    )
+
+    if (result) {
+      const body = await result.responseBody
+      ctx.status = Number(result.responseStatus)
+      ctx.responseHeaders = result.responseHeaders
+      newStream.end(typeof body === 'string' ? body : JSON.stringify(body))
+    }
+  } catch (e: any) {
+    ctx.status = 500
+    ctx.responseHeaders['content-type'] = 'text/plain; charset=utf-8'
+    newStream.end('ApiTune response function error ' + e.message)
+  }
 }
 
 function streamDelay(old: Stream, to: number) {

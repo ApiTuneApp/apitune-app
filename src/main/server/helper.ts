@@ -1,6 +1,6 @@
 import child_process from 'node:child_process'
 import { Socket } from 'node:net'
-import { finished, PassThrough, Stream } from 'node:stream'
+import { finished, PassThrough, Readable, Stream } from 'node:stream'
 import pako from 'pako'
 
 import { BodyInfo, Log } from '../../shared/contract'
@@ -272,4 +272,17 @@ export function getJson(data: string | null): any {
     // console.log('getJson error', error)
   }
   return result
+}
+
+export function toBuffer(stream: Readable): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const bufs = [] as Buffer[]
+    stream.on('data', (chunk) => {
+      bufs.push(chunk)
+    })
+    stream.on('end', () => {
+      resolve(Buffer.concat(bufs))
+    })
+    stream.on('error', reject)
+  })
 }

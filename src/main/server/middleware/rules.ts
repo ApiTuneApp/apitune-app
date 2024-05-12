@@ -17,6 +17,27 @@ const requestHandlerMap = {
   },
   [RuleType.RequestFunction]: {
     handler: ruleHandlers.requestFunction
+  },
+  [RuleType.SpeedLimit]: {
+    handler: ruleHandlers.requestSpeedLimit
+  }
+}
+
+const responseHanderMap = {
+  [RuleType.ResponseHeader]: {
+    handler: ruleHandlers.responseHeaders
+  },
+  [RuleType.ResponseBody]: {
+    handler: ruleHandlers.responseBody
+  },
+  [RuleType.ResponseDelay]: {
+    handler: ruleHandlers.responseDelay
+  },
+  [RuleType.ResponseStatus]: {
+    handler: ruleHandlers.responseStatus
+  },
+  [RuleType.ResponseFunction]: {
+    handler: ruleHandlers.responseFunction
   }
 }
 
@@ -41,24 +62,25 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
 
   for (const rule of matchedRules) {
     // run rule handler
-    for (const changes of rule.modifyList) {
-      const handler = requestHandlerMap[changes.type]
+    for (const modify of rule.modifyList) {
+      const handler = requestHandlerMap[modify.type]
       if (handler) {
-        console.log('start handle rule ===>', rule, changes)
-        await handler.handler(ctx, changes)
+        console.log('start handle request rule ===>', rule, modify)
+        await handler.handler(ctx, modify)
       }
     }
   }
   // send request, get data
   await next()
 
-  // mock res data
-  // responseBody(ctx, {
-  //   type: EditBodyType.overwrite,
-  //   content: Buffer.from(
-  //     JSON.stringify({
-  //       data: 'mock data'
-  //     })
-  //   )
-  // })
+  for (const rule of matchedRules) {
+    // run rule handler
+    for (const modify of rule.modifyList) {
+      const handler = responseHanderMap[modify.type]
+      if (handler) {
+        console.log('start handle response rule ===>', rule, modify)
+        await handler.handler(ctx, modify)
+      }
+    }
+  }
 }
