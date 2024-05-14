@@ -120,6 +120,11 @@ export interface HeaderModify extends Modify {
   value: HeaderItem[]
 }
 
+export interface SpeedLimitModify extends Modify {
+  type: RuleType.SpeedLimit
+  value: number
+}
+
 export interface BodyModify extends Modify {
   type: RuleType.RequestBody | RuleType.ResponseBody
   value: string
@@ -128,6 +133,16 @@ export interface BodyModify extends Modify {
 export interface FunctionMoidfy extends Modify {
   type: RuleType.RequestFunction | RuleType.ResponseFunction
   value: string
+}
+
+export interface ResponseStatusModify extends Modify {
+  type: RuleType.ResponseStatus
+  value: number
+}
+
+export interface DelayModify extends Modify {
+  type: RuleType.ResponseDelay
+  value: number
 }
 
 export interface RuleData {

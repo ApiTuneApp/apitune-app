@@ -7,10 +7,13 @@ import { createBrotliDecompress, createGunzip } from 'zlib'
 
 import {
   BodyModify,
+  DelayModify,
   FunctionMoidfy,
   HeaderModify,
   RedirectModify,
-  RuleType
+  ResponseStatusModify,
+  RuleType,
+  SpeedLimitModify
 } from '../../shared/contract'
 import { EditBodyOption, EditBodyType } from './contracts'
 import { getBase64, getJson, sandbox, toBuffer, toStream } from './helper'
@@ -137,8 +140,8 @@ export function responseHeaders(ctx: Context, modify: HeaderModify) {
   }
 }
 
-export function responseStatus(ctx: Context, status: number) {
-  ctx.status = +status
+export function responseStatus(ctx: Context, statusModiy: ResponseStatusModify) {
+  ctx.status = Number(statusModiy.value)
 }
 
 function beforeModifyReqBody(ctx: Context) {
@@ -147,9 +150,12 @@ function beforeModifyReqBody(ctx: Context) {
   }
 }
 
-export function responseBody(ctx: Context, option: EditBodyOption) {
+export function responseBody(ctx: Context, bodyModify: BodyModify) {
   beforeModifyResBody(ctx)
-  ctx.responseBody = editStream(ctx.responseBody, option)
+  ctx.responseBody = editStream(ctx.responseBody, {
+    type: EditBodyType.overwrite,
+    content: bodyModify.value
+  })
 }
 
 function editStream(source: Readable, option: EditBodyOption) {
@@ -190,14 +196,14 @@ function editStream(source: Readable, option: EditBodyOption) {
  * @param ctx
  * @param to x kB/s
  */
-export function requestSpeedLimit(ctx: Context, to: number) {
-  if (!to) {
+export function requestSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
+  if (!modify.value) {
     return
   }
   ctx.remoteRequestBody = ctx.remoteRequestBody.pipe(
     new Transform({
       transform(chunk, encoding, callback) {
-        setTimeout(callback.bind(null, null, chunk), chunk.length / to)
+        setTimeout(callback.bind(null, null, chunk), chunk.length / modify.value)
       }
     })
   )
@@ -208,14 +214,14 @@ export function requestSpeedLimit(ctx: Context, to: number) {
  * @param ctx
  * @param to x kB/s
  */
-export function responseSpeedLimit(ctx: Context, to: number) {
-  if (!to) {
+export function responseSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
+  if (!modify) {
     return
   }
   ctx.responseBody = ctx.responseBody.pipe(
     new Transform({
       transform(chunk, encoding, callback) {
-        setTimeout(callback.bind(null, null, chunk), chunk.length / to)
+        setTimeout(callback.bind(null, null, chunk), chunk.length / modify.value)
       }
     })
   )
@@ -226,8 +232,8 @@ export function responseSpeedLimit(ctx: Context, to: number) {
  * @param ctx
  * @param to 单位ms
  */
-export function requestDelay(ctx: Context, to: number) {
-  ctx.remoteRequestBody = streamDelay(ctx.remoteRequestBody, to)
+export function requestDelay(ctx: Context, delayModify: DelayModify) {
+  ctx.remoteRequestBody = streamDelay(ctx.remoteRequestBody, delayModify.value)
 }
 
 /**
@@ -235,15 +241,16 @@ export function requestDelay(ctx: Context, to: number) {
  * @param ctx
  * @param to 单位ms
  */
-export function responseDelay(ctx: Context, to: number) {
-  ctx.responseBody = streamDelay(ctx.responseBody, to)
+export function responseDelay(ctx: Context, delayModify: DelayModify) {
+  ctx.responseBody = streamDelay(ctx.responseBody, delayModify.value)
 }
 
 const vmAxios = Axios.create({
   timeout: 10000
 })
 
-export async function responseFunction(ctx: Context, funStr: string) {
+export async function responseFunction(ctx: Context, modify: FunctionMoidfy) {
+  const funStr = modify.value
   if (!funStr) {
     return
   }
