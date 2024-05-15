@@ -1,5 +1,3 @@
-import darkScrollbar from '@mui/material/darkScrollbar'
-import { createTheme } from '@mui/material/styles'
 import KeepAlive from 'keepalive-for-react'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
@@ -7,10 +5,9 @@ import Header from './components/header'
 import Sidebar from './components/sidebar'
 import { getApiRules } from './services/rule'
 
-import { ConfigProvider, theme } from 'antd'
-import { Layout } from 'antd'
+import { ConfigProvider, Layout, theme } from 'antd'
 
-const { Header: LayoutHeader, Footer, Sider: LayoutSider, Content } = Layout
+const { Header: LayoutHeader, Sider: LayoutSider, Content: LayoutContent } = Layout
 
 function App(): JSX.Element {
   const outlet = useOutlet()
@@ -52,9 +49,9 @@ function App(): JSX.Element {
             <Sidebar />
           </LayoutSider>
           <Layout>
-            <Content>
+            <LayoutContent>
               <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
-            </Content>
+            </LayoutContent>
           </Layout>
         </Layout>
       </Layout>
