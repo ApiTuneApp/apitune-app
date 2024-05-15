@@ -1,6 +1,5 @@
-import { Box, CssBaseline } from '@mui/material'
 import darkScrollbar from '@mui/material/darkScrollbar'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles'
 import KeepAlive from 'keepalive-for-react'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
@@ -9,19 +8,9 @@ import Sidebar from './components/sidebar'
 import { getApiRules } from './services/rule'
 
 import { ConfigProvider, theme } from 'antd'
+import { Layout } from 'antd'
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark'
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: (themeParam) => ({
-        body: themeParam.palette.mode === 'dark' ? darkScrollbar() : null
-      })
-    }
-  }
-})
+const { Header: LayoutHeader, Footer, Sider: LayoutSider, Content } = Layout
 
 function App(): JSX.Element {
   const outlet = useOutlet()
@@ -40,26 +29,36 @@ function App(): JSX.Element {
   }, [location])
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <ConfigProvider
-        theme={{
-          // 1. 单独使用暗色算法
-          algorithm: theme.darkAlgorithm
-
-          // 2. 组合使用暗色算法与紧凑算法
-          // algorithm: [theme.darkAlgorithm, theme.compactAlgorithm]
-        }}
-      >
-        <CssBaseline enableColorScheme />
-        <Header />
-        <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-          <Sidebar />
-          <Box sx={{ flex: 1 }}>
-            <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
-          </Box>
-        </Box>
-      </ConfigProvider>
-    </ThemeProvider>
+    <ConfigProvider
+      theme={{
+        // 1. 单独使用暗色算法
+        algorithm: theme.darkAlgorithm,
+        components: {
+          Layout: {
+            siderBg: '#141414',
+            algorithm: true
+          }
+        }
+      }}
+    >
+      <Layout>
+        <LayoutHeader
+          style={{ padding: 0, height: 50, display: 'flex', alignItems: 'center', width: '100%' }}
+        >
+          <Header />
+        </LayoutHeader>
+        <Layout>
+          <LayoutSider width="95">
+            <Sidebar />
+          </LayoutSider>
+          <Layout>
+            <Content>
+              <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
+            </Content>
+          </Layout>
+        </Layout>
+      </Layout>
+    </ConfigProvider>
   )
 }
 

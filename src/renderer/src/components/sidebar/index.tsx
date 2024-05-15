@@ -35,7 +35,6 @@ function Sidebar(): JSX.Element {
     <Menu
       className="sidebar-menu"
       onClick={onClick}
-      style={{ width: 90 }}
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       mode="vertical"
