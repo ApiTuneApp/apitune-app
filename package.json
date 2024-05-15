@@ -24,6 +24,7 @@
     "ca:trust": "ts-node --project tsconfig.bin.json src/main/bin/proxyhub-ca.ts trust"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "@electron/remote": "^2.1.2",
@@ -35,6 +36,7 @@
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
     "@mui/x-tree-view": "^6.17.0",
+    "antd": "^5.17.2",
     "async": "^3.2.5",
     "axios": "^1.6.8",
     "cacheable-lookup": "^6.1.0",

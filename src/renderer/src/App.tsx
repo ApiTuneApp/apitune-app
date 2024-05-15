@@ -8,6 +8,8 @@ import Header from './components/header'
 import Sidebar from './components/sidebar'
 import { getApiRules } from './services/rule'
 
+import { ConfigProvider, theme } from 'antd'
+
 const darkTheme = createTheme({
   palette: {
     mode: 'dark'
@@ -39,14 +41,24 @@ function App(): JSX.Element {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline enableColorScheme />
-      <Header />
-      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <Sidebar />
-        <Box sx={{ flex: 1 }}>
-          <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
+      <ConfigProvider
+        theme={{
+          // 1. 单独使用暗色算法
+          algorithm: theme.darkAlgorithm
+
+          // 2. 组合使用暗色算法与紧凑算法
+          // algorithm: [theme.darkAlgorithm, theme.compactAlgorithm]
+        }}
+      >
+        <CssBaseline enableColorScheme />
+        <Header />
+        <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+          <Sidebar />
+          <Box sx={{ flex: 1 }}>
+            <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
+          </Box>
         </Box>
-      </Box>
+      </ConfigProvider>
     </ThemeProvider>
   )
 }
