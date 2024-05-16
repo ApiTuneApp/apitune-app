@@ -3,117 +3,124 @@ import './rules-sidebar.less'
 import * as React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import ExpandMore from '@mui/icons-material/ExpandMore'
-import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined'
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined'
-import QueueOutlinedIcon from '@mui/icons-material/QueueOutlined'
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-  Stack,
-  Switch,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import { TreeItem, TreeItemProps, TreeView } from '@mui/x-tree-view'
-import ConfirmDialog from '@renderer/components/confirm-dialog'
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
+import { findGroupOrRule } from '@shared/utils'
 
-type RuleTreeItemProps = TreeItemProps & {
+import {
+  ExclamationCircleFilled,
+  FileOutlined,
+  FolderAddOutlined,
+  FolderOutlined,
+  MoreOutlined,
+  PlusSquareOutlined
+} from '@ant-design/icons'
+import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
+import { App, Button, Divider, Dropdown, Flex, Input, Modal, Switch, Tooltip, Tree } from 'antd'
+
+type RuleTreeDataNode = TreeDataNode & {
+  rule: RuleGroup | RuleData
+}
+
+type RuleTreeItemProps = {
   labelText: string
   rule: RuleGroup | RuleData
-  onMenuClick?: (event: React.MouseEvent<HTMLElement>) => void
+  onMenuClick: (key: string, rule: RuleGroup) => void
 }
+
+const RuleGroupDropdown: MenuProps['items'] = [
+  {
+    key: 'addRule',
+    label: 'Add Rule'
+  },
+  {
+    key: 'rename',
+    label: 'Rename'
+  },
+  {
+    key: 'delete',
+    label: 'Delete'
+  }
+]
 
 const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   props: RuleTreeItemProps,
   ref: React.Ref<HTMLLIElement>
 ) {
-  const navigate = useNavigate()
   const { labelText, rule, onMenuClick, ...others } = props
 
-  const handleSwitchClick = (e: React.MouseEvent, ruleId: string) => {
+  const handleSwitchClick = (e: React.MouseEvent, checked: boolean, ruleId: string) => {
     e.stopPropagation()
-    window.api.enableRule(ruleId, !rule.enable).then((result) => {
+    window.api.enableRule(ruleId, checked).then((result) => {
       if (result.status === EventResultStatus.Success) {
         RuleService.getApiRules()
       }
     })
   }
 
-  const handleTreeItemClick = (rule: RuleGroup | RuleData) => {
-    if (rule.kind === 'rule') {
-      navigate('/rules/edit/' + rule.id)
-    }
-  }
-
   return (
-    <TreeItem
-      label={
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {rule.kind === 'group' ? (
-            <FolderOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
-          ) : undefined}
-          <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
-            {labelText}
-          </Typography>
-          {rule.kind === 'group' ? (
-            <IconButton
-              size="small"
-              data-rule-id={rule.id}
-              onClick={(e) => {
-                e.stopPropagation()
-                onMenuClick && onMenuClick(e)
-              }}
-            >
-              <MoreHorizOutlinedIcon fontSize="small" />
-            </IconButton>
-          ) : (
-            <Tooltip title={rule.enable ? 'Disable rule' : 'Enable rule'} arrow>
-              <Switch
-                checked={rule.enable}
-                size="small"
-                onClick={(e) => handleSwitchClick(e, rule.id)}
-              />
-            </Tooltip>
-          )}
-        </Box>
-      }
-      onClick={(e) => handleTreeItemClick(rule)}
-      ref={ref}
-      {...others}
-    />
+    <Flex align="center" justify="space-between" ref={ref}>
+      <div className="rule-name-block">
+        {rule.kind === 'group' ? <FolderOutlined /> : <FileOutlined />}
+        <span className="rule-name" style={{ marginLeft: '5px' }}>
+          {labelText}
+        </span>
+      </div>
+      {rule.kind === 'group' ? (
+        <Dropdown
+          menu={{ items: RuleGroupDropdown, onClick: (e) => onMenuClick(e.key, rule) }}
+          trigger={['click']}
+        >
+          <a onClick={(e) => e.preventDefault()}>
+            <MoreOutlined />
+          </a>
+        </Dropdown>
+      ) : (
+        <Tooltip title={rule.enable ? 'Disable rule' : 'Enable rule'} arrow>
+          <Switch
+            size="small"
+            checked={rule.enable}
+            onClick={(checked, e) => handleSwitchClick(e, checked, rule.id)}
+          />
+        </Tooltip>
+      )}
+    </Flex>
   )
 })
 
 function RulesSidebar(): JSX.Element {
   const navigate = useNavigate()
+  const { modal } = App.useApp()
   const apiRules = useRuleStore((state) => state.apiRules)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
   const handleAddGroupClose = () => {
     setAddGroupDialogOpen(false)
     setEditGroupId(null)
   }
-  const handelAddGroupSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const formJson = Object.fromEntries((formData as any).entries())
-    const ruleGroupName = formJson.ruleGroupName
+  const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
+  const [newGroupName, setNewGroupName] = React.useState(
+    editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : ''
+  )
+  const [newGroupInputError, setNewGroupInputError] = React.useState(false)
+  const [expandedKeys, setExpandedKeys] = React.useState<string[]>([])
+
+  React.useEffect(() => {
+    setNewGroupName(editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : '')
+  }, [editGroupId])
+
+  const handleNewGroupNameChange = (value: string) => {
+    setNewGroupName(value)
+    setNewGroupInputError(!value)
+  }
+
+  const handelAddGroupSubmit = async () => {
+    if (!newGroupName) {
+      setNewGroupInputError(true)
+      return
+    }
     if (editGroupId) {
-      const result = await window.api.updateRuleGroupName(editGroupId, ruleGroupName)
+      const result = await window.api.updateRuleGroupName(editGroupId, newGroupName)
       if (result.status === EventResultStatus.Success) {
         RuleService.getApiRules()
       }
@@ -121,7 +128,7 @@ function RulesSidebar(): JSX.Element {
       const result = await window.api.addRule(
         JSON.stringify({
           kind: 'group',
-          name: ruleGroupName,
+          name: newGroupName,
           ruleList: [],
           enable: true
         })
@@ -133,157 +140,124 @@ function RulesSidebar(): JSX.Element {
     handleAddGroupClose()
   }
 
-  const [ruleGroupMenuAnchorEl, setRuleGroupMenuAnchorEl] = React.useState<null | HTMLElement>(null)
-  const groupMenuOpen = Boolean(ruleGroupMenuAnchorEl)
-  const handleGroupMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setRuleGroupMenuAnchorEl(event.currentTarget)
-  }
-  const handleGroupMenuClose = () => {
-    setRuleGroupMenuAnchorEl(null)
-  }
+  const treeData = React.useMemo<RuleTreeDataNode[]>(() => {
+    return apiRules.map((rule) => {
+      if (rule.kind === 'group') {
+        return {
+          key: rule.id,
+          title: rule.name,
+          rule,
+          children: rule.ruleList?.map((r) => ({
+            key: r.id,
+            title: r.name,
+            rule: r
+          }))
+        }
+      } else {
+        return {
+          key: rule.id,
+          title: rule.name,
+          rule
+        }
+      }
+    })
+  }, [apiRules])
 
-  const [delConfirmOpen, setDelConfirmOpen] = React.useState(false)
-  const handleDelConfirmClose = () => {
-    setDelConfirmOpen(false)
-  }
   const handleDelConfirmOpen = () => {
-    setDelConfirmOpen(true)
+    modal.confirm({
+      title: `Are you sure delete "${apiRules.find((r) => r.id === editGroupId)?.name}"?`,
+      icon: <ExclamationCircleFilled />,
+      content: 'Your will not be able to recover this rule group!',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        handleDelConfirm()
+      }
+    })
   }
   const handleDelConfirm = async () => {
     const result = await window.api.deleteRule(editGroupId as string)
     if (result.status === EventResultStatus.Success) {
       RuleService.getApiRules()
     }
-    handleDelConfirmClose()
   }
 
-  const handleGroupMenuItemClick = (event: React.MouseEvent<HTMLElement>) => {
-    const menuItem = event.currentTarget.textContent
-    const gId = (ruleGroupMenuAnchorEl as HTMLElement).getAttribute('data-rule-id')
-    setEditGroupId(gId)
-    if (menuItem === 'Add Rule') {
-      navigate('/rules/new?groupId=' + gId)
-    } else if (menuItem === 'Rename') {
+  const handleGroupMenuItemClick = (key: string, rule: RuleGroup) => {
+    const menuItem = key
+    setEditGroupId(rule.id)
+    if (menuItem === 'addRule') {
+      navigate('/rules/new?groupId=' + rule.id)
+    } else if (menuItem === 'rename') {
       setAddGroupDialogOpen(true)
-    } else if (menuItem === 'Delete') {
+    } else if (menuItem === 'delete') {
       handleDelConfirmOpen()
     }
-    handleGroupMenuClose()
   }
 
-  const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
+  const handleTreeSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
+    const key = info.node.key as string
+    const rule = findGroupOrRule(apiRules, key)
+    if (rule && rule.kind === 'rule') {
+      navigate(`/rules/edit/${rule.id}`)
+    } else {
+      if (expandedKeys.includes(key)) {
+        setExpandedKeys(expandedKeys.filter((k) => k !== key))
+      } else {
+        setExpandedKeys([...expandedKeys, key])
+      }
+    }
+  }
 
   return (
-    <Box className="rules-sidebar" sx={{ backgroundColor: 'var(--color-background-mute)' }}>
-      <Stack direction="row" alignItems="center" sx={{ p: 1 }}>
+    <div className="rules-sidebar">
+      <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
         <Tooltip title="Add Group" arrow>
-          <IconButton sx={{ fontSize: 18 }} onClick={() => setAddGroupDialogOpen(true)}>
-            <QueueOutlinedIcon fontSize="inherit" />
-          </IconButton>
+          <Button
+            type="text"
+            icon={<FolderAddOutlined />}
+            onClick={() => setAddGroupDialogOpen(true)}
+          />
         </Tooltip>
         <Tooltip title="Add Rule" arrow>
           <NavLink to="/rules/new">
-            <IconButton sx={{ fontSize: 18 }}>
-              <AddBoxOutlinedIcon fontSize="inherit" />
-            </IconButton>
+            <Button type="text" icon={<PlusSquareOutlined />} />
           </NavLink>
         </Tooltip>
-      </Stack>
-      <Divider />
-      <Dialog
-        fullWidth={true}
+      </Flex>
+      <Divider style={{ margin: '5px 0' }} />
+      <Modal
+        centered
+        title={`${editGroupId ? 'Edit' : 'New'} Rule Group Name`}
         open={addGroupDialogOpen}
-        onClose={() => handleAddGroupClose()}
-        maxWidth="xs"
-        PaperProps={{
-          component: 'form',
-          onSubmit: handelAddGroupSubmit
-        }}
+        onOk={handelAddGroupSubmit}
+        onCancel={() => handleAddGroupClose()}
       >
-        <DialogTitle>{editGroupId ? 'Edit' : 'New'} Rule Group Name</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="addRuleGroup"
-            name="ruleGroupName"
-            hiddenLabel
-            defaultValue={editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : ''}
-            fullWidth
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAddGroupClose}>Cancel</Button>
-          <Button type="submit">Save</Button>
-        </DialogActions>
-      </Dialog>
-      <Menu
-        id="ruleGroupMenu"
-        anchorEl={ruleGroupMenuAnchorEl}
-        open={groupMenuOpen}
-        onClose={handleGroupMenuClose}
-        MenuListProps={{
-          'aria-labelledby': 'rule-group-button'
+        <Input
+          status={newGroupInputError ? 'error' : ''}
+          value={newGroupName}
+          onChange={(e) => handleNewGroupNameChange(e.target.value)}
+        />
+      </Modal>
+      <Tree
+        className="rules-tree"
+        style={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
+        treeData={treeData}
+        blockNode={true}
+        expandedKeys={expandedKeys}
+        titleRender={(nodeData) => {
+          return (
+            <RuleTreeItem
+              key={nodeData.key}
+              labelText={nodeData.title as string}
+              rule={nodeData.rule as RuleGroup | RuleData}
+              onMenuClick={handleGroupMenuItemClick}
+            />
+          )
         }}
-      >
-        <MenuItem onClick={handleGroupMenuItemClick}>Add Rule</MenuItem>
-        <MenuItem onClick={handleGroupMenuItemClick}>Rename</MenuItem>
-        <MenuItem onClick={handleGroupMenuItemClick}>Delete</MenuItem>
-      </Menu>
-      <ConfirmDialog
-        title={`Delete "${apiRules.find((r) => r.id === editGroupId)?.name}"?`}
-        content="Your will not be able to recover this rule group!"
-        okText="Delete"
-        open={delConfirmOpen}
-        onOKProps={{ color: 'error' }}
-        onClose={handleDelConfirmClose}
-        onConfirm={handleDelConfirm}
+        onSelect={handleTreeSelect}
       />
-      <TreeView
-        aria-label="rules-tree"
-        defaultCollapseIcon={<ExpandMore />}
-        defaultExpandIcon={<ChevronRightIcon />}
-        sx={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
-      >
-        {apiRules.map((rule) => {
-          if (rule.kind === 'group') {
-            return (
-              <RuleTreeItem
-                key={rule.id}
-                nodeId={rule.id}
-                labelText={rule.name}
-                rule={rule}
-                className="rule-item rule-group"
-                onMenuClick={handleGroupMenuClick}
-              >
-                {rule.ruleList &&
-                  rule.ruleList.map((r) => (
-                    <RuleTreeItem
-                      key={r.id}
-                      nodeId={r.id}
-                      labelText={r.name}
-                      rule={r}
-                      className="rule-item"
-                    />
-                  ))}
-              </RuleTreeItem>
-            )
-          } else {
-            return (
-              <RuleTreeItem
-                key={rule.id}
-                nodeId={rule.id}
-                labelText={rule.name}
-                rule={rule}
-                className="rule-item"
-              />
-            )
-          }
-        })}
-      </TreeView>
-    </Box>
+    </div>
   )
 }
 

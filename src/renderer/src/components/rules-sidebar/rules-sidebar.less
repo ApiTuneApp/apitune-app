@@ -1,10 +1,27 @@
+.rules-sidebar {
+  background-color: var(--color-background-mute);
+}
 
-.rule-item {
-  .MuiTreeItem-content {
-    padding: 10px 10px 10px 0;
+.rule-name-block {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+.rules-tree {
+  .ant-tree-treenode {
+    .ant-tree-node-content-wrapper {
+      padding: 4px;
+    }
+    .ant-tree-switcher-icon {
+      position: relative;
+      top: 4px;
+    }
   }
-
-  .MuiTreeItem-iconContainer {
-    display: none !important;
+  .ant-tree-switcher.ant-tree-switcher-noop {
+    display: none;
   }
 }

@@ -5,7 +5,7 @@ import Header from './components/header'
 import Sidebar from './components/sidebar'
 import { getApiRules } from './services/rule'
 
-import { ConfigProvider, Layout, theme } from 'antd'
+import { App as AntApp, ConfigProvider, Layout, theme } from 'antd'
 
 const { Header: LayoutHeader, Sider: LayoutSider, Content: LayoutContent } = Layout
 
@@ -38,23 +38,25 @@ function App(): JSX.Element {
         }
       }}
     >
-      <Layout>
-        <LayoutHeader
-          style={{ padding: 0, height: 50, display: 'flex', alignItems: 'center', width: '100%' }}
-        >
-          <Header />
-        </LayoutHeader>
-        <Layout>
-          <LayoutSider width="95">
-            <Sidebar />
-          </LayoutSider>
+      <AntApp style={{ height: '100vh' }}>
+        <Layout style={{ height: '100%' }}>
+          <LayoutHeader
+            style={{ padding: 0, height: 50, display: 'flex', alignItems: 'center', width: '100%' }}
+          >
+            <Header />
+          </LayoutHeader>
           <Layout>
-            <LayoutContent>
-              <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
-            </LayoutContent>
+            <LayoutSider width="95">
+              <Sidebar />
+            </LayoutSider>
+            <Layout>
+              <LayoutContent>
+                <KeepAlive activeName={cacheKey}>{outlet}</KeepAlive>
+              </LayoutContent>
+            </Layout>
           </Layout>
         </Layout>
-      </Layout>
+      </AntApp>
     </ConfigProvider>
   )
 }
