@@ -153,6 +153,7 @@ export interface RuleData {
   enable: boolean
   kind: 'rule'
   modifyList: Array<Modify | RedirectModify | HeaderModify | BodyModify | FunctionMoidfy>
+  updateTime: number
 }
 
 export interface RuleGroup {
@@ -161,6 +162,7 @@ export interface RuleGroup {
   enable: boolean
   kind: 'group'
   ruleList: RuleData[]
+  updateTime: number
 }
 
 export interface Settings {

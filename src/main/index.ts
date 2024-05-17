@@ -81,6 +81,7 @@ app.whenReady().then(() => {
         if (typeof ruleObj.enable === 'undefined') {
           ruleObj.enable = true
         }
+        ruleObj.updateTime = new Date().getTime()
         // TODO: generate storage key with user name and workspace name
         const key = opts?.storageKey || 'user.default'
         let data = Storage.getSync(key) as StorageData
@@ -133,6 +134,7 @@ app.whenReady().then(() => {
       try {
         const ruleObj = JSON.parse(rules) as RuleData
         const data = Storage.getSync('user.default') as StorageData
+        ruleObj.updateTime = new Date().getTime()
         if (data) {
           if (data.apiRules) {
             const rule = findGroupOrRule(data.apiRules, id)
@@ -187,6 +189,7 @@ app.whenReady().then(() => {
             const rule = findGroupOrRule(data.apiRules, id)
             if (rule) {
               rule.enable = enable
+              rule.updateTime = new Date().getTime()
               Storage.set('user.default', data, (error) => {
                 if (error) {
                   reject({
@@ -236,6 +239,7 @@ app.whenReady().then(() => {
             const rule = data.apiRules.find((r) => r.id === id)
             if (rule) {
               rule.name = ruleName
+              rule.updateTime = new Date().getTime()
               Storage.set('user.default', data, (error) => {
                 if (error) {
                   reject({
