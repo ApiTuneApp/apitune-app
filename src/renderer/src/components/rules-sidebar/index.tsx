@@ -167,6 +167,15 @@ function RulesSidebar(): JSX.Element {
     }
   }
 
+  const onExpand = (_, { node }) => {
+    const key = node.key as string
+    if (expandedKeys.includes(key)) {
+      setExpandedKeys(expandedKeys.filter((k) => k !== key))
+    } else {
+      setExpandedKeys([...expandedKeys, key])
+    }
+  }
+
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
@@ -206,6 +215,7 @@ function RulesSidebar(): JSX.Element {
           )
         }}
         onSelect={handleTreeSelect}
+        onExpand={onExpand}
       />
     </div>
   )
