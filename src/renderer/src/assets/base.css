@@ -27,6 +27,8 @@
   --color-background: var(--ev-c-black);
   --color-background-soft: var(--ev-c-black-soft);
   --color-background-mute: var(--ev-c-black-mute);
+  --color-scrollbar: #444;
+  --color-scrollbar-background: #1E1E1E;
 
   --color-text: var(--ev-c-text-1);
 }
@@ -64,4 +66,20 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* You can also change the scrollbar width and height */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the vertical scrollbar */
+  height: 12px; /* Height of the horizontal scrollbar */
+}
+
+/* This part changes the scrollbar track (the part behind the scrollbar) */
+::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-background); /* Dark grey color, you can choose any color you like */
+}
+
+/* This part changes the scrollbar handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar); /* Medium grey color, this is the actual scrollbar */
 }

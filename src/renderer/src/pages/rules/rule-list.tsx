@@ -1,13 +1,14 @@
 import * as React from 'react'
+import './rules.less'
 
+import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
 import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
-import GroupEditModal from '@renderer/components/group-edit-modal'
 
-import { Switch, Space, Table, Button, App } from 'antd'
-import type { TableProps } from 'antd'
 import { ExclamationCircleFilled } from '@ant-design/icons'
+import type { TableProps } from 'antd'
+import { App, Button, Space, Switch, Table } from 'antd'
 import { NavLink } from 'react-router-dom'
 
 interface RowProps {
@@ -222,13 +223,20 @@ function RuleListPage(): JSX.Element {
   ]
 
   return (
-    <div className="rule-list" style={{ padding: '8px 24px', height: '100%', width: '100%' }}>
+    <div className="rule-list">
       <Table
+        key="id"
         dataSource={apiRules}
         columns={groupColumns}
         expandable={{
           expandedRowRender: (record) => {
-            return <Table dataSource={(record as RuleGroup).ruleList} columns={ruleColumns}></Table>
+            return (
+              <Table
+                key="id"
+                dataSource={(record as RuleGroup).ruleList}
+                columns={ruleColumns}
+              ></Table>
+            )
           },
           rowExpandable: (record) => record.kind === 'group' && record.ruleList.length > 0
         }}
