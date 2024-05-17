@@ -16,8 +16,9 @@ import {
   MoreOutlined,
   PlusSquareOutlined
 } from '@ant-design/icons'
+import GroupEditModal from '@renderer/components/group-edit-modal'
 import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
-import { App, Button, Divider, Dropdown, Flex, Input, Modal, Switch, Tooltip, Tree } from 'antd'
+import { App, Button, Divider, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
 
 type RuleTreeDataNode = TreeDataNode & {
   rule: RuleGroup | RuleData
@@ -94,51 +95,8 @@ function RulesSidebar(): JSX.Element {
   const { modal } = App.useApp()
   const apiRules = useRuleStore((state) => state.apiRules)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
-  const handleAddGroupClose = () => {
-    setAddGroupDialogOpen(false)
-    setEditGroupId(null)
-  }
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
-  const [newGroupName, setNewGroupName] = React.useState(
-    editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : ''
-  )
-  const [newGroupInputError, setNewGroupInputError] = React.useState(false)
   const [expandedKeys, setExpandedKeys] = React.useState<string[]>([])
-
-  React.useEffect(() => {
-    setNewGroupName(editGroupId ? apiRules.find((r) => r.id === editGroupId)?.name : '')
-  }, [editGroupId])
-
-  const handleNewGroupNameChange = (value: string) => {
-    setNewGroupName(value)
-    setNewGroupInputError(!value)
-  }
-
-  const handelAddGroupSubmit = async () => {
-    if (!newGroupName) {
-      setNewGroupInputError(true)
-      return
-    }
-    if (editGroupId) {
-      const result = await window.api.updateRuleGroupName(editGroupId, newGroupName)
-      if (result.status === EventResultStatus.Success) {
-        RuleService.getApiRules()
-      }
-    } else {
-      const result = await window.api.addRule(
-        JSON.stringify({
-          kind: 'group',
-          name: newGroupName,
-          ruleList: [],
-          enable: true
-        })
-      )
-      if (result.status === EventResultStatus.Success) {
-        RuleService.getApiRules()
-      }
-    }
-    handleAddGroupClose()
-  }
 
   const treeData = React.useMemo<RuleTreeDataNode[]>(() => {
     return apiRules.map((rule) => {
@@ -226,19 +184,11 @@ function RulesSidebar(): JSX.Element {
         </Tooltip>
       </Flex>
       <Divider style={{ margin: '5px 0' }} />
-      <Modal
-        centered
-        title={`${editGroupId ? 'Edit' : 'New'} Rule Group Name`}
+      <GroupEditModal
         open={addGroupDialogOpen}
-        onOk={handelAddGroupSubmit}
-        onCancel={() => handleAddGroupClose()}
-      >
-        <Input
-          status={newGroupInputError ? 'error' : ''}
-          value={newGroupName}
-          onChange={(e) => handleNewGroupNameChange(e.target.value)}
-        />
-      </Modal>
+        groupId={editGroupId}
+        onClose={() => setAddGroupDialogOpen(false)}
+      />
       <Tree
         className="rules-tree"
         style={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
