@@ -2,12 +2,13 @@ import * as React from 'react'
 
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
-import { ApiRuleItem, EventResultStatus } from '@shared/contract'
+import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 
 import { Switch, Space, Table, Button, App } from 'antd'
 import type { TableProps } from 'antd'
 import { ExclamationCircleFilled } from '@ant-design/icons'
+import { NavLink } from 'react-router-dom'
 
 interface RowProps {
   rule: ApiRuleItem
@@ -169,9 +170,69 @@ function RuleListPage(): JSX.Element {
     }
   ]
 
+  const ruleColumns: TableProps<RuleData>['columns'] = [
+    {
+      title: 'Rule Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (_, r) => {
+        return <NavLink to={`/rules/edit/${r.id}`}>{r.name}</NavLink>
+      }
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description'
+    },
+    {
+      title: 'Rule Enabled',
+      dataIndex: 'enable',
+      key: 'enable',
+      render: (enable, rule) => {
+        return (
+          <Switch
+            checked={enable}
+            size="small"
+            onChange={(checked) => triggerRuleEnable(rule, checked)}
+          />
+        )
+      }
+    },
+    {
+      title: 'Updated on',
+      dataIndex: 'updateTime',
+      key: 'updateTime',
+      render: (updateTime) => {
+        return new Date(updateTime).toLocaleString()
+      }
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text, record) => {
+        return (
+          <Space size="middle">
+            <Button type="text" danger onClick={(e) => handleDelConfirmOpen(record.id)}>
+              Delete
+            </Button>
+          </Space>
+        )
+      }
+    }
+  ]
+
   return (
     <div className="rule-list" style={{ padding: '8px 24px', height: '100%', width: '100%' }}>
-      <Table dataSource={apiRules} columns={groupColumns}></Table>
+      <Table
+        dataSource={apiRules}
+        columns={groupColumns}
+        expandable={{
+          expandedRowRender: (record) => {
+            return <Table dataSource={(record as RuleGroup).ruleList} columns={ruleColumns}></Table>
+          },
+          rowExpandable: (record) => record.kind === 'group' && record.ruleList.length > 0
+        }}
+      ></Table>
       <GroupEditModal
         open={groupNameModalOpen}
         groupId={editGroupId}
