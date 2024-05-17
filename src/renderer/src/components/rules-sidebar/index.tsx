@@ -50,6 +50,7 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   ref: React.Ref<HTMLLIElement>
 ) {
   const { labelText, rule, onMenuClick, ...others } = props
+  const [showMenu, setShowMenu] = React.useState(false)
 
   const handleSwitchClick = (e: React.MouseEvent, checked: boolean, ruleId: string) => {
     e.stopPropagation()
@@ -60,8 +61,24 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
     })
   }
 
+  const handleHover = () => {
+    if (rule.kind === 'group') {
+      setShowMenu(true)
+    }
+  }
+
+  const handleLeave = () => {
+    setShowMenu(false)
+  }
+
   return (
-    <Flex align="center" justify="space-between" ref={ref}>
+    <Flex
+      align="center"
+      justify="space-between"
+      ref={ref}
+      onMouseEnter={handleHover}
+      onMouseLeave={handleLeave}
+    >
       <div className="rule-name-block">
         {rule.kind === 'group' ? <FolderOutlined /> : <FileOutlined />}
         <span className="rule-name" style={{ marginLeft: '5px' }}>
@@ -73,7 +90,13 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
           menu={{ items: RuleGroupDropdown, onClick: (e) => onMenuClick(e.key, rule) }}
           trigger={['click']}
         >
-          <a onClick={(e) => e.preventDefault()}>
+          <a
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            style={{ display: showMenu ? 'inherit' : 'none' }}
+          >
             <MoreOutlined />
           </a>
         </Dropdown>
