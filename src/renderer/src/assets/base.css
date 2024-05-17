@@ -30,6 +30,11 @@
   --color-scrollbar: #444;
   --color-scrollbar-background: #1E1E1E;
 
+  --color-elevation-0: #121212;
+  --color-elevation-1: #222222;
+  --color-elevation-2: #282828;
+  --color-elevation-3: #2b2b2b;
+
   --color-text: var(--ev-c-text-1);
 }
 

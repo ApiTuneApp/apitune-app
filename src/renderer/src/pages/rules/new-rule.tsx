@@ -1,33 +1,10 @@
 import '@renderer/components/add-rule-item/index.less'
+import './rules.less'
 
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
-import ArrowDropDownCircleOutlinedIcon from '@mui/icons-material/ArrowDropDownCircleOutlined'
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
-import {
-  Alert,
-  Autocomplete,
-  Box,
-  Button,
-  FormControl,
-  FormControlLabel,
-  IconButton,
-  Input,
-  Menu,
-  MenuItem,
-  Paper,
-  Select,
-  Snackbar,
-  Stack,
-  Switch,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
+import { FormControl, Paper } from '@mui/material'
 import { RuleItem } from '@renderer/common/contract'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
@@ -41,33 +18,43 @@ import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, RuleData, RuleType } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
-import { use } from 'marked'
+
+import { Flex, Button, Dropdown, Tooltip, Switch, Select, App, Input, Space } from 'antd'
+import {
+  DeleteOutlined,
+  DownCircleOutlined,
+  DownOutlined,
+  ExperimentOutlined,
+  LeftOutlined
+} from '@ant-design/icons'
 
 const reqMethods = ReqMethods.map((item) => ({
-  label: item
+  label: item,
+  value: item
 }))
 
 const AddRulesMenu: RuleMenuItem[] = [
-  { type: RuleType.Redirect, label: 'ReDirect' },
-  { type: RuleType.SpeedLimit, label: 'Add Speed Limit' },
-  { type: RuleType.RequestHeader, label: 'Modify Request Headers' },
-  { type: RuleType.RequestBody, label: 'Modify Request Body' },
-  { type: RuleType.RequestFunction, label: 'Add Request Function' },
-  { type: RuleType.ResponseHeader, label: 'Modify Response Headers' },
-  { type: RuleType.ResponseBody, label: 'Modify Response Body' },
-  { type: RuleType.ResponseDelay, label: 'Add Response Delay' },
-  // { type: Rules.ResponseFile, label: 'Replace Response With File' },
-  { type: RuleType.ResponseFunction, label: 'Add Response Function' },
-  { type: RuleType.ResponseStatus, label: 'Modify Response Status' }
+  { key: RuleType.Redirect, label: 'ReDirect' },
+  { key: RuleType.SpeedLimit, label: 'Add Speed Limit' },
+  { key: RuleType.RequestHeader, label: 'Modify Request Headers' },
+  { key: RuleType.RequestBody, label: 'Modify Request Body' },
+  { key: RuleType.RequestFunction, label: 'Add Request Function' },
+  { key: RuleType.ResponseHeader, label: 'Modify Response Headers' },
+  { key: RuleType.ResponseBody, label: 'Modify Response Body' },
+  { key: RuleType.ResponseDelay, label: 'Add Response Delay' },
+  // { key: Rules.ResponseFile, label: 'Replace Response With File' },
+  { key: RuleType.ResponseFunction, label: 'Add Response Function' },
+  { key: RuleType.ResponseStatus, label: 'Modify Response Status' }
 ]
 
 type RuleMenuItem = {
-  type: RuleType
+  key: RuleType
   label: string
 }
 
 function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
+  const { message } = App.useApp()
   const [searchParams] = useSearchParams()
   const groupId = searchParams.get('groupId')
 
@@ -106,24 +93,22 @@ function NewRulePage(): JSX.Element {
   const [matchMethods, setMatchMethods] = useState<string[]>([])
 
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
-  const [addRuleAnchorEl, setAddRuleAnchorEl] = useState<null | HTMLElement>(null)
-  const addRuleOpen = Boolean(addRuleAnchorEl)
   const [modifyList, setChangeList] = useState<RuleItem[]>([])
 
-  const [addRuleResult, setAddRuleResult] = useState<IpcResult>()
-
-  const handleAddRuleClose = () => {
-    setAddRuleAnchorEl(null)
+  const showAddRuleResult = (result: IpcResult) => {
+    if (result.status === EventResultStatus.Success) {
+      message.success(`Rule ${editRuleId ? 'edited' : 'added'} successfully`, () => {
+        RuleService.getApiRules()
+        navigate('/rules/list')
+      })
+    } else {
+      message.error(`Error: ${result.error}`)
+    }
   }
 
-  const showAddRuleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAddRuleAnchorEl(event.currentTarget)
-  }
-
-  const handleAddRuleClick = (rule: RuleMenuItem) => {
-    setAddRuleAnchorEl(null)
-    const initValue: RuleItem = { type: rule.type, value: '', valid: false }
-    if (rule.type === RuleType.ResponseStatus) {
+  const handleAddRuleClick = (key: RuleType) => {
+    const initValue: RuleItem = { type: key, value: '', valid: false }
+    if (key === RuleType.ResponseStatus) {
       initValue.value = 200
     }
     setChangeList((prevRules) => [...prevRules, initValue])
@@ -196,7 +181,7 @@ function NewRulePage(): JSX.Element {
     })
     const formValid = modifyList.every((rule) => rule.valid)
     if (!ruleName) {
-      setAddRuleResult({
+      showAddRuleResult({
         status: EventResultStatus.Error,
         error: 'Rule name is required'
       })
@@ -205,7 +190,7 @@ function NewRulePage(): JSX.Element {
     if (formValid) {
       if (editRuleId) {
         if (!editRule) {
-          setAddRuleResult({
+          showAddRuleResult({
             status: EventResultStatus.Error,
             error: 'Rule not found'
           })
@@ -230,7 +215,7 @@ function NewRulePage(): JSX.Element {
             }))
           })
         )
-        setAddRuleResult(result)
+        showAddRuleResult(result)
       } else {
         const result = await window.api.addRule(
           JSON.stringify({
@@ -251,7 +236,7 @@ function NewRulePage(): JSX.Element {
           }),
           { groupId: groupId as string }
         )
-        setAddRuleResult(result)
+        showAddRuleResult(result)
       }
     }
   }
@@ -261,208 +246,142 @@ function NewRulePage(): JSX.Element {
     setChangeList(newRules)
   }
 
-  const handleResultClose = () => {
-    setAddRuleResult(undefined)
-    if (addRuleResult?.status === EventResultStatus.Success) {
-      RuleService.getApiRules()
-      navigate('/rules/list')
-    }
-  }
-
   return (
-    <Box
-      className="page-new"
-      sx={{ height: '100%', p: 2, display: 'flex', flexDirection: 'column' }}
-    >
-      <Box
-        sx={{ pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-        color="var(--ev-c-text-2)"
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <div className="page-new">
+      <div className="page-new-header">
+        <Flex align="center">
           <Tooltip title="Go back to rule list">
-            <IconButton onClick={() => navigate('/rules/list')} color="inherit" size="small">
-              <ArrowBackIosNewIcon fontSize="small" />
-            </IconButton>
+            <Button
+              className="normal-link"
+              onClick={() => navigate('/rules/list')}
+              type="link"
+              size="small"
+            >
+              <LeftOutlined />
+            </Button>
           </Tooltip>
           {editRuleId ? (
-            <Typography ml={1}>Edit Rule / {editRule?.name}</Typography>
+            <span>Edit Rule / {editRule?.name}</span>
           ) : (
-            <Typography ml={1}>
-              {groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule
-            </Typography>
+            <span>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</span>
           )}
-        </Box>
-        <Box>
-          <FormControlLabel
-            sx={{ pr: 2 }}
-            control={
-              <Switch
-                checked={ruleEnable}
-                onChange={(e) => setRuleEnable(e.target.checked)}
-              ></Switch>
-            }
-            labelPlacement="start"
-            label={ruleEnable ? 'Enabled' : 'Disabled'}
-          />
-          <Button color="primary" variant="contained" size="small" type="submit" form="addRuleForm">
+        </Flex>
+        <div>
+          <Switch
+            style={{ marginRight: '10px' }}
+            checkedChildren="Enabled"
+            unCheckedChildren="Disabled"
+            checked={ruleEnable}
+            onChange={(checked) => setRuleEnable(checked)}
+          ></Switch>
+          <Button type="primary" form="addRuleForm">
             Save
           </Button>
-        </Box>
-      </Box>
-
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={!!addRuleResult}
-        autoHideDuration={1500}
-        onClose={handleResultClose}
-      >
-        {addRuleResult && (
-          <Alert
-            onClose={handleResultClose}
-            severity={addRuleResult?.status === EventResultStatus.Success ? 'success' : 'error'}
-            variant="filled"
-            sx={{ width: '100%' }}
-          >
-            {addRuleResult?.status === EventResultStatus.Success
-              ? `Rule ${editRuleId ? 'edited' : 'added'} successfully`
-              : 'Error: ' + addRuleResult?.error}
-          </Alert>
-        )}
-      </Snackbar>
-
-      <Box sx={{ pt: 1, px: 8, overflowY: 'auto' }}>
-        <TextField
-          fullWidth
-          label="Add Rule Name"
-          size="small"
-          sx={{ pb: 2 }}
+        </div>
+      </div>
+      <div style={{ padding: '4px 36px', overflowY: 'auto' }}>
+        <Input
+          size="large"
+          placeholder="Add Rule Name"
+          style={{ marginBottom: '8px' }}
           value={ruleName}
           onChange={(e) => setRuleName(e.target.value)}
         />
-        <Input
-          fullWidth
-          multiline
+        <Input.TextArea
+          size="large"
           placeholder="Add Description (Optional)"
-          size="small"
-          disableUnderline
-          sx={{ pb: 4 }}
+          style={{ marginBottom: '16px' }}
           value={ruleDesc}
           onChange={(e) => setRuleDesc(e.target.value)}
         />
-        <Paper elevation={3} sx={{ px: 2, py: 1 }}>
-          <Typography variant="subtitle1">If Request Match:</Typography>
-          <Stack flexDirection="row" gap={1} sx={{ pt: 1 }}>
+        <div className="paper-block e2">
+          <h3>If Request Match:</h3>
+          <Flex gap={1} style={{ paddingBottom: '4px' }}>
             <Select
-              size="small"
+              size="large"
               defaultValue="url"
               value={matchType}
-              onChange={(e) => setMatchType(e.target.value)}
-            >
-              <MenuItem value="url">URL</MenuItem>
-              <MenuItem value="host">Host</MenuItem>
-              <MenuItem value="path">Path</MenuItem>
-            </Select>
+              options={[
+                { label: 'URL', value: 'url' },
+                { label: 'Host', value: 'host' },
+                { label: 'Path', value: 'path' }
+              ]}
+              onChange={(value) => setMatchType(value)}
+            />
             <Select
-              size="small"
+              size="large"
               defaultValue="contains"
               value={matchMode}
-              onChange={(e) => setMatchMode(e.target.value)}
-            >
-              <MenuItem value="contains">Contains</MenuItem>
-              <MenuItem value="equals">Equals</MenuItem>
-              <MenuItem value="matches">Matches(Regex)</MenuItem>
-            </Select>
-            <TextField
-              size="small"
-              sx={{ flex: 1 }}
+              options={[
+                { label: 'Contains', value: 'contains' },
+                { label: 'Equals', value: 'equals' },
+                { label: 'Matches(Regex)', value: 'matches' }
+              ]}
+              onChange={(value) => setMatchMode(value)}
+            />
+            <Input
+              style={{ flex: 1 }}
               value={matchValue}
               onChange={(e) => setMatchValue(e.target.value)}
             />
             <Tooltip title="Test macth rules">
-              <IconButton>
-                <ScienceOutlinedIcon />
-              </IconButton>
+              <ExperimentOutlined style={{ fontSize: '20px', marginLeft: '8px' }} />
             </Tooltip>
             <Tooltip title="Request methods filter">
-              <IconButton onClick={() => setShowReqMethodsFilter(!showReqMethodsFilter)}>
-                <ArrowDropDownCircleOutlinedIcon
-                  sx={{ rotate: showReqMethodsFilter ? '180deg' : 'none' }}
-                />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-          {showReqMethodsFilter && (
-            <Paper elevation={1} sx={{ p: 1, mt: 1 }}>
-              <Autocomplete
-                multiple
-                size="small"
-                options={reqMethods}
-                value={matchMethods.map((item) => ({ label: item }))}
-                onChange={(_, value) => setMatchMethods(value.map((item) => item.label))}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Request methods:"
-                    variant="standard"
-                    placeholder="Select methods (leave empty to match all)"
-                    size="small"
-                  />
-                )}
+              <DownCircleOutlined
+                onClick={() => setShowReqMethodsFilter(!showReqMethodsFilter)}
+                style={{
+                  fontSize: '20px',
+                  marginLeft: '8px',
+                  rotate: showReqMethodsFilter ? '180deg' : 'none'
+                }}
               />
-            </Paper>
+            </Tooltip>
+          </Flex>
+          {showReqMethodsFilter && (
+            <Select
+              allowClear
+              size="large"
+              mode="multiple"
+              placeholder="Select methods (leave empty to match all)"
+              value={matchMethods}
+              onChange={setMatchMethods}
+              style={{ width: '100%', marginTop: '8px' }}
+              options={reqMethods}
+            />
           )}
-        </Paper>
-        <Button
-          aria-haspopup="true"
-          aria-controls={addRuleOpen ? 'add-rule-menu' : undefined}
-          aria-expanded={addRuleOpen ? 'true' : undefined}
-          disableElevation
-          variant="contained"
-          sx={{ my: 2 }}
-          endIcon={<KeyboardArrowDownIcon />}
-          onClick={showAddRuleMenu}
-        >
-          Add Rules
-        </Button>
-        <Menu
-          id="add-rule-menu"
-          anchorEl={addRuleAnchorEl}
-          open={addRuleOpen}
-          onClose={handleAddRuleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button'
+        </div>
+        <Dropdown
+          menu={{
+            items: AddRulesMenu,
+            onClick: (item) => handleAddRuleClick(item.key as RuleType)
           }}
         >
-          {AddRulesMenu.map((rule) => (
-            <MenuItem
-              onClick={() => handleAddRuleClick(rule)}
-              key={rule.type}
-              disabled={modifyList.some((item) => item.type === rule.type)}
-            >
-              {rule.label}
-            </MenuItem>
-          ))}
-        </Menu>
-        <Paper
-          elevation={3}
-          component="form"
-          onSubmit={handleAddRuleSubmit}
-          id="addRuleForm"
-          noValidate
-        >
+          <Button type="primary" style={{ margin: '8px 0' }}>
+            <Space>
+              Add Rules
+              <DownOutlined />
+            </Space>
+          </Button>
+        </Dropdown>
+        <div className="paper-block e2">
           {modifyList.map((rule, index) => (
-            <FormControl key={index} fullWidth>
-              <Tooltip title="remove rule" placement="top" arrow onClick={() => removeRule(index)}>
-                <IconButton size="small" sx={{ position: 'absolute', top: '10px', right: '10px' }}>
-                  <DeleteOutlinedIcon fontSize="small" />
-                </IconButton>
+            <Flex key={index} vertical style={{ width: '100%' }}>
+              <Tooltip title="remove rule" placement="top" arrow>
+                <Button
+                  size="small"
+                  style={{ position: 'absolute', top: '10px', right: '10px' }}
+                  onClick={() => removeRule(index)}
+                >
+                  <DeleteOutlined />
+                </Button>
               </Tooltip>
               {getAddRuleValueComponent(rule)}
-            </FormControl>
+            </Flex>
           ))}
-        </Paper>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   )
 }
 

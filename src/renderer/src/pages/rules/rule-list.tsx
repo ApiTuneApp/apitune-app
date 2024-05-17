@@ -143,7 +143,7 @@ function RuleListPage(): JSX.Element {
   ]
 
   return (
-    <div className="rule-list">
+    <div className="page-rule-list">
       <Table
         rowKey="id"
         dataSource={apiRules}
