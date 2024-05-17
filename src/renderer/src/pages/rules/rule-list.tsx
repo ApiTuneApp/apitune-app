@@ -11,86 +11,6 @@ import type { TableProps } from 'antd'
 import { App, Button, Space, Switch, Table } from 'antd'
 import { NavLink } from 'react-router-dom'
 
-interface RowProps {
-  rule: ApiRuleItem
-  triggerRuleEnable: (rule: ApiRuleItem, enable: boolean) => void
-}
-
-function Row({ rule, triggerRuleEnable }: RowProps) {
-  const [open, setOpen] = React.useState(false)
-
-  return (
-    <React.Fragment>
-      {/* <TableRow>
-        <TableCell>
-          {rule.kind === 'group' && rule.ruleList.length > 0 ? (
-            <IconButton aria-label="expand rule" size="small" onClick={() => setOpen(!open)}>
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          ) : null}
-        </TableCell>
-        <TableCell>{rule.name}</TableCell>
-        <TableCell>
-          <Switch
-            checked={rule.enable}
-            size="small"
-            onChange={(e) => triggerRuleEnable(rule, e.target.checked)}
-          />
-        </TableCell>
-        <TableCell>Jan 04, 2024</TableCell>
-        <TableCell align="center">
-          <Button>Rename</Button>
-          <Button>Edit</Button>
-          <Button color="error">Delete</Button>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Rule Name</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Rule Enable</TableCell>
-                    <TableCell>Updated on</TableCell>
-                    <TableCell align="center">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {(rule as RuleGroup).ruleList.map((r: RuleData) => (
-                    <TableRow key={r.id}>
-                      <TableCell>
-                        <NavLink to={`/rules/edit/${r.id}`}>{r.name}</NavLink>
-                      </TableCell>
-                      <TableCell>{r.description}</TableCell>
-                      <TableCell>
-                        <Switch
-                          checked={r.enable}
-                          size="small"
-                          onChange={(e) => triggerRuleEnable(rule, e.target.checked)}
-                        />
-                      </TableCell>
-                      <TableCell>Jan 04, 2024</TableCell>
-                      <TableCell align="center">
-                        <Button size="small">Edit</Button>
-                        <Button color="error" size="small">
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow> */}
-    </React.Fragment>
-  )
-}
-
 function RuleListPage(): JSX.Element {
   const { modal } = App.useApp()
   const apiRules = useRuleStore((state) => state.apiRules)
@@ -225,16 +145,18 @@ function RuleListPage(): JSX.Element {
   return (
     <div className="rule-list">
       <Table
-        key="id"
+        rowKey="id"
         dataSource={apiRules}
         columns={groupColumns}
+        pagination={false}
         expandable={{
           expandedRowRender: (record) => {
             return (
               <Table
-                key="id"
+                rowKey="id"
                 dataSource={(record as RuleGroup).ruleList}
                 columns={ruleColumns}
+                pagination={false}
               ></Table>
             )
           },
