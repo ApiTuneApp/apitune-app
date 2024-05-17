@@ -2,14 +2,14 @@ import './assets/main.less'
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom'
+
 import App from './App'
 import NetworkPage from './pages/network'
 import RulesPage from './pages/rules'
 import NewRulePage from './pages/rules/new-rule'
 import RuleListPage from './pages/rules/rule-list'
 import SettingsPage from './pages/settings'
-
-import { Navigate, RouterProvider, createHashRouter } from 'react-router-dom'
 
 const router = createHashRouter([
   {

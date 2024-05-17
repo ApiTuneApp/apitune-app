@@ -1,11 +1,11 @@
 import './sidebar.less'
 
+import { Menu } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
-import { Menu } from 'antd'
-import type { MenuProps } from 'antd'
 import { AppstoreOutlined, RadarChartOutlined, SettingOutlined } from '@ant-design/icons'
 
+import type { MenuProps } from 'antd'
 type MenuItem = Required<MenuProps>['items'][number]
 
 const items: MenuItem[] = [

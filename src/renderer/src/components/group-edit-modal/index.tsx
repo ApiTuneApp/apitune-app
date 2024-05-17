@@ -1,8 +1,9 @@
+import { Input, Modal } from 'antd'
+import * as React from 'react'
+
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
 import { EventResultStatus } from '@shared/contract'
-import { Input, Modal } from 'antd'
-import * as React from 'react'
 
 type NameModalProps = {
   open: boolean

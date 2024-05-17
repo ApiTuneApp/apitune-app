@@ -1,12 +1,8 @@
 import './rules-sidebar.less'
 
+import { App, Button, Divider, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
 import * as React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-
-import * as RuleService from '@renderer/services/rule'
-import { useRuleStore } from '@renderer/store'
-import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
-import { findGroupOrRule } from '@shared/utils'
 
 import {
   ExclamationCircleFilled,
@@ -17,9 +13,12 @@ import {
   PlusSquareOutlined
 } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
-import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
-import { App, Button, Divider, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
+import * as RuleService from '@renderer/services/rule'
+import { useRuleStore } from '@renderer/store'
+import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
+import { findGroupOrRule } from '@shared/utils'
 
+import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
 type RuleTreeDataNode = TreeDataNode & {
   rule: RuleGroup | RuleData
 }

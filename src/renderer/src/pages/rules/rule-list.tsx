@@ -1,15 +1,16 @@
-import * as React from 'react'
 import './rules.less'
 
+import { App, Button, Space, Switch, Table } from 'antd'
+import * as React from 'react'
+import { NavLink } from 'react-router-dom'
+
+import { ExclamationCircleFilled } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
 import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 
-import { ExclamationCircleFilled } from '@ant-design/icons'
 import type { TableProps } from 'antd'
-import { App, Button, Space, Switch, Table } from 'antd'
-import { NavLink } from 'react-router-dom'
 
 function RuleListPage(): JSX.Element {
   const { modal } = App.useApp()

@@ -1,10 +1,17 @@
 import '@renderer/components/add-rule-item/index.less'
 import './rules.less'
 
+import { App, Button, Dropdown, Flex, Input, Select, Space, Switch, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-import { FormControl, Paper } from '@mui/material'
+import {
+  DeleteOutlined,
+  DownCircleOutlined,
+  DownOutlined,
+  ExperimentOutlined,
+  LeftOutlined
+} from '@ant-design/icons'
 import { RuleItem } from '@renderer/common/contract'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
@@ -18,15 +25,6 @@ import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, RuleData, RuleType } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
-
-import { Flex, Button, Dropdown, Tooltip, Switch, Select, App, Input, Space } from 'antd'
-import {
-  DeleteOutlined,
-  DownCircleOutlined,
-  DownOutlined,
-  ExperimentOutlined,
-  LeftOutlined
-} from '@ant-design/icons'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item,

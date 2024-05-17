@@ -1,9 +1,9 @@
 import './rules.less'
 
-import RulesSidebar from '@renderer/components/rules-sidebar'
+import { Flex } from 'antd'
 import { Outlet } from 'react-router-dom'
 
-import { Flex } from 'antd'
+import RulesSidebar from '@renderer/components/rules-sidebar'
 
 function RulesPage(): JSX.Element {
   return (

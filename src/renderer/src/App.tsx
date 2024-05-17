@@ -1,11 +1,11 @@
+import { App as AntApp, ConfigProvider, Layout, theme } from 'antd'
 import KeepAlive from 'keepalive-for-react'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
+
 import Header from './components/header'
 import Sidebar from './components/sidebar'
 import { getApiRules } from './services/rule'
-
-import { App as AntApp, ConfigProvider, Layout, theme } from 'antd'
 
 const { Header: LayoutHeader, Sider: LayoutSider, Content: LayoutContent } = Layout
 
