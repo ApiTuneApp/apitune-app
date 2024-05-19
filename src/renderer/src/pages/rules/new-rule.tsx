@@ -1,7 +1,7 @@
 import '@renderer/components/add-rule-item/index.less'
 import './rules.less'
 
-import { App, Button, Dropdown, Flex, Input, Select, Space, Switch, Tooltip } from 'antd'
+import { App, Button, Dropdown, Flex, Form, Input, Select, Space, Switch, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
@@ -55,6 +55,7 @@ function NewRulePage(): JSX.Element {
   const { message } = App.useApp()
   const [searchParams] = useSearchParams()
   const groupId = searchParams.get('groupId')
+  const [form] = Form.useForm()
 
   const apiRules = useRuleStore((state) => state.apiRules)
   const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
@@ -170,6 +171,14 @@ function NewRulePage(): JSX.Element {
     }
   }
 
+  const handleFormSubmit = () => {
+    form.submit()
+  }
+
+  const handleFinish = (values: any) => {
+    console.log('Received values of form:', values)
+  }
+
   const handleAddRuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     modifyList.forEach((rule) => {
@@ -272,7 +281,7 @@ function NewRulePage(): JSX.Element {
             checked={ruleEnable}
             onChange={(checked) => setRuleEnable(checked)}
           ></Switch>
-          <Button type="primary" form="addRuleForm">
+          <Button type="primary" onClick={handleFormSubmit}>
             Save
           </Button>
         </div>
@@ -294,7 +303,7 @@ function NewRulePage(): JSX.Element {
         />
         <div className="paper-block e2">
           <h3>If Request Match:</h3>
-          <Flex gap={1} style={{ paddingBottom: '4px' }}>
+          <Flex gap={4} style={{ paddingBottom: '4px' }}>
             <Select
               size="large"
               defaultValue="url"
@@ -362,22 +371,27 @@ function NewRulePage(): JSX.Element {
             </Space>
           </Button>
         </Dropdown>
-        <div className="paper-block e2">
-          {modifyList.map((rule, index) => (
-            <Flex key={index} vertical style={{ width: '100%' }}>
-              <Tooltip title="remove rule" placement="top" arrow>
-                <Button
-                  size="small"
-                  style={{ position: 'absolute', top: '10px', right: '10px' }}
-                  onClick={() => removeRule(index)}
-                >
-                  <DeleteOutlined />
-                </Button>
-              </Tooltip>
-              {getAddRuleValueComponent(rule)}
-            </Flex>
-          ))}
-        </div>
+        {modifyList.length > 0 && (
+          <Form
+            form={form}
+            layout="vertical"
+            size="large"
+            className="paper-block e2"
+            onFinish={handleFinish}
+          >
+            {modifyList.map((rule, index) => (
+              <div key={index} style={{ position: 'relative' }}>
+                <Tooltip title="remove rule" placement="top" arrow>
+                  <DeleteOutlined
+                    style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 999 }}
+                    onClick={() => removeRule(index)}
+                  />
+                </Tooltip>
+                {getAddRuleValueComponent(rule)}
+              </div>
+            ))}
+          </Form>
+        )}
       </div>
     </div>
   )

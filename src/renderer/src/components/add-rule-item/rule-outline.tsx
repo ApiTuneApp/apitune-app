@@ -1,21 +1,14 @@
+import { Form } from 'antd'
 import { ReactElement } from 'react'
-
-import { Box, Typography } from '@mui/material'
 
 type RuleOutlineProps = {
   title: string
-  WrapComponent: ReactElement
+  WrapComponent?: ReactElement
+  children?: ReactElement
 }
 
-function RuleOutline({ title, WrapComponent }: RuleOutlineProps) {
-  return (
-    <Box className="rule-value-item">
-      <Typography variant="subtitle1" gutterBottom>
-        {title}
-      </Typography>
-      {WrapComponent}
-    </Box>
-  )
+function RuleOutline({ title, children }: RuleOutlineProps) {
+  return <Form.Item label={title}>{children}</Form.Item>
 }
 
 export default RuleOutline

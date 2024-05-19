@@ -1,51 +1,15 @@
-import { useState } from 'react'
-
-import { InputAdornment, TextField } from '@mui/material'
+import { Input, Form } from 'antd'
 import { AddRuleValueProps } from '@renderer/common/contract'
 
-import RuleOutline from './rule-outline'
-
-function SpeedLimit({ rule, setValue, setValid }: AddRuleValueProps): JSX.Element {
-  const [errorMsg, setErrorMsg] = useState('')
-  function validator(value: string) {
-    let valid = true
-    if (!value || !value.trim()) {
-      valid = false
-      setErrorMsg('Speed limit is required')
-    } else {
-      valid = true
-      setErrorMsg('')
-    }
-    // rule.valid = valid
-    setValid(valid)
-  }
-
-  rule.validator = validator
+function SpeedLimit({ rule }: AddRuleValueProps): JSX.Element {
   return (
-    <RuleOutline
-      title="Speed limit:"
-      WrapComponent={
-        <TextField
-          hiddenLabel
-          fullWidth
-          required
-          placeholder="please input speed limit"
-          size="small"
-          value={rule.value}
-          type="number"
-          error={!!errorMsg}
-          helperText={errorMsg}
-          onChange={(e) => {
-            const value = e.target.value
-            validator(value)
-            setValue(value)
-          }}
-          InputProps={{
-            endAdornment: <InputAdornment position="start">KB/s</InputAdornment>
-          }}
-        ></TextField>
-      }
-    />
+    <Form.Item
+      label="Speed limit:"
+      name={rule.type}
+      rules={[{ required: true, message: 'Speed limit is required' }]}
+    >
+      <Input type="number" placeholder="please input speed limit" addonAfter="KB/s" />
+    </Form.Item>
   )
 }
 
