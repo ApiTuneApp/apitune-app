@@ -1,12 +1,12 @@
-import { Input, Form } from 'antd'
+import { Form, Input } from 'antd'
 
 import { AddRuleValueProps } from '@renderer/common/contract'
 
-function Redirect({ rule }: AddRuleValueProps): JSX.Element {
+function Redirect({ field }: AddRuleValueProps): JSX.Element {
   return (
     <Form.Item
       label="Redirects to:"
-      name={rule.type}
+      name={[field.name, 'value']}
       rules={[
         { required: true, message: 'Redirect url is required' },
         { type: 'url', message: 'Invalid url' }

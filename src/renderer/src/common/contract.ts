@@ -1,14 +1,12 @@
 import { RuleType } from '@shared/contract'
+import { FormInstance, FormListFieldData } from 'antd'
 
 export interface RuleItem {
   type: RuleType
   value: string | object | number | Array<any>
-  valid: boolean
-  validator?: (value: any) => void
 }
 
 export interface AddRuleValueProps {
-  rule: RuleItem
-  setValue: (value: RuleItem['value']) => void
-  setValid: (valid: RuleItem['valid']) => void
+  form: FormInstance
+  field: FormListFieldData
 }
