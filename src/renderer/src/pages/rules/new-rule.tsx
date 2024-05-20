@@ -15,7 +15,7 @@ import {
   Switch,
   Tooltip
 } from 'antd'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import {
@@ -35,6 +35,9 @@ import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, RuleData, RuleType } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
+import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
+import ResponseStatus from '@renderer/components/add-rule-item/response-status'
+import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item,
@@ -72,34 +75,18 @@ function NewRulePage(): JSX.Element {
 
   const { id: editRuleId } = useParams()
   const editRule = useRuleStore((state) => findGroupOrRule(state.apiRules, editRuleId)) as RuleData
-
-  // init rule data when editRuleId changes:
-  useEffect(() => {
-    if (editRule) {
-      setRuleName(editRule.name)
-      setRuleDesc(editRule.description)
-      setRuleEnable(editRule.enable)
-      setMatchType(editRule.matches.matchType)
-      setMatchValue(editRule.matches.value)
-      setMatchMode(editRule.matches.matchMode)
-      setMatchMethods(editRule.matches.methods)
-      setChangeList(
-        editRule.modifyList.map((rule) => ({
-          type: rule.type,
-          value: rule.value,
-          valid: true
-        }))
-      )
-    }
-  }, [editRuleId])
-
-  const [ruleName, setRuleName] = useState('')
-  const [ruleDesc, setRuleDesc] = useState('')
-  const [ruleEnable, setRuleEnable] = useState(true)
-  const [matchType, setMatchType] = useState('url')
-  const [matchValue, setMatchValue] = useState('')
-  const [matchMode, setMatchMode] = useState('contains')
-  const [matchMethods, setMatchMethods] = useState<string[]>([])
+  const formInitValues = editRule || {
+    name: '',
+    description: '',
+    enable: true,
+    matches: {
+      value: '123',
+      matchType: 'url',
+      matchMode: 'contains',
+      methods: []
+    },
+    modifyList: []
+  }
 
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
   const [modifyList, setChangeList] = useState<RuleItem[]>([])
@@ -126,32 +113,6 @@ function NewRulePage(): JSX.Element {
     add(initValue)
   }
 
-  // there should only one type in rule list
-  const getSetValueMethod = (rule: RuleItem) => {
-    return (value: RuleItem['value']) =>
-      setChangeList((prevRules) =>
-        prevRules.map((r) => {
-          if (r.type === rule.type) {
-            return { ...r, value }
-          }
-          return r
-        })
-      )
-  }
-
-  // const getSetValidMethod = (rule: RuleItem) => {
-  //   return (valid: RuleItem['valid']) => {
-  //     return setChangeList((prevRules) =>
-  //       prevRules.map((r) => {
-  //         if (r.type === rule.type) {
-  //           return { ...r, valid }
-  //         }
-  //         return r
-  //       })
-  //     )
-  //   }
-  // }
-
   const getAddRuleValueComponent = (field: FormListFieldData) => {
     const modifyList = form.getFieldValue('modifyList')
     const rule = modifyList[field.key as number]
@@ -168,97 +129,73 @@ function NewRulePage(): JSX.Element {
         return <BodyEditor form={form} field={field} type="request" />
       case RuleType.ResponseBody:
         return <BodyEditor form={form} field={field} type="response" />
-      // case RuleType.ResponseDelay:
-      //   return <ResponseDelay rule={rule} setValue={setValue} setValid={setValid} />
-      // case RuleType.RequestFunction:
-      //   return <FunctionEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
-      // case RuleType.ResponseFunction:
-      //   return (
-      //     <FunctionEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
-      //   )
-      // case RuleType.ResponseStatus:
-      //   return <ResponseStatus rule={rule} setValue={setValue} setValid={setValid} />
+      case RuleType.ResponseDelay:
+        return <ResponseDelay form={form} field={field} />
+      case RuleType.RequestFunction:
+        return <FunctionEditor form={form} field={field} type="request" />
+      case RuleType.ResponseFunction:
+        return <FunctionEditor form={form} field={field} type="response" />
+      case RuleType.ResponseStatus:
+        return <ResponseStatus form={form} field={field} />
       default:
         return <h2>{rule.type} not accomplished yet!</h2>
     }
   }
 
-  const handleFormSubmit = () => {
-    form.submit()
+  const handleAddRuleSubmit = async (values: RuleData) => {
+    console.log('form value', values)
+    return
+    // if (editRuleId) {
+    //   if (!editRule) {
+    //     showAddRuleResult({
+    //       status: EventResultStatus.Error,
+    //       error: 'Rule not found'
+    //     })
+    //     return
+    //   }
+    //   const result = await window.api.updateRule(
+    //     editRuleId,
+    //     JSON.stringify({
+    //       kind: 'rule',
+    //       name: values.name,
+    //       describe: values.description,
+    //       enable: values.enable,
+    //       matches: {
+    //         value: matchValue,
+    //         matchType,
+    //         matchMode,
+    //         methods: matchMethods
+    //       },
+    //       modifyList: modifyList.map((rule) => ({
+    //         type: rule.type,
+    //         value: rule.value
+    //       }))
+    //     })
+    //   )
+    //   showAddRuleResult(result)
+    // } else {
+    //   const result = await window.api.addRule(
+    //     JSON.stringify({
+    //       kind: 'rule',
+    //       name: ruleName,
+    //       describe: ruleDesc,
+    //       enable: ruleEnable,
+    //       matches: {
+    //         value: matchValue,
+    //         matchType,
+    //         matchMode,
+    //         methods: matchMethods
+    //       },
+    //       modifyList: modifyList.map((rule) => ({
+    //         type: rule.type,
+    //         value: rule.value
+    //       }))
+    //     }),
+    //     { groupId: groupId as string }
+    //   )
+    //   showAddRuleResult(result)
+    // }
   }
-
-  const handleFinish = (values: any) => {
-    console.log('Received values of form:', values)
-  }
-
-  // const handleAddRuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault()
-  //   modifyList.forEach((rule) => {
-  //     if (rule.validator) {
-  //       rule.validator(rule.value)
-  //     }
-  //   })
-  //   const formValid = modifyList.every((rule) => rule.valid)
-  //   if (!ruleName) {
-  //     showAddRuleResult({
-  //       status: EventResultStatus.Error,
-  //       error: 'Rule name is required'
-  //     })
-  //     return
-  //   }
-  //   if (formValid) {
-  //     if (editRuleId) {
-  //       if (!editRule) {
-  //         showAddRuleResult({
-  //           status: EventResultStatus.Error,
-  //           error: 'Rule not found'
-  //         })
-  //         return
-  //       }
-  //       const result = await window.api.updateRule(
-  //         editRuleId,
-  //         JSON.stringify({
-  //           kind: 'rule',
-  //           name: ruleName,
-  //           describe: ruleDesc,
-  //           enable: ruleEnable,
-  //           matches: {
-  //             value: matchValue,
-  //             matchType,
-  //             matchMode,
-  //             methods: matchMethods
-  //           },
-  //           modifyList: modifyList.map((rule) => ({
-  //             type: rule.type,
-  //             value: rule.value
-  //           }))
-  //         })
-  //       )
-  //       showAddRuleResult(result)
-  //     } else {
-  //       const result = await window.api.addRule(
-  //         JSON.stringify({
-  //           kind: 'rule',
-  //           name: ruleName,
-  //           describe: ruleDesc,
-  //           enable: ruleEnable,
-  //           matches: {
-  //             value: matchValue,
-  //             matchType,
-  //             matchMode,
-  //             methods: matchMethods
-  //           },
-  //           modifyList: modifyList.map((rule) => ({
-  //             type: rule.type,
-  //             value: rule.value
-  //           }))
-  //         }),
-  //         { groupId: groupId as string }
-  //       )
-  //       showAddRuleResult(result)
-  //     }
-  //   }
-  // }
 
   const removeRule = (index: number) => {
     const newRules = modifyList.filter((_, i) => i !== index)
@@ -267,45 +204,46 @@ function NewRulePage(): JSX.Element {
 
   return (
     <div className="page-new">
-      <div className="page-new-header">
-        <Flex align="center">
-          <Tooltip title="Go back to rule list">
-            <Button
-              className="normal-link"
-              onClick={() => navigate('/rules/list')}
-              type="link"
-              size="small"
-            >
-              <LeftOutlined />
-            </Button>
-          </Tooltip>
-          {editRuleId ? (
-            <span>Edit Rule / {editRule?.name}</span>
-          ) : (
-            <span>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</span>
-          )}
-        </Flex>
-        <div>
-          <Switch
-            style={{ marginRight: '10px' }}
-            checkedChildren="Enabled"
-            unCheckedChildren="Disabled"
-            checked={ruleEnable}
-            onChange={(checked) => setRuleEnable(checked)}
-          ></Switch>
-          <Button size="small" type="primary" onClick={handleFormSubmit}>
-            Save
-          </Button>
-        </div>
-      </div>
       <Form
         form={form}
+        initialValues={formInitValues}
         style={{ padding: '4px 36px', overflowY: 'auto' }}
         layout="vertical"
         size="large"
-        onFinish={handleFinish}
+        onFinish={handleAddRuleSubmit}
       >
-        <Form.Item name="name">
+        <div className="page-new-header">
+          <Flex align="center">
+            <Tooltip title="Go back to rule list">
+              <Button
+                className="normal-link"
+                onClick={() => navigate('/rules/list')}
+                type="link"
+                size="small"
+              >
+                <LeftOutlined />
+              </Button>
+            </Tooltip>
+            {editRuleId ? (
+              <span>Edit Rule / {editRule?.name}</span>
+            ) : (
+              <span>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</span>
+            )}
+          </Flex>
+          <Space>
+            <Form.Item name="enable" noStyle>
+              <Switch
+                style={{ marginRight: '10px' }}
+                checkedChildren="Enabled"
+                unCheckedChildren="Disabled"
+              ></Switch>
+            </Form.Item>
+            <Button size="small" type="primary" onClick={() => form.submit()}>
+              Save
+            </Button>
+          </Space>
+        </div>
+        <Form.Item name="name" rules={[{ required: true, message: 'Rule name is required' }]}>
           <Input size="large" placeholder="Add Rule Name" />
         </Form.Item>
         <Form.Item name="description">
@@ -318,38 +256,32 @@ function NewRulePage(): JSX.Element {
           style={{ width: '100%' }}
         >
           <Flex gap={4} style={{ paddingBottom: '4px' }} align="baseline">
-            <Form.Item name="matchType">
+            <Form.Item name={['matches', 'matchType']}>
               <Select
                 size="large"
-                defaultValue="url"
-                value={matchType}
                 options={[
                   { label: 'URL', value: 'url' },
                   { label: 'Host', value: 'host' },
                   { label: 'Path', value: 'path' }
                 ]}
-                onChange={(value) => setMatchType(value)}
               />
             </Form.Item>
-            <Form.Item name="matchMode">
+            <Form.Item name={['matches', 'matchMode']}>
               <Select
                 size="large"
-                defaultValue="contains"
-                value={matchMode}
                 options={[
                   { label: 'Contains', value: 'contains' },
                   { label: 'Equals', value: 'equals' },
                   { label: 'Matches(Regex)', value: 'matches' }
                 ]}
-                onChange={(value) => setMatchMode(value)}
               />
             </Form.Item>
-            <Form.Item name="matchValue" style={{ flex: 1 }}>
-              <Input
-                style={{ flex: 1 }}
-                value={matchValue}
-                onChange={(e) => setMatchValue(e.target.value)}
-              />
+            <Form.Item
+              name={['matches', 'value']}
+              style={{ flex: 1 }}
+              rules={[{ required: true, message: 'Match value is required' }]}
+            >
+              <Input placeholder="Match Value" />
             </Form.Item>
             <Flex style={{ position: 'relative', top: 4 }}>
               <Tooltip title="Test macth rules">
@@ -368,16 +300,16 @@ function NewRulePage(): JSX.Element {
             </Flex>
           </Flex>
           {showReqMethodsFilter && (
-            <Select
-              allowClear
-              size="large"
-              mode="multiple"
-              placeholder="Select methods (leave empty to match all)"
-              value={matchMethods}
-              onChange={setMatchMethods}
-              style={{ width: '100%', marginTop: '8px' }}
-              options={reqMethods}
-            />
+            <Form.Item name={['matches', 'methods']}>
+              <Select
+                allowClear
+                size="large"
+                mode="multiple"
+                placeholder="Select methods (leave empty to match all)"
+                style={{ width: '100%', marginTop: '8px' }}
+                options={reqMethods}
+              />
+            </Form.Item>
           )}
         </Form.Item>
 
