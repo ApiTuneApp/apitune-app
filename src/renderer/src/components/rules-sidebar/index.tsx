@@ -15,10 +15,12 @@ import {
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
+import { useUxStore } from '@renderer/store/ux'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
 
 import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
+
 type RuleTreeDataNode = TreeDataNode & {
   rule: RuleGroup | RuleData
 }
@@ -118,7 +120,8 @@ function RulesSidebar(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
-  const [expandedKeys, setExpandedKeys] = React.useState<string[]>([])
+  const ruleSidebarExpandedKeys = useUxStore((state) => state.ruleSidebarExpandedKeys)
+  const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
 
   const treeData = React.useMemo<RuleTreeDataNode[]>(() => {
     return apiRules.map((rule) => {
@@ -181,20 +184,20 @@ function RulesSidebar(): JSX.Element {
     if (rule && rule.kind === 'rule') {
       navigate(`/rules/edit/${rule.id}`)
     } else {
-      if (expandedKeys.includes(key)) {
-        setExpandedKeys(expandedKeys.filter((k) => k !== key))
+      if (ruleSidebarExpandedKeys.includes(key)) {
+        setRuleSidebarExpandedKeys(ruleSidebarExpandedKeys.filter((k) => k !== key))
       } else {
-        setExpandedKeys([...expandedKeys, key])
+        setRuleSidebarExpandedKeys([...ruleSidebarExpandedKeys, key])
       }
     }
   }
 
   const onExpand = (_, { node }) => {
     const key = node.key as string
-    if (expandedKeys.includes(key)) {
-      setExpandedKeys(expandedKeys.filter((k) => k !== key))
+    if (ruleSidebarExpandedKeys.includes(key)) {
+      setRuleSidebarExpandedKeys(ruleSidebarExpandedKeys.filter((k) => k !== key))
     } else {
-      setExpandedKeys([...expandedKeys, key])
+      setRuleSidebarExpandedKeys([...ruleSidebarExpandedKeys, key])
     }
   }
 
@@ -225,7 +228,7 @@ function RulesSidebar(): JSX.Element {
         style={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
         treeData={treeData}
         blockNode={true}
-        expandedKeys={expandedKeys}
+        expandedKeys={ruleSidebarExpandedKeys}
         titleRender={(nodeData) => {
           return (
             <RuleTreeItem
