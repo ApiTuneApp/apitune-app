@@ -34,6 +34,7 @@ import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, RuleData, RuleType } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
+import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item,
@@ -163,10 +164,10 @@ function NewRulePage(): JSX.Element {
         return <HeaderEditor form={form} field={field} type="request" />
       case RuleType.ResponseHeader:
         return <HeaderEditor form={form} field={field} type="response" />
-      // case RuleType.RequestBody:
-      //   return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="request" />
-      // case RuleType.ResponseBody:
-      //   return <BodyEditor rule={rule} setValue={setValue} setValid={setValid} type="response" />
+      case RuleType.RequestBody:
+        return <BodyEditor form={form} field={field} type="request" />
+      case RuleType.ResponseBody:
+        return <BodyEditor form={form} field={field} type="response" />
       // case RuleType.ResponseDelay:
       //   return <ResponseDelay rule={rule} setValue={setValue} setValid={setValid} />
       // case RuleType.RequestFunction:
@@ -292,7 +293,7 @@ function NewRulePage(): JSX.Element {
             checked={ruleEnable}
             onChange={(checked) => setRuleEnable(checked)}
           ></Switch>
-          <Button type="primary" onClick={handleFormSubmit}>
+          <Button size="small" type="primary" onClick={handleFormSubmit}>
             Save
           </Button>
         </div>

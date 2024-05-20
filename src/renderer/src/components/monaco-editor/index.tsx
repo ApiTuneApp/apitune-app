@@ -1,14 +1,12 @@
 import * as monaco from 'monaco-editor'
-
-import Editor, { EditorProps, loader } from '@monaco-editor/react'
-import { useRef } from 'react'
-import { useTheme } from '@mui/material/styles'
-
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import { useRef } from 'react'
+
+import Editor, { EditorProps, loader } from '@monaco-editor/react'
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
@@ -36,8 +34,8 @@ type MonacoEditorProps = {
 }
 
 export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
-  const theme = useTheme()
-  const editorTheme = theme.palette.mode === 'dark' ? 'vs-dark' : ''
+  // TODO: support theme switch
+  const editorTheme = 'vsdark'
 
   const editorRef = useRef(null)
   function handleEditorDidMount(editor, monaco) {
