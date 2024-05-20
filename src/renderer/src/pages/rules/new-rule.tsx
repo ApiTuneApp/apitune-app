@@ -7,7 +7,6 @@ import {
   Dropdown,
   Flex,
   Form,
-  FormListFieldData,
   FormListOperation,
   Input,
   Select,
@@ -32,7 +31,7 @@ import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import * as RuleService from '@renderer/services/rule'
 import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
-import { EventResultStatus, IpcResult, RuleData, RuleType } from '@shared/contract'
+import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
@@ -80,7 +79,7 @@ function NewRulePage(): JSX.Element {
     description: '',
     enable: true,
     matches: {
-      value: '123',
+      value: '',
       matchType: 'url',
       matchMode: 'contains',
       methods: []
@@ -89,7 +88,6 @@ function NewRulePage(): JSX.Element {
   }
 
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
-  const [modifyList, setChangeList] = useState<RuleItem[]>([])
 
   const showAddRuleResult = (result: IpcResult) => {
     if (result.status === EventResultStatus.Success) {
@@ -113,10 +111,9 @@ function NewRulePage(): JSX.Element {
     add(initValue)
   }
 
-  const getAddRuleValueComponent = (field: FormListFieldData) => {
-    const modifyList = form.getFieldValue('modifyList')
-    const rule = modifyList[field.key as number]
-    switch (rule.type) {
+  const getAddRuleValueComponent = (modify: Modify, index: number) => {
+    const field = { name: index, key: index }
+    switch (modify.type) {
       case RuleType.Redirect:
         return <Redirect form={form} field={field} />
       case RuleType.SpeedLimit:
@@ -138,68 +135,46 @@ function NewRulePage(): JSX.Element {
       case RuleType.ResponseStatus:
         return <ResponseStatus form={form} field={field} />
       default:
-        return <h2>{rule.type} not accomplished yet!</h2>
+        return <h2>{modify.type} not accomplished yet!</h2>
     }
   }
 
   const handleAddRuleSubmit = async (values: RuleData) => {
     console.log('form value', values)
-    return
-    // if (editRuleId) {
-    //   if (!editRule) {
-    //     showAddRuleResult({
-    //       status: EventResultStatus.Error,
-    //       error: 'Rule not found'
-    //     })
-    //     return
-    //   }
-    //   const result = await window.api.updateRule(
-    //     editRuleId,
-    //     JSON.stringify({
-    //       kind: 'rule',
-    //       name: values.name,
-    //       describe: values.description,
-    //       enable: values.enable,
-    //       matches: {
-    //         value: matchValue,
-    //         matchType,
-    //         matchMode,
-    //         methods: matchMethods
-    //       },
-    //       modifyList: modifyList.map((rule) => ({
-    //         type: rule.type,
-    //         value: rule.value
-    //       }))
-    //     })
-    //   )
-    //   showAddRuleResult(result)
-    // } else {
-    //   const result = await window.api.addRule(
-    //     JSON.stringify({
-    //       kind: 'rule',
-    //       name: ruleName,
-    //       describe: ruleDesc,
-    //       enable: ruleEnable,
-    //       matches: {
-    //         value: matchValue,
-    //         matchType,
-    //         matchMode,
-    //         methods: matchMethods
-    //       },
-    //       modifyList: modifyList.map((rule) => ({
-    //         type: rule.type,
-    //         value: rule.value
-    //       }))
-    //     }),
-    //     { groupId: groupId as string }
-    //   )
-    //   showAddRuleResult(result)
-    // }
-  }
-
-  const removeRule = (index: number) => {
-    const newRules = modifyList.filter((_, i) => i !== index)
-    setChangeList(newRules)
+    if (editRuleId) {
+      if (!editRule) {
+        showAddRuleResult({
+          status: EventResultStatus.Error,
+          error: 'Rule not found'
+        })
+        return
+      }
+      const result = await window.api.updateRule(
+        editRuleId,
+        JSON.stringify({
+          kind: 'rule',
+          name: values.name,
+          describe: values.description,
+          enable: values.enable,
+          matches: values.matches,
+          modifyList: values.modifyList
+        })
+      )
+      showAddRuleResult(result)
+    } else {
+      const result = await window.api.addRule(
+        JSON.stringify({
+          kind: 'rule',
+          name: values.name,
+          describe: values.description,
+          enable: values.enable,
+          matches: values.matches,
+          modifyList: values.modifyList
+        }),
+        { groupId: groupId as string }
+      )
+      showAddRuleResult(result)
+    }
   }
 
   return (
@@ -209,7 +184,6 @@ function NewRulePage(): JSX.Element {
         initialValues={formInitValues}
         style={{ padding: '4px 36px', overflowY: 'auto' }}
         layout="vertical"
-        size="large"
         onFinish={handleAddRuleSubmit}
       >
         <div className="page-new-header">
@@ -243,22 +217,21 @@ function NewRulePage(): JSX.Element {
             </Button>
           </Space>
         </div>
-        <Form.Item name="name" rules={[{ required: true, message: 'Rule name is required' }]}>
-          <Input size="large" placeholder="Add Rule Name" />
-        </Form.Item>
-        <Form.Item name="description">
-          <Input.TextArea placeholder="Add Rule Description" />
-        </Form.Item>
-        <Form.Item
-          name="matches"
-          className="paper-block e2"
-          label="If Request Match:"
-          style={{ width: '100%' }}
-        >
+        <div className="paper-block e2">
+          <div className="paper-title">Rule Info: </div>
+          <Form.Item name="name" rules={[{ required: true, message: 'Rule name is required' }]}>
+            <Input size="large" placeholder="Add Rule Name" />
+          </Form.Item>
+          <Form.Item name="description">
+            <Input.TextArea placeholder="Add Rule Description" />
+          </Form.Item>
+        </div>
+
+        <div className="paper-block e2">
+          <div className="paper-title">Match Rules: </div>
           <Flex gap={4} style={{ paddingBottom: '4px' }} align="baseline">
             <Form.Item name={['matches', 'matchType']}>
               <Select
-                size="large"
                 options={[
                   { label: 'URL', value: 'url' },
                   { label: 'Host', value: 'host' },
@@ -268,7 +241,6 @@ function NewRulePage(): JSX.Element {
             </Form.Item>
             <Form.Item name={['matches', 'matchMode']}>
               <Select
-                size="large"
                 options={[
                   { label: 'Contains', value: 'contains' },
                   { label: 'Equals', value: 'equals' },
@@ -311,9 +283,9 @@ function NewRulePage(): JSX.Element {
               />
             </Form.Item>
           )}
-        </Form.Item>
+        </div>
 
-        <Form.List name="modifyList" initialValue={modifyList}>
+        <Form.List name="modifyList">
           {(fields, { add, remove }) => (
             <>
               <Dropdown
@@ -329,12 +301,8 @@ function NewRulePage(): JSX.Element {
                   </Space>
                 </Button>
               </Dropdown>
-              {fields.map((field, index) => (
-                <div
-                  key={index}
-                  style={{ position: 'relative', marginBottom: 10 }}
-                  className="paper-block e2"
-                >
+              {form.getFieldValue('modifyList').map((rule, index) => (
+                <div key={index} style={{ position: 'relative' }} className="paper-block e2">
                   <Tooltip title="remove rule" placement="top" arrow>
                     <DeleteOutlined
                       style={{ position: 'absolute', top: '20px', right: '15px', zIndex: 999 }}
@@ -342,7 +310,7 @@ function NewRulePage(): JSX.Element {
                     />
                   </Tooltip>
 
-                  {getAddRuleValueComponent(field)}
+                  {getAddRuleValueComponent(rule, index)}
                 </div>
               ))}
             </>

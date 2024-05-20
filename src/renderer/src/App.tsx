@@ -34,6 +34,9 @@ function App(): JSX.Element {
           Layout: {
             siderBg: '#141414',
             algorithm: true
+          },
+          Form: {
+            itemMarginBottom: 10
           }
         }
       }}
