@@ -11,6 +11,7 @@ import { useRuleStore } from '@renderer/store'
 import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 
 import type { TableProps } from 'antd'
+import { findGroupOrRule } from '@shared/utils'
 
 function RuleListPage(): JSX.Element {
   const { modal } = App.useApp()
@@ -31,16 +32,17 @@ function RuleListPage(): JSX.Element {
     setGroupNameModalOpen(true)
   }
 
-  const handleDelConfirmOpen = (editGroupId) => {
+  const handleDelConfirmOpen = (id: string) => {
+    const curRule = findGroupOrRule(apiRules, id)
     modal.confirm({
-      title: `Are you sure delete "${apiRules.find((r) => r.id === editGroupId)?.name}"?`,
+      title: `Are you sure delete "${curRule?.name}"?`,
       icon: <ExclamationCircleFilled />,
-      content: 'Your will not be able to recover this rule group!',
+      content: `Your will not be able to recover this rule${curRule?.kind === 'group' ? ' group' : ''}!`,
       okText: 'Yes',
       okType: 'danger',
       cancelText: 'No',
       onOk: async () => {
-        const result = await window.api.deleteRule(editGroupId as string)
+        const result = await window.api.deleteRule(id)
         if (result.status === EventResultStatus.Success) {
           RuleService.getApiRules()
         }

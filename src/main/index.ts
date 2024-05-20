@@ -286,8 +286,9 @@ app.whenReady().then(() => {
         const data = Storage.getSync('user.default') as StorageData
         if (data) {
           if (data.apiRules) {
-            const index = data.apiRules.findIndex((r) => r.id === id)
-            if (index >= 0) {
+            const curRule = findGroupOrRule(data.apiRules, id)
+            if (curRule?.kind === 'group') {
+              const index = data.apiRules.findIndex((r) => r.id === id)
               data.apiRules.splice(index, 1)
               Storage.set('user.default', data, (error) => {
                 if (error) {
@@ -302,6 +303,35 @@ app.whenReady().then(() => {
                   })
                 }
               })
+            } else if (curRule?.kind === 'rule') {
+              const group = data.apiRules.find((g) => {
+                if (g.kind === 'group') {
+                  return g.ruleList.find((r) => r.id === id)
+                }
+                return false
+              }) as RuleGroup
+              if (group) {
+                const index = group.ruleList.findIndex((r) => r.id === id)
+                group.ruleList.splice(index, 1)
+                Storage.set('user.default', data, (error) => {
+                  if (error) {
+                    reject({
+                      status: EventResultStatus.Error,
+                      error: error.message
+                    })
+                  } else {
+                    updateRuntimeRules(data.apiRules)
+                    resolve({
+                      status: EventResultStatus.Success
+                    })
+                  }
+                })
+              } else {
+                reject({
+                  status: EventResultStatus.Error,
+                  error: 'Group not found'
+                })
+              }
             } else {
               reject({
                 status: EventResultStatus.Error,

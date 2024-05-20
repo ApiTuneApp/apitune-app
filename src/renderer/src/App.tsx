@@ -28,7 +28,6 @@ function App(): JSX.Element {
   return (
     <ConfigProvider
       theme={{
-        // 1. 单独使用暗色算法
         algorithm: theme.darkAlgorithm,
         components: {
           Layout: {

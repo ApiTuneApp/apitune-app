@@ -14,13 +14,14 @@ import {
   Switch,
   Tooltip
 } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import {
   DeleteOutlined,
   DownCircleOutlined,
   DownOutlined,
+  ExclamationCircleFilled,
   ExperimentOutlined,
   LeftOutlined
 } from '@ant-design/icons'
@@ -64,9 +65,9 @@ type RuleMenuItem = {
 
 function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
-  const { message } = App.useApp()
   const [searchParams] = useSearchParams()
   const groupId = searchParams.get('groupId')
+  const { message, modal } = App.useApp()
   const [form] = Form.useForm()
 
   const apiRules = useRuleStore((state) => state.apiRules)
@@ -86,6 +87,12 @@ function NewRulePage(): JSX.Element {
     },
     modifyList: []
   }
+
+  useEffect(() => {
+    if (editRule) {
+      form.setFieldsValue(editRule)
+    }
+  }, [editRule])
 
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
 
@@ -140,7 +147,6 @@ function NewRulePage(): JSX.Element {
   }
 
   const handleAddRuleSubmit = async (values: RuleData) => {
-    console.log('form value', values)
     if (editRuleId) {
       if (!editRule) {
         showAddRuleResult({
@@ -175,6 +181,25 @@ function NewRulePage(): JSX.Element {
       )
       showAddRuleResult(result)
     }
+  }
+
+  const handleDelConfirmOpen = (id: string) => {
+    const curRule = findGroupOrRule(apiRules, id)
+    modal.confirm({
+      title: `Are you sure delete "${curRule?.name}"?`,
+      icon: <ExclamationCircleFilled />,
+      content: 'Your will not be able to recover this rule!',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk: async () => {
+        const result = await window.api.deleteRule(id)
+        if (result.status === EventResultStatus.Success) {
+          RuleService.getApiRules()
+          navigate('/rules/list')
+        }
+      }
+    })
   }
 
   return (
@@ -215,6 +240,11 @@ function NewRulePage(): JSX.Element {
             <Button size="small" type="primary" onClick={() => form.submit()}>
               Save
             </Button>
+            {editRuleId && (
+              <Button size="small" danger onClick={() => handleDelConfirmOpen(editRuleId)}>
+                Delete
+              </Button>
+            )}
           </Space>
         </div>
         <div className="paper-block e2">
