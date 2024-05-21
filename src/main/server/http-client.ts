@@ -48,7 +48,7 @@ export default function (ctx: Context) {
       {
         method: ctx.method,
         headers: reqHeaders,
-        timeout: config.serverRequestTimeout,
+        // timeout: config.serverRequestTimeout,
         lookup: cacheable.lookup as unknown as LookupFunction,
         insecureHTTPParser: true,
         agent

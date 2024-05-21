@@ -18,7 +18,7 @@ export function isRuleMatch(ctx: Context, rule: RuleData) {
   }
 
   const methodValue = method.toUpperCase()
-  if (methods.length > 0 && !methods.includes(methodValue)) {
+  if (methods?.length > 0 && !methods.includes(methodValue)) {
     return false
   }
   if (matchMode === 'contains') {
