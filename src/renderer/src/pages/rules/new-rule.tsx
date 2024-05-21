@@ -301,18 +301,19 @@ function NewRulePage(): JSX.Element {
               </Tooltip>
             </Flex>
           </Flex>
-          {showReqMethodsFilter && (
-            <Form.Item name={['matches', 'methods']}>
-              <Select
-                allowClear
-                size="large"
-                mode="multiple"
-                placeholder="Select methods (leave empty to match all)"
-                style={{ width: '100%', marginTop: '8px' }}
-                options={reqMethods}
-              />
-            </Form.Item>
-          )}
+          <Form.Item
+            name={['matches', 'methods']}
+            style={{ display: showReqMethodsFilter ? 'block' : 'none' }}
+          >
+            <Select
+              allowClear
+              size="large"
+              mode="multiple"
+              placeholder="Select methods (leave empty to match all)"
+              style={{ width: '100%', marginTop: '8px' }}
+              options={reqMethods}
+            />
+          </Form.Item>
         </div>
 
         <Form.List name="modifyList">
