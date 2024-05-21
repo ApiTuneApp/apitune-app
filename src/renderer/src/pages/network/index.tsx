@@ -1,7 +1,7 @@
 import '@glideapps/glide-data-grid/dist/index.css'
 import './network.less'
 
-import { Flex, Input, Space, Tooltip } from 'antd'
+import { Flex, Input, Space, Table, Tooltip } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 
 import {
@@ -12,15 +12,6 @@ import {
   PauseCircleOutlined,
   PlayCircleOutlined
 } from '@ant-design/icons'
-import {
-  DataEditor,
-  GridCell,
-  GridCellKind,
-  GridColumn,
-  GridSelection,
-  Highlight,
-  Item
-} from '@glideapps/glide-data-grid'
 import LogDetail from '@renderer/components/log-detail'
 import { Log, MainEvent } from '@shared/contract'
 
@@ -32,30 +23,69 @@ function NetworkPage(): JSX.Element {
   const stopRecordStr = 'Stop recording network log'
   const startRecordStr = 'Record network log'
   const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
-  const [columns, setColumns] = useState<GridColumn[]>([
-    { title: 'Protocol', id: 'protocol' },
-    { title: 'Host', id: 'host', width: 160 },
-    { title: 'Path', id: 'pathname', width: 200 },
-    { title: 'Method', id: 'method', width: 90 },
-    { title: 'Status', id: 'status', width: 90 },
-    { title: 'MatchRules', id: 'matchedRules' },
-    { title: 'Time', id: 'time', width: 80 }
-  ])
-  const [highlightRegions, setHighlightRegions] = useState<Highlight[]>()
   const [proxyLogs, setProxyLogs] = useState<Log[]>([])
   const [resultLogs, setResultLogs] = useState<Log[]>([])
   const [curLog, setCurLog] = useState<Log | undefined>()
   const [drawerHeight, setDrawerHeight] = useState(0)
   const [searchValue, setSearchValue] = useState('')
 
-  const highlightColor = '#357edd'
+  const columns = [
+    {
+      title: 'Protocol',
+      dataIndex: 'protocol',
+      key: 'protocol'
+    },
+    {
+      title: 'Host',
+      dataIndex: 'host',
+      key: 'host',
+      width: 160
+    },
+    {
+      title: 'Path',
+      dataIndex: 'pathname',
+      key: 'pathname',
+      width: 200
+    },
+    {
+      title: 'Method',
+      dataIndex: 'method',
+      key: 'method',
+      width: 90
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      width: 90
+    },
+    {
+      title: 'MatchRules',
+      dataIndex: 'matchedRules',
+      key: 'matchedRules',
+      render(_, record: Log) {
+        return record.matchedRules.join(',')
+      }
+    },
+    {
+      title: 'Time',
+      dataIndex: 'time',
+      key: 'time',
+      width: 80,
+      render(_, record: Log) {
+        return record.finishTime ? `${record.finishTime - record.startTime}ms` : ''
+      }
+    }
+  ]
 
   useEffect(() => {
     window.api.onProxyLog((log) => {
       if (recordPaused) return
       setProxyLogs((prev) => [...prev, log])
-      if (searchValue && log.url.includes(searchValue)) {
-        setResultLogs((prev) => [...prev, log])
+      if (searchValue) {
+        if (log.url.includes(searchValue)) {
+          setResultLogs((prev) => [...prev, log])
+        }
       } else {
         setResultLogs((prev) => [...prev, log])
       }
@@ -66,71 +96,9 @@ function NetworkPage(): JSX.Element {
     }
   }, [])
 
-  // If fetching data is slow you can use the DataEditor ref to send updates for cells
-  // once data is loaded.
-  const getContent = (cell: Item): GridCell => {
-    const [col, row] = cell
-    const dataRow = resultLogs[row]
-    const column = columns[col]
-    let data = ''
-    if (column && dataRow) {
-      switch (column.id) {
-        case 'time':
-          data = dataRow.finishTime ? `${dataRow.finishTime - dataRow.startTime}ms` : ''
-          break
-        case 'matchedRules':
-          data = dataRow.matchedRules.join(',')
-          break
-        default:
-          data = dataRow[column.id as string]
-          break
-      }
-    }
-    return {
-      kind: GridCellKind.Text,
-      allowOverlay: false,
-      displayData: data.toString(),
-      data
-    }
-  }
-
   const handlePauseClick = function () {
     setPauseBtnText(!recordPaused ? startRecordStr : pauseBtnText)
     setRecordPaused(!recordPaused)
-  }
-
-  const onColumnResize = useCallback(
-    (col: GridColumn, newSize: number) => {
-      const index = columns.indexOf(col)
-      const newCols = [...columns]
-      newCols[index] = {
-        ...newCols[index],
-        width: newSize
-      }
-      setColumns(newCols)
-    },
-    [columns]
-  )
-
-  const onGridSelectionChange = (newSelection: GridSelection) => {
-    if (newSelection.current !== undefined) {
-      setHighlightRegions([
-        {
-          color: highlightColor,
-          range: {
-            x: 0,
-            y: newSelection.current.range.y,
-            width: columns.length,
-            height: 1
-          }
-        }
-      ])
-      console.log('cur log', resultLogs[newSelection.current.range.y])
-      setCurLog(resultLogs[newSelection.current.range.y])
-      setDrawerHeight(400)
-    } else {
-      setHighlightRegions(undefined)
-    }
   }
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -167,6 +135,11 @@ function NetworkPage(): JSX.Element {
     }
   }
 
+  const handleRowClick = (record: Log) => {
+    setCurLog(record)
+    setDrawerHeight(400)
+  }
+
   return (
     <Flex className="app-page page-network" vertical>
       <Flex gap={4} style={{ paddingBottom: '10px' }}>
@@ -193,34 +166,26 @@ function NetworkPage(): JSX.Element {
         </Space>
       </Flex>
       {proxyLogs.length > 0 && (
-        <DataEditor
-          className="network-table"
-          theme={{
-            accentLight: highlightColor,
-            bgCell: '#222222',
-            bgHeader: '#222222',
-            bgHeaderHovered: 'rgba(235, 235, 245, 0.38)',
-            bgHeaderHasFocus: 'rgba(235, 235, 245, 0.38)',
-            textHeader: 'rgba(255, 255, 245, 0.86)',
-            textDark: 'rgba(255, 255, 245, 0.86)'
-          }}
+        <Table
+          size="small"
+          rowKey="id"
+          virtual
           columns={columns}
-          rows={resultLogs.length}
-          rowMarkers="number"
-          rangeSelect="none"
-          rowSelect="single"
-          columnSelect="none"
-          drawFocusRing={false}
-          width="100%"
-          height="auto"
-          smoothScrollX={true}
-          smoothScrollY={true}
-          overscrollY={50}
-          highlightRegions={highlightRegions}
-          getCellContent={getContent}
-          onColumnResize={onColumnResize}
-          onGridSelectionChange={onGridSelectionChange}
-        />
+          dataSource={resultLogs}
+          pagination={false}
+          // rowSelection={{}}
+          rowClassName={(record) => {
+            return curLog && record.id === curLog.id ? 'ant-table-row-selected' : ''
+          }}
+          style={{ flex: 1, overflowY: 'auto' }}
+          onRow={(record) => {
+            return {
+              onClick: (event) => {
+                handleRowClick(record)
+              }
+            }
+          }}
+        ></Table>
       )}
       <div
         className="paper-block no-padding"

@@ -36,6 +36,10 @@ function App(): JSX.Element {
           },
           Form: {
             itemMarginBottom: 10
+          },
+          Table: {
+            rowSelectedBg: '#1668dc',
+            rowSelectedHoverBg: '#1668dc'
           }
         }
       }}
