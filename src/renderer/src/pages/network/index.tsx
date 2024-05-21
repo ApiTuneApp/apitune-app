@@ -1,8 +1,17 @@
 import '@glideapps/glide-data-grid/dist/index.css'
 import './network.less'
 
+import { Flex, Input, Space, Tooltip } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 
+import {
+  ClearOutlined,
+  CloseOutlined,
+  ControlOutlined,
+  HolderOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined
+} from '@ant-design/icons'
 import {
   DataEditor,
   GridCell,
@@ -12,16 +21,8 @@ import {
   Highlight,
   Item
 } from '@glideapps/glide-data-grid'
-import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
-import DragIndicatorOutlinedIcon from '@mui/icons-material/DragIndicatorOutlined'
-import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined'
-import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined'
-import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined'
-import { Drawer, IconButton, Stack, TextField, Tooltip } from '@mui/material'
 import LogDetail from '@renderer/components/log-detail'
-
-import { Log, MainEvent } from '../../../../shared/contract'
+import { Log, MainEvent } from '@shared/contract'
 
 const minDrawerHeight = 20
 const maxDarwerHeight = 1000
@@ -167,35 +168,30 @@ function NetworkPage(): JSX.Element {
   }
 
   return (
-    <Stack className="app-page page-network" direction="column">
-      <Stack sx={{ pb: '10px' }} direction="row">
-        <TextField
-          size="small"
+    <Flex className="app-page page-network" vertical>
+      <Flex gap={4} style={{ paddingBottom: '10px' }}>
+        <Input
+          placeholder="Search URL"
           className="app-control app-input network-input"
-          label="Search URL"
           value={searchValue}
           onChange={handleSearchChange}
         />
-        <Tooltip title="Clear network log">
-          <IconButton aria-label="clear network log" onClick={handleClearLog}>
-            <BlockOutlinedIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={pauseBtnText}>
-          <IconButton aria-label={pauseBtnText} onClick={handlePauseClick}>
+        <Space>
+          <Tooltip title="Clear network log">
+            <ClearOutlined onClick={handleClearLog} style={{ fontSize: 18 }} />
+          </Tooltip>
+          <Tooltip title={pauseBtnText}>
             {recordPaused ? (
-              <PlayCircleFilledWhiteOutlinedIcon />
+              <PlayCircleOutlined onClick={handlePauseClick} style={{ fontSize: 18 }} />
             ) : (
-              <PauseCircleOutlineOutlinedIcon />
+              <PauseCircleOutlined onClick={handlePauseClick} style={{ fontSize: 18 }} />
             )}
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Config network column">
-          <IconButton aria-label="Config network column">
-            <TuneOutlinedIcon />
-          </IconButton>
-        </Tooltip>
-      </Stack>
+          </Tooltip>
+          <Tooltip title="Config network column">
+            <ControlOutlined style={{ fontSize: 18 }} />
+          </Tooltip>
+        </Space>
+      </Flex>
       {proxyLogs.length > 0 && (
         <DataEditor
           className="network-table"
@@ -226,25 +222,21 @@ function NetworkPage(): JSX.Element {
           onGridSelectionChange={onGridSelectionChange}
         />
       )}
-      <Drawer
-        anchor="bottom"
-        open={!!curLog && drawerHeight > 0}
-        variant="persistent"
-        PaperProps={{
-          elevation: 2,
-          sx: {
-            position: 'relative',
-            height: drawerHeight
-          }
+      <div
+        className="paper-block no-padding"
+        style={{
+          display: !!curLog && drawerHeight > 0 ? 'block' : 'none',
+          position: 'relative',
+          height: drawerHeight
         }}
       >
         <div className="bottom-resizer" onMouseDown={handleMouseDown}>
-          <CloseOutlinedIcon className="bottom-drawer-close" onClick={handleDrawerClose} />
-          <DragIndicatorOutlinedIcon className="bottom-resizer-icon" fontSize="small" />
+          <HolderOutlined className="bottom-resizer-icon" />
         </div>
+        <CloseOutlined className="bottom-drawer-close" onClick={handleDrawerClose} />
         <div className="network-detail">{curLog && <LogDetail log={curLog} />}</div>
-      </Drawer>
-    </Stack>
+      </div>
+    </Flex>
   )
 }
 
