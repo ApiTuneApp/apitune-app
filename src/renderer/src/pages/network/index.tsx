@@ -1,4 +1,3 @@
-import '@glideapps/glide-data-grid/dist/index.css'
 import './network.less'
 
 import { Flex, Input, Space, Table, Tooltip } from 'antd'
