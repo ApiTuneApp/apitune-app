@@ -12,17 +12,21 @@ import {
   PlayCircleOutlined
 } from '@ant-design/icons'
 import LogDetail from '@renderer/components/log-detail'
-import { Log, MainEvent } from '@shared/contract'
+import { useUxStore } from '@renderer/store/ux'
+import { Log } from '@shared/contract'
 
 const minDrawerHeight = 20
 const maxDarwerHeight = 1000
 
 function NetworkPage(): JSX.Element {
-  const [recordPaused, setRecordPaused] = useState(false)
+  const proxyLogs = useUxStore((state) => state.proxyLogs)
+  const handleClearLog = useUxStore((state) => state.clearProxyLogs)
+  const recordPaused = useUxStore((state) => state.logPaused)
+  const setRecordPaused = useUxStore((state) => state.setLogPaused)
+
   const stopRecordStr = 'Stop recording network log'
   const startRecordStr = 'Record network log'
   const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
-  const [proxyLogs, setProxyLogs] = useState<Log[]>([])
   const [resultLogs, setResultLogs] = useState<Log[]>([])
   const [curLog, setCurLog] = useState<Log | undefined>()
   const [drawerHeight, setDrawerHeight] = useState(0)
@@ -78,22 +82,12 @@ function NetworkPage(): JSX.Element {
   ]
 
   useEffect(() => {
-    window.api.onProxyLog((log) => {
-      if (recordPaused) return
-      setProxyLogs((prev) => [...prev, log])
-      if (searchValue) {
-        if (log.url.includes(searchValue)) {
-          setResultLogs((prev) => [...prev, log])
-        }
-      } else {
-        setResultLogs((prev) => [...prev, log])
-      }
-    })
-
-    return () => {
-      window.api.clearupEvent(MainEvent.ProxyLog)
+    if (searchValue) {
+      setResultLogs(proxyLogs.filter((log) => log.url.includes(searchValue)))
+    } else {
+      setResultLogs(proxyLogs)
     }
-  }, [])
+  }, [proxyLogs])
 
   const handlePauseClick = function () {
     setPauseBtnText(!recordPaused ? startRecordStr : pauseBtnText)
@@ -119,10 +113,6 @@ function NetworkPage(): JSX.Element {
 
   const handleDrawerClose = () => {
     setDrawerHeight(0)
-  }
-
-  const handleClearLog = () => {
-    setProxyLogs([])
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

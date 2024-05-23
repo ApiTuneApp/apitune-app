@@ -4,14 +4,17 @@ import {
   StorageDataParams,
   IpcResult,
   RenderEvent,
-  AddGroupOpts
+  AddGroupOpts,
+  Log
 } from 'src/shared/contract'
+
+type onProxyLogCallback = (log: Log) => void
 
 declare global {
   interface Window {
     electron: ElectronAPI
     api: {
-      onProxyLog: (callback) => void
+      onProxyLog: (callback: onProxyLogCallback) => void
       getApiRules: () => Promise<ApiRules>
       clearupEvent: (event: MainEvent | RenderEvent) => void
       addRule: (ruleStr: string, opts?: AddGroupOpts) => Promise<IpcResult>

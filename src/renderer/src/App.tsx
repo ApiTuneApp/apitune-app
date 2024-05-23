@@ -3,6 +3,9 @@ import KeepAlive from 'keepalive-for-react'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
 
+import { useUxStore } from '@renderer/store/ux'
+import { MainEvent } from '@shared/contract'
+
 import Header from './components/header'
 import Sidebar from './components/sidebar'
 import { getApiRules } from './services/rule'
@@ -12,10 +15,21 @@ const { Header: LayoutHeader, Sider: LayoutSider, Content: LayoutContent } = Lay
 function App(): JSX.Element {
   const outlet = useOutlet()
   const location = useLocation()
+  const addProxyLogs = useUxStore((state) => state.addProxyLogs)
 
   useEffect(() => {
     const cancelFn = getApiRules()
     return cancelFn
+  }, [])
+
+  useEffect(() => {
+    window.api.onProxyLog((log) => {
+      addProxyLogs(log)
+    })
+
+    return () => {
+      window.api.clearupEvent(MainEvent.ProxyLog)
+    }
   }, [])
 
   /**
