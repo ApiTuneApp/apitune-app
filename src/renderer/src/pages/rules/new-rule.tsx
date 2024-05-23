@@ -38,6 +38,7 @@ import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
+import MatchTestModal from '@renderer/components/match-test-modal'
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item,
@@ -95,6 +96,7 @@ function NewRulePage(): JSX.Element {
   }, [editRule])
 
   const [showReqMethodsFilter, setShowReqMethodsFilter] = useState(false)
+  const [showMatchTestModal, setShowMatchTestModal] = useState(false)
 
   const showAddRuleResult = (result: IpcResult) => {
     if (result.status === EventResultStatus.Success) {
@@ -287,7 +289,10 @@ function NewRulePage(): JSX.Element {
             </Form.Item>
             <Flex style={{ position: 'relative', top: 4 }}>
               <Tooltip title="Test macth rules">
-                <ExperimentOutlined style={{ fontSize: '20px', marginLeft: '8px' }} />
+                <ExperimentOutlined
+                  style={{ fontSize: '20px', marginLeft: '8px' }}
+                  onClick={() => setShowMatchTestModal(true)}
+                />
               </Tooltip>
               <Tooltip title="Request methods filter">
                 <DownCircleOutlined
@@ -315,6 +320,15 @@ function NewRulePage(): JSX.Element {
             />
           </Form.Item>
         </div>
+        <MatchTestModal
+          open={showMatchTestModal}
+          initValue={{
+            matchType: form.getFieldValue(['matches', 'matchType']),
+            matchOperator: form.getFieldValue(['matches', 'matchMode']),
+            matchValue: form.getFieldValue(['matches', 'value'])
+          }}
+          onCancel={() => setShowMatchTestModal(false)}
+        />
 
         <Form.List name="modifyList">
           {(fields, { add, remove }) => (
