@@ -255,7 +255,7 @@ function NewRulePage(): JSX.Element {
             <Input size="large" placeholder="Add Rule Name" />
           </Form.Item>
           <Form.Item name="description">
-            <Input.TextArea placeholder="Add Rule Description" />
+            <Input.TextArea placeholder="Add Rule Description (Optional)" />
           </Form.Item>
         </div>
 
