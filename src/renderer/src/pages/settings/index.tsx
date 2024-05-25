@@ -1,27 +1,30 @@
 import { FileProtectOutlined } from '@ant-design/icons'
-import { Button, Divider, Form, Input, Select, Space } from 'antd'
+import { Button, Typography, Form, InputNumber, Select, Space } from 'antd'
 import { useState } from 'react'
 
 function SettingsPage(): JSX.Element {
   const [proxyPort, setProxyPort] = useState(8998)
   return (
     <div className="app-page page-settings">
-      <h2 style={{ marginBottom: 20 }}>Settings</h2>
+      <Typography.Title level={4} style={{ marginBottom: 20 }}>
+        Settings
+      </Typography.Title>
       <Form layout="vertical">
         <Space direction="vertical" size="middle" style={{ width: '60%' }}>
           <Button icon={<FileProtectOutlined />} iconPosition="start">
             Trust ApiTune CA
           </Button>
           <Space>
-            {/* <span>Chagne Proxy Port: </span> */}
             <Form.Item label="Proxy Port">
               <Space.Compact block>
-                <Input
-                  size="small"
-                  type="number"
+                <InputNumber
+                  min={1024}
+                  max={49152}
+                  controls={false}
                   value={proxyPort}
-                  onChange={(e) => setProxyPort(Number(e.target.value))}
-                ></Input>
+                  style={{ width: 170 }}
+                  onChange={(value) => setProxyPort(Number(value))}
+                ></InputNumber>
                 <Button type="primary">Update</Button>
               </Space.Compact>
             </Form.Item>
