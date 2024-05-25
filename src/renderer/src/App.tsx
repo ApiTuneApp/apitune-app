@@ -66,7 +66,7 @@ function App(): JSX.Element {
             <Header />
           </LayoutHeader>
           <Layout>
-            <LayoutSider width="95">
+            <LayoutSider width="76">
               <Sidebar />
             </LayoutSider>
             <Layout>
