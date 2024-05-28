@@ -155,6 +155,7 @@ function NetworkPage(): JSX.Element {
 
   const handleRowClick = (record: Log) => {
     setCurLog(record)
+    console.log('cur log', record)
     setDrawerHeight(400)
   }
 

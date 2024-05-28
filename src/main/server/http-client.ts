@@ -54,7 +54,7 @@ export default function (ctx: Context) {
         agent
       },
       (serverRes: IncomingMessage) => {
-        clearTimeout(timeoutKey)
+        // clearTimeout(timeoutKey)
         if (serverReq.destroyed) return
 
         // record error
@@ -139,13 +139,13 @@ export default function (ctx: Context) {
     })
 
     // 首次超过 120s 则 abort
-    const timeoutKey = setTimeout(() => {
-      if (serverReq.destroyed) return
+    // const timeoutKey = setTimeout(() => {
+    //   if (serverReq.destroyed) return
 
-      serverReq.destroy()
-      console.error(`${config.name} request abort, requst more then 120s`)
-      reject('server req timeout')
-    }, 120 * 1e3)
+    //   serverReq.destroy()
+    //   console.error(`${config.name} request abort, requst more then 120s`)
+    //   reject('server req timeout')
+    // }, 120 * 1e3)
 
     ctx.remoteRequestBody.pipe(serverReq)
   })

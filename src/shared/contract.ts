@@ -53,6 +53,7 @@ export interface Log {
   requestHeaders: any
   // post参数（超过5MB 值为null）
   requestBody?: Base64
+  requestBodyInfo?: string
   // post体长度(byte)
   requestBodyLength?: number
   // 返回状态码

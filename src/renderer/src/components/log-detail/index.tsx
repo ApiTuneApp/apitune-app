@@ -44,7 +44,7 @@ function parseURLEncoded(query) {
 }
 
 function getRequestParams(log: Log) {
-  const { method, requestBody, requestHeaders, search } = log
+  const { method, requestBody, requestBodyInfo, requestHeaders, search } = log
   if (method === 'GET') {
     const data = {}
     if (search) {
@@ -77,8 +77,9 @@ function getRequestParams(log: Log) {
     data
   if (isJson && requestBody) {
     try {
-      data = atob(requestBody.toString())
-      result = eval('(' + data + ')')
+      // data = atob(requestBody.toString())
+      // data= requestBodyInfo;
+      result = eval('(' + requestBodyInfo + ')')
     } catch (error) {
       isJson = false
       result = data
@@ -221,7 +222,9 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
     }
   ]
 
-  return <Tabs defaultActiveKey="request" items={items} style={{ padding: '0 10px' }} />
+  return (
+    <Tabs defaultActiveKey="request" items={items} style={{ padding: '0 10px', height: '100%' }} />
+  )
 }
 
 export default LogDetail

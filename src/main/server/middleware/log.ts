@@ -27,6 +27,12 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
     startTime: Date.now()
   }
 
+  // Can't use await here
+  getBase64(ctx.remoteRequestBody).then(({ length, base64 }) => {
+    log.requestBody = base64
+    log.requestBodyLength = length
+  })
+
   // send request, get data
   await next()
 
@@ -44,6 +50,9 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
     log.responseBodyLength = length
     log.finishTime = Date.now()
     log.responseBodyInfo = getBodyInfo(log)
+
+    // log.requestBody = Buffer.from(log.requestBody as unknown as string, 'base64')
+    log.requestBodyInfo = Buffer.from(log.requestBody as unknown as string, 'base64').toString()
 
     proxyLog(log)
   })
