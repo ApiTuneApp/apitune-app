@@ -174,12 +174,24 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
     {
       key: 'request',
       label: 'Request',
-      children: <Collapse size="small" items={requestColItems} />
+      children: (
+        <Collapse
+          size="small"
+          items={requestColItems}
+          defaultActiveKey={requestColItems.map((item) => item.key as string)}
+        />
+      )
     },
     {
       key: 'response',
       label: 'Response',
-      children: <Collapse size="small" items={responseColItems} />
+      children: (
+        <Collapse
+          size="small"
+          items={responseColItems}
+          defaultActiveKey={responseColItems.map((item) => item.key as string)}
+        />
+      )
     },
     {
       key: 'preview',

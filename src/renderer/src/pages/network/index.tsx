@@ -34,21 +34,50 @@ function NetworkPage(): JSX.Element {
 
   const columns = [
     {
+      title: 'Id',
+      dataIndex: 'id',
+      key: 'id',
+      width: 60
+    },
+    {
+      title: 'URL',
+      dataIndex: 'url',
+      key: 'url',
+      ellipsis: true,
+      render: (item) => (
+        <Tooltip placement="topLeft" title={item}>
+          {item}
+        </Tooltip>
+      ),
+      width: 300
+    },
+    {
       title: 'Protocol',
       dataIndex: 'protocol',
-      key: 'protocol'
+      key: 'protocol',
+      width: 80
     },
     {
       title: 'Host',
       dataIndex: 'host',
       key: 'host',
-      width: 160
+      ellipsis: true,
+      render: (item) => (
+        <Tooltip placement="topLeft" title={item}>
+          {item}
+        </Tooltip>
+      )
     },
     {
       title: 'Path',
       dataIndex: 'pathname',
       key: 'pathname',
-      width: 200
+      ellipsis: true,
+      render: (item) => (
+        <Tooltip placement="topLeft" title={item}>
+          {item}
+        </Tooltip>
+      )
     },
     {
       title: 'Method',
@@ -60,7 +89,7 @@ function NetworkPage(): JSX.Element {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      width: 90
+      width: 60
     },
     {
       title: 'MatchRules',

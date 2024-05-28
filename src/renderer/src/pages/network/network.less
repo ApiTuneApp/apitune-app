@@ -20,10 +20,13 @@
 }
 
 .network-detail {
-  flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  .ant-tabs-content-holder {
+    overflow-y: auto;
+  }
 }
 
 .bottom-drawer-close {
