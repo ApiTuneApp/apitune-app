@@ -1,5 +1,3 @@
-import { initServer, changeServerPort } from './server/init'
-
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
@@ -19,8 +17,9 @@ import {
 } from '../shared/contract'
 import { findGroupOrRule } from '../shared/utils'
 import { initCommunicator } from './communicator'
-import { DefaultUserData, initRuntimeRules, updateRuntimeRules } from './storage'
 import config from './server/config'
+import { changeServerPort, initServer } from './server/init'
+import { DefaultUserData, initRuntimeRules, updateRuntimeRules } from './storage'
 
 // Todo: get port from settings
 initServer(config.port)
@@ -74,9 +73,6 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
-
-  // IPC test
-  ipcMain.on(RenderEvent.ping, () => console.log('pong'))
 
   ipcMain.handle(RenderEvent.AddRule, (event, rules: string, opts?: AddGroupOpts) => {
     return new Promise((resolve, reject) => {

@@ -9,7 +9,8 @@ export const app = new Koa()
 
 app.use(async function errorHandler(ctx: Context, next: Next) {
   if (ctx.header[config.proxyHeader]) {
-    ctx.body = '`kproxy` 需要设置为代理服务器使用，具体请参见说明文档， 当前请求死循环'
+    ctx.body =
+      'ApiTune needs to be set as a proxy server to use, please refer to the documentation for details'
     ctx.status = 400
     return
   }

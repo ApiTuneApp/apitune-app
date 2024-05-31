@@ -38,7 +38,6 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
 
   if (isHttps(head)) {
     if (/[^a-z]$/.test(host)) {
-      // ERROR: KPROXY-NODE-6
       console.error({
         message: 'https host error',
         extra: {

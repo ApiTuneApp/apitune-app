@@ -3,8 +3,8 @@ import path from 'path'
 export default {
   name: 'apitune',
   port: 8998,
-  proxyHeader: 'x-forwarded-from-proxy',
-  // kproxy请求对方服务器超时时间
+  proxyHeader: 'x-forwarded-from-apitune',
+  // proxy请求对方服务器超时时间
   serverRequestTimeout: 20000,
 
   // https server 不活跃之后回收时长
