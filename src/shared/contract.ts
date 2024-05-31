@@ -1,5 +1,3 @@
-import exp from 'constants'
-
 export enum RenderEvent {
   ping = 'ping',
   startServer = 'startServer',
@@ -8,7 +6,8 @@ export enum RenderEvent {
   EnableRule = 'enableRule',
   UpdateRuleGroupName = 'updateRuleGroupName',
   GetApiRules = 'getApiRules',
-  DeleteRule = 'deleteRule'
+  DeleteRule = 'deleteRule',
+  ChangePort = 'changePort'
 }
 
 export enum MainEvent {

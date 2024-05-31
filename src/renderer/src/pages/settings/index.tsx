@@ -1,9 +1,25 @@
 import { FileProtectOutlined } from '@ant-design/icons'
-import { Button, Typography, Form, InputNumber, Select, Space } from 'antd'
+import { Button, Typography, Form, InputNumber, Select, Space, App } from 'antd'
 import { useState } from 'react'
 
 function SettingsPage(): JSX.Element {
+  const { message } = App.useApp()
   const [proxyPort, setProxyPort] = useState(8998)
+
+  // TODO: get port from settings
+  // if (proxyPort !== 8998) setUpdatePortDisable(false)
+
+  const changePort = async () => {
+    try {
+      await window.api.changePort(proxyPort)
+      message.success('Port updated')
+    } catch (error) {
+      console.error(error)
+      message.error('Failed to update port')
+      setProxyPort(8998)
+    }
+  }
+
   return (
     <div className="app-page page-settings">
       <Typography.Title level={4} style={{ marginBottom: 20 }}>
@@ -25,7 +41,9 @@ function SettingsPage(): JSX.Element {
                   style={{ width: 170 }}
                   onChange={(value) => setProxyPort(Number(value))}
                 ></InputNumber>
-                <Button type="primary">Update</Button>
+                <Button type="primary" disabled={proxyPort == 8998} onClick={changePort}>
+                  Update
+                </Button>
               </Space.Compact>
             </Form.Item>
           </Space>

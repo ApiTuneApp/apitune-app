@@ -1,13 +1,13 @@
-import './server'
+import { initServer, changeServerPort } from './server/init'
 
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
 import { join } from 'path'
+import { v4 as uuidv4 } from 'uuid'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
-import { v4 as uuidv4 } from 'uuid'
 import icon from '../../resources/icon.png?asset'
 import {
   AddGroupOpts,
@@ -17,9 +17,13 @@ import {
   RuleGroup,
   StorageData
 } from '../shared/contract'
+import { findGroupOrRule } from '../shared/utils'
 import { initCommunicator } from './communicator'
 import { DefaultUserData, initRuntimeRules, updateRuntimeRules } from './storage'
-import { findGroupOrRule } from '../shared/utils'
+import config from './server/config'
+
+// Todo: get port from settings
+initServer(config.port)
 
 function createWindow(): void {
   // Create the browser window.
@@ -371,6 +375,25 @@ app.whenReady().then(() => {
       } catch (error) {
         reject(error)
       }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.ChangePort, (event, port: number) => {
+    return new Promise((resolve, reject) => {
+      changeServerPort(
+        port,
+        () => {
+          resolve({
+            status: EventResultStatus.Success
+          })
+        },
+        (error) => {
+          reject({
+            status: EventResultStatus.Error,
+            error: error.message
+          })
+        }
+      )
     })
   })
 

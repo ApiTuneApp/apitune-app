@@ -27,6 +27,9 @@ const api = {
   },
   deleteRule: (id: string): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.DeleteRule, id)
+  },
+  changePort: (port: number): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.ChangePort, port)
   }
 }
 

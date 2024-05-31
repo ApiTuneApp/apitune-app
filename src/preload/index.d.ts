@@ -22,6 +22,7 @@ declare global {
       enableRule: (id: string, enable: boolean) => Promise<IpcResult>
       updateRuleGroupName: (id: string, ruleName: string) => Promise<IpcResult>
       deleteRule: (id: string) => Promise<IpcResult>
+      changePort: (port: number) => Promise<IpcResult>
     }
   }
 }
