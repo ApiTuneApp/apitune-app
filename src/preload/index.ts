@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { MainEvent, RenderEvent, IpcResult, ApiRules, AddGroupOpts } from '../shared/contract'
+import { get } from 'node:http'
 
 // Custom APIs for renderer
 const api = {
@@ -30,6 +31,9 @@ const api = {
   },
   changePort: (port: number): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.ChangePort, port)
+  },
+  getSettings: (): Promise<any> => {
+    return ipcRenderer.invoke(RenderEvent.GetSettings)
   }
 }
 

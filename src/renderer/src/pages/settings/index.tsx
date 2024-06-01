@@ -1,22 +1,25 @@
 import { FileProtectOutlined } from '@ant-design/icons'
+import { useSettingStore } from '@renderer/store/setting'
 import { Button, Typography, Form, InputNumber, Select, Space, App } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function SettingsPage(): JSX.Element {
   const { message } = App.useApp()
-  const [proxyPort, setProxyPort] = useState(8998)
 
-  // TODO: get port from settings
-  // if (proxyPort !== 8998) setUpdatePortDisable(false)
+  const { port, theme, setTheme } = useSettingStore((state) => state)
+  const [proxyPort, setProxyPort] = useState(port)
+
+  useEffect(() => {
+    setProxyPort(port)
+  }, [port])
 
   const changePort = async () => {
     try {
       await window.api.changePort(proxyPort)
       message.success('Port updated')
     } catch (error) {
-      console.error(error)
-      message.error('Failed to update port')
-      setProxyPort(8998)
+      message.error('Failed to update port: ' + error)
+      setProxyPort(port)
     }
   }
 
@@ -41,7 +44,7 @@ function SettingsPage(): JSX.Element {
                   style={{ width: 170 }}
                   onChange={(value) => setProxyPort(Number(value))}
                 ></InputNumber>
-                <Button type="primary" disabled={proxyPort == 8998} onClick={changePort}>
+                <Button type="primary" disabled={proxyPort == port} onClick={changePort}>
                   Update
                 </Button>
               </Space.Compact>
@@ -50,13 +53,14 @@ function SettingsPage(): JSX.Element {
           <Space>
             <Form.Item label="Themes">
               <Select
-                defaultValue="dark"
+                value={theme}
                 style={{ width: 250 }}
                 options={[
                   { label: 'Light', value: 'light' },
                   { label: 'Dark', value: 'dark' },
                   { label: 'Sync with system', value: 'system' }
                 ]}
+                onChange={(value) => setTheme(value)}
               />
             </Form.Item>
           </Space>

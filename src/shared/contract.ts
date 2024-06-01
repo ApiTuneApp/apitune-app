@@ -7,6 +7,7 @@ export enum RenderEvent {
   UpdateRuleGroupName = 'updateRuleGroupName',
   GetApiRules = 'getApiRules',
   DeleteRule = 'deleteRule',
+  GetSettings = 'getSettings',
   ChangePort = 'changePort'
 }
 
@@ -165,21 +166,22 @@ export interface RuleGroup {
   updateTime: number
 }
 
-export interface Settings {
-  proxyPort?: '8998'
+export interface SettingStorage {
+  version: string
+  port: number
+  theme: 'light' | 'dark' | 'system'
 }
 
 export type ApiRuleItem = RuleGroup | RuleData
 
 export type ApiRules = Array<RuleGroup | RuleData>
 
-export interface StorageData {
+export interface RuleStorage {
   version: string
-  settings: Settings
   apiRules: ApiRules
 }
 
-export type StorageDataParams = Partial<StorageData>
+export type RuleStorageParams = Partial<RuleStorage>
 
 export type AddGroupOpts = {
   groupId?: string

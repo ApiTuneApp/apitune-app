@@ -1,7 +1,7 @@
 import { Input, Modal } from 'antd'
 import * as React from 'react'
 
-import * as RuleService from '@renderer/services/rule'
+import * as Service from '@renderer/services'
 import { useRuleStore } from '@renderer/store'
 import { EventResultStatus } from '@shared/contract'
 
@@ -35,7 +35,7 @@ export default function GroupEditModal(props: NameModalProps): JSX.Element {
     if (groupId) {
       const result = await window.api.updateRuleGroupName(groupId, name)
       if (result.status === EventResultStatus.Success) {
-        RuleService.getApiRules()
+        Service.getApiRules()
       }
     } else {
       const result = await window.api.addRule(
@@ -47,7 +47,7 @@ export default function GroupEditModal(props: NameModalProps): JSX.Element {
         })
       )
       if (result.status === EventResultStatus.Success) {
-        RuleService.getApiRules()
+        Service.getApiRules()
       }
     }
     onSubmit && onSubmit()

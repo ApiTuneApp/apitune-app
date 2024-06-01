@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom'
 
 import { ExclamationCircleFilled } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
-import * as RuleService from '@renderer/services/rule'
+import * as Service from '@renderer/services'
 import { useRuleStore } from '@renderer/store'
 import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 
@@ -22,7 +22,7 @@ function RuleListPage(): JSX.Element {
   function triggerRuleEnable(rule, enabled) {
     window.api.enableRule(rule.id, enabled).then((result) => {
       if (result.status === EventResultStatus.Success) {
-        RuleService.getApiRules()
+        Service.getApiRules()
       }
     })
   }
@@ -44,7 +44,7 @@ function RuleListPage(): JSX.Element {
       onOk: async () => {
         const result = await window.api.deleteRule(id)
         if (result.status === EventResultStatus.Success) {
-          RuleService.getApiRules()
+          Service.getApiRules()
         }
       }
     })

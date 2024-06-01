@@ -8,7 +8,7 @@ import { MainEvent } from '@shared/contract'
 
 import Header from './components/header'
 import Sidebar from './components/sidebar'
-import { getApiRules } from './services/rule'
+import { getApiRules, getSettings } from './services'
 
 const { Header: LayoutHeader, Sider: LayoutSider, Content: LayoutContent } = Layout
 
@@ -18,8 +18,12 @@ function App(): JSX.Element {
   const addProxyLogs = useUxStore((state) => state.addProxyLogs)
 
   useEffect(() => {
-    const cancelFn = getApiRules()
-    return cancelFn
+    const cancelRules = getApiRules()
+    const cancelSettings = getSettings()
+    return () => {
+      cancelRules()
+      cancelSettings()
+    }
   }, [])
 
   useEffect(() => {

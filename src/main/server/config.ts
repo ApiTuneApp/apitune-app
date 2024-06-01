@@ -18,5 +18,8 @@ export default {
   caDir: path.resolve(__dirname, '../src/ca'),
   // 可展示的body限制 目前10MB
   // MaxBodyLogSize: 10e6
-  MaxBodyLogSize: 10e60
+  MaxBodyLogSize: 10e60,
+
+  RuleDefaultStorageKey: 'rules.default',
+  SettingDefaultStorageKey: 'settings.default'
 }

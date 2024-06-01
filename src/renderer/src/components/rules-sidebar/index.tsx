@@ -13,7 +13,7 @@ import {
   PlusSquareOutlined
 } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
-import * as RuleService from '@renderer/services/rule'
+import * as Service from '@renderer/services'
 import { useRuleStore } from '@renderer/store'
 import { useUxStore } from '@renderer/store/ux'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
@@ -57,7 +57,7 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
     e.stopPropagation()
     window.api.enableRule(ruleId, checked).then((result) => {
       if (result.status === EventResultStatus.Success) {
-        RuleService.getApiRules()
+        Service.getApiRules()
       }
     })
   }
@@ -162,7 +162,7 @@ function RulesSidebar(): JSX.Element {
   const handleDelConfirm = async () => {
     const result = await window.api.deleteRule(editGroupId as string)
     if (result.status === EventResultStatus.Success) {
-      RuleService.getApiRules()
+      Service.getApiRules()
     }
   }
 

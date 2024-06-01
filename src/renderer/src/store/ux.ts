@@ -17,9 +17,9 @@ type Action = {
 
 export const useUxStore = create<State & Action>((set) => ({
   ruleSidebarExpandedKeys: [],
-  setRuleSidebarExpandedKeys: (keys) => set(() => ({ ruleSidebarExpandedKeys: keys })),
   proxyLogs: [],
   logPaused: false,
+  setRuleSidebarExpandedKeys: (keys) => set(() => ({ ruleSidebarExpandedKeys: keys })),
   addProxyLogs: (log: Log) =>
     set((state) => {
       if (state.logPaused) return state

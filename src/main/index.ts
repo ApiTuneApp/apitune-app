@@ -13,16 +13,25 @@ import {
   RenderEvent,
   RuleData,
   RuleGroup,
-  StorageData
+  RuleStorage
 } from '../shared/contract'
 import { findGroupOrRule } from '../shared/utils'
 import { initCommunicator } from './communicator'
 import config from './server/config'
 import { changeServerPort, initServer } from './server/init'
-import { DefaultUserData, initRuntimeRules, updateRuntimeRules } from './storage'
+import {
+  DefaultRuleData,
+  DefaultSettingData,
+  initRuntimeRules,
+  initSettingData,
+  updateRuntimeRules,
+  updateSettingData
+} from './storage'
 
-// Todo: get port from settings
-initServer(config.port)
+initSettingData()
+
+// TODO: handle default port is in use
+initServer(DefaultSettingData.port)
 
 function createWindow(): void {
   // Create the browser window.
@@ -83,8 +92,8 @@ app.whenReady().then(() => {
         }
         ruleObj.updateTime = new Date().getTime()
         // TODO: generate storage key with user name and workspace name
-        const key = opts?.storageKey || 'user.default'
-        let data = Storage.getSync(key) as StorageData
+        const key = opts?.storageKey || config.RuleDefaultStorageKey
+        let data = Storage.getSync(key) as RuleStorage
         if (data) {
           if (data.apiRules) {
             if (opts?.groupId) {
@@ -105,7 +114,7 @@ app.whenReady().then(() => {
           }
           ruleObj.id = uuidv4()
         } else {
-          data = DefaultUserData
+          data = DefaultRuleData
         }
         Storage.set(key, data, (error) => {
           if (error) {
@@ -133,14 +142,14 @@ app.whenReady().then(() => {
     return new Promise((resolve, reject) => {
       try {
         const ruleObj = JSON.parse(rules) as RuleData
-        const data = Storage.getSync('user.default') as StorageData
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
         ruleObj.updateTime = new Date().getTime()
         if (data) {
           if (data.apiRules) {
             const rule = findGroupOrRule(data.apiRules, id)
             if (rule) {
               Object.assign(rule, ruleObj)
-              Storage.set('user.default', data, (error) => {
+              Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   reject({
                     status: EventResultStatus.Error,
@@ -183,14 +192,14 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.EnableRule, (event, id: string, enable: boolean) => {
     return new Promise((resolve, reject) => {
       try {
-        const data = Storage.getSync('user.default') as StorageData
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
         if (data) {
           if (data.apiRules) {
             const rule = findGroupOrRule(data.apiRules, id)
             if (rule) {
               rule.enable = enable
               rule.updateTime = new Date().getTime()
-              Storage.set('user.default', data, (error) => {
+              Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   reject({
                     status: EventResultStatus.Error,
@@ -233,14 +242,14 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.UpdateRuleGroupName, (event, id: string, ruleName: string) => {
     return new Promise((resolve, reject) => {
       try {
-        const data = Storage.getSync('user.default') as StorageData
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
         if (data) {
           if (data.apiRules) {
             const rule = data.apiRules.find((r) => r.id === id)
             if (rule) {
               rule.name = ruleName
               rule.updateTime = new Date().getTime()
-              Storage.set('user.default', data, (error) => {
+              Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   reject({
                     status: EventResultStatus.Error,
@@ -283,14 +292,14 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.DeleteRule, (event, id: string) => {
     return new Promise((resolve, reject) => {
       try {
-        const data = Storage.getSync('user.default') as StorageData
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
         if (data) {
           if (data.apiRules) {
             const curRule = findGroupOrRule(data.apiRules, id)
             if (curRule?.kind === 'group') {
               const index = data.apiRules.findIndex((r) => r.id === id)
               data.apiRules.splice(index, 1)
-              Storage.set('user.default', data, (error) => {
+              Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   reject({
                     status: EventResultStatus.Error,
@@ -313,7 +322,7 @@ app.whenReady().then(() => {
               if (group) {
                 const index = group.ruleList.findIndex((r) => r.id === id)
                 group.ruleList.splice(index, 1)
-                Storage.set('user.default', data, (error) => {
+                Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                   if (error) {
                     reject({
                       status: EventResultStatus.Error,
@@ -362,11 +371,26 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.GetApiRules, (event) => {
     return new Promise((resolve, reject) => {
       try {
-        const data = Storage.getSync('user.default') as StorageData
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
         if (data) {
           resolve(data.apiRules || [])
         } else {
           resolve([])
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.GetSettings, (event) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const data = Storage.getSync(config.SettingDefaultStorageKey)
+        if (data) {
+          resolve(data)
+        } else {
+          resolve(DefaultSettingData)
         }
       } catch (error) {
         reject(error)
@@ -379,6 +403,9 @@ app.whenReady().then(() => {
       changeServerPort(
         port,
         () => {
+          updateSettingData({
+            port: port
+          })
           resolve({
             status: EventResultStatus.Success
           })

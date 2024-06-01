@@ -2,7 +2,7 @@ import { Context, Next } from 'koa'
 
 import { RuleData, RuleType } from '../../../shared/contract'
 import { isRuleMatch } from '../../helper'
-import { DefaultUserData } from '../../storage'
+import { DefaultRuleData } from '../../storage'
 import * as ruleHandlers from '../rule-handler'
 
 const requestHandlerMap = {
@@ -42,7 +42,7 @@ const responseHanderMap = {
 }
 
 export default async function RulesMiddleware(ctx: Context, next: Next) {
-  const curApiRules = DefaultUserData.apiRules
+  const curApiRules = DefaultRuleData.apiRules
 
   // find enabled rule list
   const enableRuleDataList: RuleData[] = []

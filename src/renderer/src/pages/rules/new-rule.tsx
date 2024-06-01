@@ -29,7 +29,7 @@ import { RuleItem } from '@renderer/common/contract'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import Redirect from '@renderer/components/add-rule-item/redirect'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
-import * as RuleService from '@renderer/services/rule'
+import * as Service from '@renderer/services'
 import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@shared/contract'
@@ -101,7 +101,7 @@ function NewRulePage(): JSX.Element {
   const showAddRuleResult = (result: IpcResult) => {
     if (result.status === EventResultStatus.Success) {
       message.success(`Rule ${editRuleId ? 'edited' : 'added'} successfully`, () => {
-        RuleService.getApiRules()
+        Service.getApiRules()
         navigate('/rules/list')
       })
     } else {
@@ -197,7 +197,7 @@ function NewRulePage(): JSX.Element {
       onOk: async () => {
         const result = await window.api.deleteRule(id)
         if (result.status === EventResultStatus.Success) {
-          RuleService.getApiRules()
+          Service.getApiRules()
           navigate('/rules/list')
         }
       }

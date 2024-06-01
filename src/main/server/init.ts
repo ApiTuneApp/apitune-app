@@ -12,34 +12,47 @@ process.on('unhandledRejection', (e) => {
   console.log('unhandledRejection', e)
 })
 
-let httpServer: http.Server
+export let httpServer: http.Server
 
-export function initServer(port, success?: () => void, fail?: (e: Error) => void) {
-  httpServer = http.createServer({
+export function initServer(
+  port,
+  success?: (newHttpServer: http.Server) => void,
+  fail?: (e: Error) => void
+) {
+  const newHttpServer = http.createServer({
     insecureHTTPParser: true
   })
 
-  httpServer.on('request', handleRequest)
-  httpServer.on('connect', onConnect)
-  httpServer.on('upgrade', onUpgrade)
-  httpServer
+  newHttpServer.on('request', handleRequest)
+  newHttpServer.on('connect', onConnect)
+  newHttpServer.on('upgrade', onUpgrade)
+  newHttpServer
     .listen(port, '127.0.0.1', () => {
       console.log(`Server is listening on port ${port}`)
-      success && success()
+      httpServer = newHttpServer
+      success && success(newHttpServer)
     })
     .on('error', (e) => {
       fail && fail(e)
     })
-  return httpServer
+  return newHttpServer
 }
 
-export function stopServer() {
-  httpServer.close(() => {
+function stopServer(oldServer: http.Server, newHttpServer?: http.Server) {
+  oldServer.close(() => {
     console.log('Server stopped')
+    newHttpServer && (httpServer = newHttpServer)
   })
 }
 
 export function changeServerPort(port: number, sucess?: () => void, fail?: (e: Error) => void) {
-  stopServer()
-  initServer(port, sucess, fail)
+  const oldServer = httpServer
+  initServer(
+    port,
+    (newHttpServer: http.Server) => {
+      stopServer(oldServer, newHttpServer)
+      sucess && sucess()
+    },
+    fail
+  )
 }

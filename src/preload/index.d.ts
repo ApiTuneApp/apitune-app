@@ -1,11 +1,12 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 import {
   MainEvent,
-  StorageDataParams,
+  RuleStorageParams,
   IpcResult,
   RenderEvent,
   AddGroupOpts,
-  Log
+  Log,
+  SettingStorage
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -23,6 +24,7 @@ declare global {
       updateRuleGroupName: (id: string, ruleName: string) => Promise<IpcResult>
       deleteRule: (id: string) => Promise<IpcResult>
       changePort: (port: number) => Promise<IpcResult>
+      getSettings: () => Promise<SettingStorage>
     }
   }
 }
