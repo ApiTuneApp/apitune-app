@@ -48,18 +48,30 @@ function App(): JSX.Element {
   return (
     <ConfigProvider
       theme={{
-        algorithm: appTheme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+        algorithm:
+          appTheme === 'dark'
+            ? [antdTheme.darkAlgorithm, antdTheme.compactAlgorithm]
+            : [antdTheme.defaultAlgorithm, antdTheme.compactAlgorithm],
+        token: {
+          colorBgContainer: 'var(--color-background-soft)'
+        },
         components: {
           Layout: {
-            siderBg: '#141414',
-            algorithm: true
+            algorithm: true,
+            siderBg: 'var(--color-background-soft)',
+            headerBg: 'var(--color-background-soft)',
+            headerHeight: 40
           },
           Form: {
             itemMarginBottom: 10
           },
           Table: {
-            rowSelectedBg: '#1668dc',
-            rowSelectedHoverBg: '#1668dc'
+            algorithm: true,
+            rowSelectedBg: appTheme === 'dark' ? '#1668dc' : '#bae0ff',
+            rowSelectedHoverBg: appTheme === 'dark' ? '#1668dc' : '#bae0ff'
+          },
+          Tree: {
+            // colorBgContainer: 'var(--color-background-mute)'
           }
         }
       }}
@@ -67,7 +79,7 @@ function App(): JSX.Element {
       <AntApp style={{ height: '100vh' }}>
         <Layout style={{ height: '100%' }}>
           <LayoutHeader
-            style={{ padding: 0, height: 50, display: 'flex', alignItems: 'center', width: '100%' }}
+            style={{ padding: 0, display: 'flex', alignItems: 'center', width: '100%' }}
           >
             <Header />
           </LayoutHeader>

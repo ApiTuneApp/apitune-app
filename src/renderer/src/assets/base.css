@@ -23,19 +23,40 @@
   --ev-button-alt-hover-bg: var(--ev-c-gray-2);
 }
 
-:root {
-  --color-background: var(--ev-c-black);
-  --color-background-soft: var(--ev-c-black-soft);
-  --color-background-mute: var(--ev-c-black-mute);
-  --color-scrollbar: #444;
-  --color-scrollbar-background: #1E1E1E;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--ev-c-black);
+    --color-background-soft: var(--ev-c-black-soft);
+    --color-background-mute: var(--ev-c-black-mute);
+    --color-scrollbar: #444;
+    --color-scrollbar-background: #1E1E1E;
 
-  --color-elevation-0: #121212;
-  --color-elevation-1: #222222;
-  --color-elevation-2: #282828;
-  --color-elevation-3: #2b2b2b;
+    --color-elevation-0: #121212;
+    --color-elevation-1: #222222;
+    --color-elevation-2: #282828;
+    --color-elevation-3: #2b2b2b;
 
-  --color-text: var(--ev-c-text-1);
+    --color-text: var(--ev-c-text-1);
+    --color-text-2: var(--ev-c-text-2);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-background: var(--ev-c-white);
+    --color-background-soft: var(--ev-c-white-soft);
+    --color-background-mute: var(--ev-c-white-mute);
+    --color-scrollbar: #ccc;
+    --color-scrollbar-background: #f1f1f1;
+
+    --color-elevation-0: #f8f8f8;
+    --color-elevation-1: #f2f2f2;
+    --color-elevation-2: #eaeaea;
+    --color-elevation-3: #e0e0e0;
+
+    --color-text: var(--ev-c-black);
+    --color-text-2: var(--ev-c-black-soft);
+  }
 }
 
 *,

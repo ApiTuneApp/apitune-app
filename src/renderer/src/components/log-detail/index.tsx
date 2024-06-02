@@ -4,6 +4,7 @@ import { Collapse, CollapseProps, Descriptions, Tabs, TabsProps } from 'antd'
 
 import ReactJson from '@microlink/react-json-view'
 import { Log } from '@shared/contract'
+import { useSettingStore } from '@renderer/store/setting'
 
 interface LogDetailProps {
   log: Log
@@ -97,6 +98,7 @@ function isImg(type: string | undefined) {
 
 function LogDetail({ log }: LogDetailProps): JSX.Element {
   const requestParams = getRequestParams(log)
+  const appTheme = useSettingStore((state) => state.appTheme)
 
   const requestColItems: CollapseProps['items'] = [
     {
@@ -135,7 +137,13 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
       key: 'requestParams',
       label: 'Request Parameters',
       children: requestParams.isJson ? (
-        <ReactJson src={requestParams.data} theme="monokai" displayDataTypes={false} name={false} />
+        <ReactJson
+          src={requestParams.data}
+          theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
+          displayDataTypes={false}
+          displayObjectSize={false}
+          name={false}
+        />
       ) : (
         <div className="raw-content">{requestParams.data}</div>
       )
@@ -202,8 +210,9 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
           {log.responseBodyInfo?.isJson && (
             <ReactJson
               src={log.responseBodyInfo?.data}
-              theme="monokai"
+              theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
               displayDataTypes={false}
+              displayObjectSize={false}
               name={false}
             />
           )}

@@ -1,6 +1,6 @@
 import './rules-sidebar.less'
 
-import { App, Button, Divider, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
+import { App, Button, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
 import * as React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
@@ -217,7 +217,6 @@ function RulesSidebar(): JSX.Element {
           </NavLink>
         </Tooltip>
       </Flex>
-      <Divider style={{ margin: '5px 0' }} />
       <GroupEditModal
         open={addGroupDialogOpen}
         groupId={editGroupId}

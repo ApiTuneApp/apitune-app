@@ -15,8 +15,9 @@ import LogDetail from '@renderer/components/log-detail'
 import { useUxStore } from '@renderer/store/ux'
 import { Log } from '@shared/contract'
 
-const minDrawerHeight = 20
-const maxDarwerHeight = 1000
+const MinDrawerHeight = 20
+const MaxDarwerHeight = 1000
+const QueryIconSize = 16
 
 function NetworkPage(): JSX.Element {
   const proxyLogs = useUxStore((state) => state.proxyLogs)
@@ -135,7 +136,7 @@ function NetworkPage(): JSX.Element {
 
   const handleMouseMove = useCallback((e) => {
     const newHeight = document.body.offsetHeight - e.clientY - 22
-    if (newHeight > minDrawerHeight && newHeight < maxDarwerHeight) {
+    if (newHeight > MinDrawerHeight && newHeight < MaxDarwerHeight) {
       setDrawerHeight(newHeight)
     }
   }, [])
@@ -170,17 +171,17 @@ function NetworkPage(): JSX.Element {
         />
         <Space>
           <Tooltip title="Clear network log">
-            <ClearOutlined onClick={handleClearLog} style={{ fontSize: 18 }} />
+            <ClearOutlined onClick={handleClearLog} style={{ fontSize: QueryIconSize }} />
           </Tooltip>
           <Tooltip title={pauseBtnText}>
             {recordPaused ? (
-              <PlayCircleOutlined onClick={handlePauseClick} style={{ fontSize: 18 }} />
+              <PlayCircleOutlined onClick={handlePauseClick} style={{ fontSize: QueryIconSize }} />
             ) : (
-              <PauseCircleOutlined onClick={handlePauseClick} style={{ fontSize: 18 }} />
+              <PauseCircleOutlined onClick={handlePauseClick} style={{ fontSize: QueryIconSize }} />
             )}
           </Tooltip>
           <Tooltip title="Config network column">
-            <ControlOutlined style={{ fontSize: 18 }} />
+            <ControlOutlined style={{ fontSize: QueryIconSize }} />
           </Tooltip>
         </Space>
       </Flex>

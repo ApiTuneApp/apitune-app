@@ -7,6 +7,7 @@ import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 import { useRef } from 'react'
 
 import Editor, { EditorProps, loader } from '@monaco-editor/react'
+import { useSettingStore } from '@renderer/store/setting'
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
@@ -34,8 +35,7 @@ type MonacoEditorProps = {
 }
 
 export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
-  // TODO: support theme switch
-  const editorTheme = 'vsdark'
+  const editorTheme = useSettingStore((state) => state.appTheme) === 'dark' ? 'vs-dark' : 'light'
 
   const editorRef = useRef(null)
   function handleEditorDidMount(editor, monaco) {

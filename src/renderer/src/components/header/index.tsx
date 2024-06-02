@@ -1,9 +1,13 @@
 import './header.less'
 
+import { Typography } from 'antd'
+
+const { Text } = Typography
+
 function Header(): JSX.Element {
   return (
     <div className="app-header">
-      <span>My Workspace(default)</span>
+      <Text>My Workspace</Text>
     </div>
   )
 }
