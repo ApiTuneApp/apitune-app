@@ -14,12 +14,17 @@ interface LogObjBlockProps {
 }
 
 function LogObjBlock({ data }: LogObjBlockProps) {
-  return Object.keys(data).map((key) => (
-    <div className="log-block-item" key={key}>
-      <span className="block-label">{key}: </span>
-      <span className="block-value">{data[key]}</span>
-    </div>
-  ))
+  return (
+    <Descriptions
+      size="small"
+      column={1}
+      items={Object.keys(data).map((key) => ({
+        key,
+        label: key,
+        children: [data[key]]
+      }))}
+    />
+  )
 }
 
 function parseURLEncoded(query) {
