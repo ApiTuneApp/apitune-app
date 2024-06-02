@@ -6,7 +6,8 @@ import {
   RenderEvent,
   AddGroupOpts,
   Log,
-  SettingStorage
+  SettingStorage,
+  AppTheme
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -25,6 +26,8 @@ declare global {
       deleteRule: (id: string) => Promise<IpcResult>
       changePort: (port: number) => Promise<IpcResult>
       getSettings: () => Promise<SettingStorage>
+      getAppTheme: () => Promise<AppTheme>
+      changeTheme: (theme: Theme) => Promise<IpcResult>
     }
   }
 }

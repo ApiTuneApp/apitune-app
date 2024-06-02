@@ -1,7 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { MainEvent, RenderEvent, IpcResult, ApiRules, AddGroupOpts } from '../shared/contract'
-import { get } from 'node:http'
+import {
+  MainEvent,
+  RenderEvent,
+  IpcResult,
+  ApiRules,
+  AddGroupOpts,
+  Theme
+} from '../shared/contract'
 
 // Custom APIs for renderer
 const api = {
@@ -34,6 +40,12 @@ const api = {
   },
   getSettings: (): Promise<any> => {
     return ipcRenderer.invoke(RenderEvent.GetSettings)
+  },
+  getAppTheme: (): Promise<Theme> => {
+    return ipcRenderer.invoke(RenderEvent.GetAppTheme)
+  },
+  changeTheme: (theme: Theme): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.ChangeTheme, theme)
   }
 }
 

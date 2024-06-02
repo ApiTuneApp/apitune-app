@@ -14,8 +14,16 @@ export function getApiRules() {
 
 export function getSettings() {
   const initSettings = useSettingStore.getState().initSettings
+  const setAppThme = useSettingStore.getState().setAppTheme
   window.api.getSettings().then((settings) => {
     initSettings(settings)
+    if (settings.theme === 'system') {
+      window.api.getAppTheme().then((theme) => {
+        setAppThme(theme)
+      })
+    } else {
+      setAppThme(settings.theme)
+    }
   })
   return () => {
     window.api.clearupEvent(RenderEvent.GetSettings)

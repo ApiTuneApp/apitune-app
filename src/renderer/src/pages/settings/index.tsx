@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 function SettingsPage(): JSX.Element {
   const { message } = App.useApp()
 
-  const { port, theme, setTheme } = useSettingStore((state) => state)
+  const { port, theme, setTheme, setAppTheme } = useSettingStore((state) => state)
   const [proxyPort, setProxyPort] = useState(port)
 
   useEffect(() => {
@@ -20,6 +20,17 @@ function SettingsPage(): JSX.Element {
     } catch (error) {
       message.error('Failed to update port: ' + error)
       setProxyPort(port)
+    }
+  }
+
+  const handleThemeChange = (value) => {
+    setTheme(value)
+    if (value === 'system') {
+      window.api.getAppTheme().then((theme) => {
+        setAppTheme(theme)
+      })
+    } else {
+      setAppTheme(value)
     }
   }
 
@@ -60,7 +71,7 @@ function SettingsPage(): JSX.Element {
                   { label: 'Dark', value: 'dark' },
                   { label: 'Sync with system', value: 'system' }
                 ]}
-                onChange={(value) => setTheme(value)}
+                onChange={(value) => handleThemeChange(value)}
               />
             </Form.Item>
           </Space>

@@ -1,4 +1,4 @@
-import { App as AntApp, ConfigProvider, Layout, theme } from 'antd'
+import { App as AntApp, ConfigProvider, Layout, theme as antdTheme } from 'antd'
 import KeepAlive from 'keepalive-for-react'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
@@ -9,6 +9,7 @@ import { MainEvent } from '@shared/contract'
 import Header from './components/header'
 import Sidebar from './components/sidebar'
 import { getApiRules, getSettings } from './services'
+import { useSettingStore } from './store/setting'
 
 const { Header: LayoutHeader, Sider: LayoutSider, Content: LayoutContent } = Layout
 
@@ -16,6 +17,7 @@ function App(): JSX.Element {
   const outlet = useOutlet()
   const location = useLocation()
   const addProxyLogs = useUxStore((state) => state.addProxyLogs)
+  const appTheme = useSettingStore((state) => state.appTheme)
 
   useEffect(() => {
     const cancelRules = getApiRules()
@@ -46,7 +48,7 @@ function App(): JSX.Element {
   return (
     <ConfigProvider
       theme={{
-        algorithm: theme.darkAlgorithm,
+        algorithm: appTheme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
         components: {
           Layout: {
             siderBg: '#141414',

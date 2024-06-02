@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { nativeTheme } from 'electron/main'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
 import { join } from 'path'
@@ -13,7 +14,8 @@ import {
   RenderEvent,
   RuleData,
   RuleGroup,
-  RuleStorage
+  RuleStorage,
+  Theme
 } from '../shared/contract'
 import { findGroupOrRule } from '../shared/utils'
 import { initCommunicator } from './communicator'
@@ -417,6 +419,28 @@ app.whenReady().then(() => {
           })
         }
       )
+    })
+  })
+
+  ipcMain.handle(RenderEvent.ChangeTheme, (event, theme: Theme) => {
+    return new Promise((resolve, reject) => {
+      nativeTheme.themeSource = theme
+      updateSettingData({
+        theme: theme
+      })
+      resolve({
+        status: EventResultStatus.Success
+      })
+    })
+  })
+
+  ipcMain.handle(RenderEvent.GetAppTheme, (event) => {
+    return new Promise((resolve, reject) => {
+      try {
+        resolve(nativeTheme.shouldUseDarkColors ? 'dark' : 'light')
+      } catch (error) {
+        resolve('light')
+      }
     })
   })
 

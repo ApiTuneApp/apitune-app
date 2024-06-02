@@ -8,7 +8,9 @@ export enum RenderEvent {
   GetApiRules = 'getApiRules',
   DeleteRule = 'deleteRule',
   GetSettings = 'getSettings',
-  ChangePort = 'changePort'
+  ChangePort = 'changePort',
+  ChangeTheme = 'changeTheme',
+  GetAppTheme = 'getAppTheme'
 }
 
 export enum MainEvent {
@@ -166,10 +168,13 @@ export interface RuleGroup {
   updateTime: number
 }
 
+export type Theme = 'light' | 'dark' | 'system'
+export type AppTheme = 'light' | 'dark' | null
+
 export interface SettingStorage {
   version: string
   port: number
-  theme: 'light' | 'dark' | 'system'
+  theme: Theme
 }
 
 export type ApiRuleItem = RuleGroup | RuleData
