@@ -69,7 +69,6 @@ function HeaderEditor({ field, type }: AddRuleValueProps & HeaderEditorProps): J
             </Flex>
           ))}
           <Button
-            size="small"
             type="dashed"
             block
             style={{ marginLeft: 4 }}

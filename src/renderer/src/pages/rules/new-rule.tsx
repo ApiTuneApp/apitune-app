@@ -12,7 +12,8 @@ import {
   Select,
   Space,
   Switch,
-  Tooltip
+  Tooltip,
+  Typography
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -26,19 +27,21 @@ import {
   LeftOutlined
 } from '@ant-design/icons'
 import { RuleItem } from '@renderer/common/contract'
+import BodyEditor from '@renderer/components/add-rule-item/body-editor'
+import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import Redirect from '@renderer/components/add-rule-item/redirect'
+import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
+import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
+import MatchTestModal from '@renderer/components/match-test-modal'
 import * as Service from '@renderer/services'
 import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
-import BodyEditor from '@renderer/components/add-rule-item/body-editor'
-import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
-import ResponseStatus from '@renderer/components/add-rule-item/response-status'
-import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
-import MatchTestModal from '@renderer/components/match-test-modal'
+
+const { Text } = Typography
 
 const reqMethods = ReqMethods.map((item) => ({
   label: item,
@@ -216,19 +219,14 @@ function NewRulePage(): JSX.Element {
         <div className="page-new-header">
           <Flex align="center">
             <Tooltip title="Go back to rule list">
-              <Button
-                className="normal-link"
-                onClick={() => navigate('/rules/list')}
-                type="link"
-                size="small"
-              >
+              <Button className="normal-link" onClick={() => navigate('/rules/list')} type="link">
                 <LeftOutlined />
               </Button>
             </Tooltip>
             {editRuleId ? (
-              <span>Edit Rule / {editRule?.name}</span>
+              <Text>Edit Rule / {editRule?.name}</Text>
             ) : (
-              <span>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</span>
+              <Text>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</Text>
             )}
           </Flex>
           <Space>
@@ -239,11 +237,11 @@ function NewRulePage(): JSX.Element {
                 unCheckedChildren="Disabled"
               ></Switch>
             </Form.Item>
-            <Button size="small" type="primary" onClick={() => form.submit()}>
+            <Button type="primary" onClick={() => form.submit()}>
               Save
             </Button>
             {editRuleId && (
-              <Button size="small" danger onClick={() => handleDelConfirmOpen(editRuleId)}>
+              <Button danger onClick={() => handleDelConfirmOpen(editRuleId)}>
                 Delete
               </Button>
             )}
@@ -252,7 +250,7 @@ function NewRulePage(): JSX.Element {
         <div className="paper-block e2">
           <div className="paper-title">Rule Info: </div>
           <Form.Item name="name" rules={[{ required: true, message: 'Rule name is required' }]}>
-            <Input size="large" placeholder="Add Rule Name" />
+            <Input placeholder="Add Rule Name" />
           </Form.Item>
           <Form.Item name="description">
             <Input.TextArea placeholder="Add Rule Description (Optional)" />
@@ -262,7 +260,7 @@ function NewRulePage(): JSX.Element {
         <div className="paper-block e2">
           <div className="paper-title">Match Rules: </div>
           <Flex gap={4} style={{ paddingBottom: '4px' }} align="baseline">
-            <Form.Item name={['matches', 'matchType']}>
+            <Form.Item name={['matches', 'matchType']} noStyle>
               <Select
                 options={[
                   { label: 'URL', value: 'url' },
@@ -271,7 +269,7 @@ function NewRulePage(): JSX.Element {
                 ]}
               />
             </Form.Item>
-            <Form.Item name={['matches', 'matchMode']}>
+            <Form.Item name={['matches', 'matchMode']} noStyle>
               <Select
                 options={[
                   { label: 'Contains', value: 'contains' },
@@ -284,13 +282,14 @@ function NewRulePage(): JSX.Element {
               name={['matches', 'value']}
               style={{ flex: 1 }}
               rules={[{ required: true, message: 'Match value is required' }]}
+              noStyle
             >
               <Input placeholder="Match Value" />
             </Form.Item>
             <Flex style={{ position: 'relative', top: 4 }}>
               <Tooltip title="Test macth rules">
                 <ExperimentOutlined
-                  style={{ fontSize: '20px', marginLeft: '8px' }}
+                  style={{ fontSize: '16px', marginLeft: '8px' }}
                   onClick={() => setShowMatchTestModal(true)}
                 />
               </Tooltip>
@@ -298,7 +297,7 @@ function NewRulePage(): JSX.Element {
                 <DownCircleOutlined
                   onClick={() => setShowReqMethodsFilter(!showReqMethodsFilter)}
                   style={{
-                    fontSize: '20px',
+                    fontSize: '16px',
                     marginLeft: '8px',
                     rotate: showReqMethodsFilter ? '180deg' : 'none'
                   }}
@@ -307,12 +306,12 @@ function NewRulePage(): JSX.Element {
             </Flex>
           </Flex>
           <Form.Item
+            noStyle
             name={['matches', 'methods']}
             style={{ display: showReqMethodsFilter ? 'block' : 'none' }}
           >
             <Select
               allowClear
-              size="large"
               mode="multiple"
               placeholder="Select methods (leave empty to match all)"
               style={{ width: '100%', marginTop: '8px' }}
@@ -350,7 +349,7 @@ function NewRulePage(): JSX.Element {
                 <div key={index} style={{ position: 'relative' }} className="paper-block e2">
                   <Tooltip title="remove rule" placement="top" arrow>
                     <DeleteOutlined
-                      style={{ position: 'absolute', top: '20px', right: '15px', zIndex: 999 }}
+                      style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 999 }}
                       onClick={() => remove(index)}
                     />
                   </Tooltip>
