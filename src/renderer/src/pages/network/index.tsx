@@ -185,28 +185,26 @@ function NetworkPage(): JSX.Element {
           </Tooltip>
         </Space>
       </Flex>
-      {proxyLogs.length > 0 && (
-        <Table
-          size="small"
-          rowKey="id"
-          virtual
-          columns={columns}
-          dataSource={resultLogs}
-          pagination={false}
-          // rowSelection={{}}
-          rowClassName={(record) => {
-            return curLog && record.id === curLog.id ? 'ant-table-row-selected' : ''
-          }}
-          style={{ flex: 1, overflowY: 'auto' }}
-          onRow={(record) => {
-            return {
-              onClick: (event) => {
-                handleRowClick(record)
-              }
+      <Table
+        size="small"
+        rowKey="id"
+        virtual
+        columns={columns}
+        dataSource={resultLogs}
+        pagination={false}
+        // rowSelection={{}}
+        rowClassName={(record) => {
+          return curLog && record.id === curLog.id ? 'ant-table-row-selected' : ''
+        }}
+        style={{ flex: 1, overflowY: 'auto' }}
+        onRow={(record) => {
+          return {
+            onClick: (event) => {
+              handleRowClick(record)
             }
-          }}
-        ></Table>
-      )}
+          }
+        }}
+      ></Table>
       <div
         className="paper-block no-padding"
         style={{

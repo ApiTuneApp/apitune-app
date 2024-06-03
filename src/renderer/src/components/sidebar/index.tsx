@@ -10,7 +10,7 @@ type MenuItem = Required<MenuProps>['items'][number]
 
 const items: MenuItem[] = [
   {
-    key: 'rules',
+    key: 'rules/list',
     icon: <AppstoreOutlined style={{ fontSize: '18px' }} />,
     label: 'API Rules'
   },
