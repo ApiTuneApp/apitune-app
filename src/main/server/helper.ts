@@ -120,17 +120,20 @@ export function merge(baseObj: any, extendObj: any) {
 
 export function execScriptSync(cmd: string) {
   let stdout,
-    status = 0
+    status = 0,
+    error = ''
   try {
     stdout = child_process.execSync(cmd)
   } catch (err: any) {
     stdout = err.stdout
     status = err.status
+    error = err.message
   }
 
   return {
     stdout: stdout.toString(),
-    status
+    status,
+    error
   }
 }
 

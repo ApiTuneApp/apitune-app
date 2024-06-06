@@ -6,8 +6,6 @@ const command = process.argv[2]
 
 console.log('Run command', command)
 
-console.log('crtMgr', crtMgr.genRootCa)
-
 if (command === 'genRootCa') {
   crtMgr.genRootCa((error: Error | CertErrors | null, keyPath: string, crtPath: string) => {
     if (error) {
@@ -18,16 +16,14 @@ if (command === 'genRootCa') {
   })
 } else if (command === 'status') {
   const isRootCAFileExists = crtMgr.isRootCAExists()
-  crtMgr.ifRootCATrusted((error: Error | null, trusted: boolean) => {
-    if (!error) {
-      console.log('Root CA is trusted:', trusted)
-    } else {
-      console.log('Failed to check if Root CA is trusted:', error)
-    }
-  })
+  const ifRootCATrusted = crtMgr.ifRootCATrusted()
+  const rootDirPath = crtMgr.getRootDirPath()
+  const rootCAPath = crtMgr.genRootCaFilePath()
 
   console.log('Root CA file exists:', isRootCAFileExists)
-  // console.log('\n');
+  console.log('Root CA is trusted:', ifRootCATrusted)
+  console.log('Root directory path:', rootDirPath)
+  console.log('Root CA file path:', rootCAPath)
 } else if (command === 'trust') {
   const isRootCAFileExists = crtMgr.isRootCAExists()
   const ifRootCATrusted = crtMgr.ifRootCATrusted()

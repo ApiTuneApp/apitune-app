@@ -29,6 +29,7 @@ declare global {
       getAppTheme: () => Promise<AppTheme>
       changeTheme: (theme: Theme) => Promise<IpcResult>
       getIp: () => Promise<string>
+      ca: (type: CaEventType) => Promise<IpcResult>
     }
   }
 }

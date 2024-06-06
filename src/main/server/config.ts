@@ -1,7 +1,7 @@
 import path from 'path'
 
 export default {
-  name: 'apitune',
+  name: 'ApiTune',
   port: 8998,
   proxyHeader: 'x-forwarded-from-apitune',
   // proxy请求对方服务器超时时间

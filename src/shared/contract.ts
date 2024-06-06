@@ -11,7 +11,8 @@ export enum RenderEvent {
   ChangePort = 'changePort',
   ChangeTheme = 'changeTheme',
   GetAppTheme = 'getAppTheme',
-  GetIP = 'getIP'
+  GetIP = 'getIP',
+  CA = 'CA'
 }
 
 export enum MainEvent {
@@ -24,8 +25,11 @@ export enum EventResultStatus {
   Error = 'error'
 }
 
+export type CaEventType = 'status' | 'genRoot' | 'trust'
+
 export interface IpcResult {
   status: EventResultStatus
+  data?: any
   error?: string
 }
 

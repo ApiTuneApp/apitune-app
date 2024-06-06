@@ -1,16 +1,17 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
-import { nativeTheme } from 'electron/main'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
+import { nativeTheme } from 'electron/main'
+import ip from 'ip'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
-import * as ip from 'ip'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
 import icon from '../../resources/icon.png?asset'
 import {
   AddGroupOpts,
+  CaEventType,
   EventResultStatus,
   RenderEvent,
   RuleData,
@@ -20,6 +21,7 @@ import {
 } from '../shared/contract'
 import { findGroupOrRule } from '../shared/utils'
 import { initCommunicator } from './communicator'
+import crtMgr from './server/cert-manager'
 import config from './server/config'
 import { changeServerPort, initServer } from './server/init'
 import {
@@ -451,6 +453,74 @@ app.whenReady().then(() => {
 
   ipcMain.handle(RenderEvent.GetIP, (event) => {
     return ip.address()
+  })
+
+  ipcMain.handle(RenderEvent.CA, (_event, type: CaEventType) => {
+    if (type === 'status') {
+      return new Promise((resolve, reject) => {
+        // Usually root CA is generated when the app is first launched
+        const isRootCAFileExists = crtMgr.isRootCAExists()
+        const isRootCATrusted = crtMgr.ifRootCATrusted()
+        const isCertificateInstalled = crtMgr.isCertificateInstalled()
+        resolve({
+          status: EventResultStatus.Success,
+          data: {
+            isRootCAFileExists,
+            isRootCATrusted,
+            isCertificateInstalled
+          }
+        })
+      })
+    } else if (type === 'genRoot') {
+      return new Promise((resolve, reject) => {
+        crtMgr.genRootCa((error, keyPath: string, crtPath: string) => {
+          if (error) {
+            resolve({
+              status: EventResultStatus.Error,
+              error: 'Failed to generate Root CA'
+            })
+          } else {
+            resolve({
+              status: EventResultStatus.Success,
+              data: {
+                keyPath,
+                crtPath
+              }
+            })
+          }
+        })
+      })
+    } else if (type === 'trust') {
+      const isRootCAFileExists = crtMgr.isRootCAExists()
+      const ifRootCATrusted = crtMgr.ifRootCATrusted()
+      return new Promise((resolve, reject) => {
+        if (!isRootCAFileExists) {
+          resolve({
+            status: EventResultStatus.Error,
+            error: 'Root CA not exists'
+          })
+        } else if (ifRootCATrusted) {
+          resolve({
+            status: EventResultStatus.Error,
+            error: 'Root CA is already trusted'
+          })
+        } else {
+          const result = crtMgr.installRootCA()
+          if (result.error) {
+            console.error('Failed to trust Root CA:', result.error)
+            resolve({
+              status: EventResultStatus.Error,
+              error: 'Failed to trust Root CA'
+            })
+          } else {
+            resolve({
+              status: EventResultStatus.Success
+            })
+          }
+        }
+      })
+    }
+    return Promise.resolve()
   })
 
   const dataPath = Storage.getDataPath()
