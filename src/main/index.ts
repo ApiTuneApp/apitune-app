@@ -391,6 +391,10 @@ app.whenReady().then(() => {
       try {
         const data = Storage.getSync(config.SettingDefaultStorageKey)
         if (data) {
+          // Should init theme to make prefers-color-scheme work
+          if (data.theme !== 'system') {
+            nativeTheme.themeSource = data.theme
+          }
           resolve(data)
         } else {
           resolve(DefaultSettingData)
