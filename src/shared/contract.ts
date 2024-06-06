@@ -10,7 +10,8 @@ export enum RenderEvent {
   GetSettings = 'getSettings',
   ChangePort = 'changePort',
   ChangeTheme = 'changeTheme',
-  GetAppTheme = 'getAppTheme'
+  GetAppTheme = 'getAppTheme',
+  GetIP = 'getIP'
 }
 
 export enum MainEvent {

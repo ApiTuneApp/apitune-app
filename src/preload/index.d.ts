@@ -28,6 +28,7 @@ declare global {
       getSettings: () => Promise<SettingStorage>
       getAppTheme: () => Promise<AppTheme>
       changeTheme: (theme: Theme) => Promise<IpcResult>
+      getIp: () => Promise<string>
     }
   }
 }

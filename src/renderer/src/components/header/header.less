@@ -2,5 +2,26 @@
 .app-header {
   width: 100%;
   padding: 0 20px;
-  // background-color: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .ip-item {
+    font-size: 12px;
+    background-color: var(--color-background-mute);
+    height: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 4px;
+    border: 1px solid var(--color-elevation-2);
+    .ip-status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 100%;
+      background-color: green;
+      margin-right: 4px;
+      position: relative;
+    }
+  }
 }

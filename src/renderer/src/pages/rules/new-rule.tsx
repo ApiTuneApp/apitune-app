@@ -212,7 +212,7 @@ function NewRulePage(): JSX.Element {
       <Form
         form={form}
         initialValues={formInitValues}
-        style={{ padding: '4px 36px', overflowY: 'auto' }}
+        style={{ padding: '4px 16px', overflowY: 'auto' }}
         layout="vertical"
         onFinish={handleAddRuleSubmit}
       >

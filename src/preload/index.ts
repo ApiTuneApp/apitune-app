@@ -8,6 +8,7 @@ import {
   AddGroupOpts,
   Theme
 } from '../shared/contract'
+import { get } from 'node:http'
 
 // Custom APIs for renderer
 const api = {
@@ -46,6 +47,9 @@ const api = {
   },
   changeTheme: (theme: Theme): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.ChangeTheme, theme)
+  },
+  getIp: (): Promise<string> => {
+    return ipcRenderer.invoke(RenderEvent.GetIP)
   }
 }
 

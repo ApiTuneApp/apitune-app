@@ -4,6 +4,7 @@ import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-insta
 import Storage from 'electron-json-storage'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import * as ip from 'ip'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
@@ -442,6 +443,10 @@ app.whenReady().then(() => {
         resolve('light')
       }
     })
+  })
+
+  ipcMain.handle(RenderEvent.GetIP, (event) => {
+    return ip.address()
   })
 
   const dataPath = Storage.getDataPath()
