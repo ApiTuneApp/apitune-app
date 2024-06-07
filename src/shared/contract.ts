@@ -25,7 +25,7 @@ export enum EventResultStatus {
   Error = 'error'
 }
 
-export type CaEventType = 'status' | 'genRoot' | 'trust'
+export type CaEventType = 'status' | 'genRoot' | 'trust' | 'export'
 
 export interface IpcResult {
   status: EventResultStatus

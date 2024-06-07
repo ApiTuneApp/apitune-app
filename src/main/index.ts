@@ -1,7 +1,8 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
 import { nativeTheme } from 'electron/main'
+import fs from 'fs'
 import ip from 'ip'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
@@ -518,6 +519,43 @@ app.whenReady().then(() => {
             })
           }
         }
+      })
+    } else if (type === 'export') {
+      const caPath = crtMgr.genRootCaFilePath()
+      return new Promise((resolve) => {
+        dialog
+          .showSaveDialog({
+            title: 'Export Root CA',
+            defaultPath: caPath,
+            filters: [{ name: 'CRT Files', extensions: ['crt'] }]
+          })
+          .then((result) => {
+            if (result.canceled) {
+              resolve({
+                status: EventResultStatus.Error,
+                error: 'Export canceled'
+              })
+            } else {
+              if (result.filePath) {
+                // Copy file to the selected path with fs
+                const sourcePath = crtMgr.genRootCaFilePath()
+                const destinationPath = result.filePath
+                fs.copyFile(sourcePath, destinationPath, (error) => {
+                  if (error) {
+                    console.error('Failed to copy file:', error)
+                    resolve({
+                      status: EventResultStatus.Error,
+                      error: 'Failed to copy file'
+                    })
+                  } else {
+                    resolve({
+                      status: EventResultStatus.Success
+                    })
+                  }
+                })
+              }
+            }
+          })
       })
     }
     return Promise.resolve()
