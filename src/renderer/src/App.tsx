@@ -67,6 +67,7 @@ function App(): JSX.Element {
           },
           Table: {
             algorithm: true,
+            headerBorderRadius: 0,
             rowSelectedBg: appTheme === 'dark' ? '#1668dc' : '#bae0ff',
             rowSelectedHoverBg: appTheme === 'dark' ? '#1668dc' : '#bae0ff'
           },

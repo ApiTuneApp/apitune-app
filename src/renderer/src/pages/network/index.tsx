@@ -186,13 +186,13 @@ function NetworkPage(): JSX.Element {
         </Space>
       </Flex>
       <Table
+        className="network-table"
         size="small"
         rowKey="id"
         virtual
         columns={columns}
         dataSource={resultLogs}
         pagination={false}
-        // rowSelection={{}}
         rowClassName={(record) => {
           return curLog && record.id === curLog.id ? 'ant-table-row-selected' : ''
         }}
