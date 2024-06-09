@@ -15,6 +15,9 @@ import LogDetail from '@renderer/components/log-detail'
 import { useUxStore } from '@renderer/store/ux'
 import { Log } from '@shared/contract'
 
+const appSidebarWidth = 76
+const appHeaderHeight = 40
+const networkPagePadding = 40
 const MinDrawerHeight = 20
 const MaxDarwerHeight = 1000
 const QueryIconSize = 16
@@ -160,6 +163,11 @@ function NetworkPage(): JSX.Element {
     setDrawerHeight(400)
   }
 
+  const tableHeight =
+    document.body.offsetHeight - drawerHeight - appHeaderHeight - networkPagePadding
+
+  const tableWidth = document.body.offsetWidth - appSidebarWidth - networkPagePadding
+
   return (
     <Flex className="app-page page-network" vertical>
       <Flex gap={4} style={{ paddingBottom: '10px' }}>
@@ -193,10 +201,11 @@ function NetworkPage(): JSX.Element {
         columns={columns}
         dataSource={resultLogs}
         pagination={false}
+        scroll={{ x: tableWidth, y: tableHeight }}
         rowClassName={(record) => {
           return curLog && record.id === curLog.id ? 'ant-table-row-selected' : ''
         }}
-        style={{ flex: 1, overflowY: 'auto' }}
+        style={{ height: `calc(100% - ${drawerHeight}px)` }}
         onRow={(record) => {
           return {
             onClick: (event) => {
