@@ -1,6 +1,6 @@
 import './network.less'
 
-import { Flex, Input, Space, Table, Tooltip } from 'antd'
+import { Checkbox, Flex, Input, Popover, Space, Table, Tooltip } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 
 import {
@@ -111,6 +111,92 @@ function NetworkPage(): JSX.Element {
     }
   ]
 
+  const allColumns = [
+    {
+      title: 'Id',
+      dataIndex: 'id',
+      key: 'id',
+      width: 60
+    },
+    {
+      title: 'URL',
+      dataIndex: 'url',
+      key: 'url',
+      ellipsis: true,
+      render: (item) => (
+        <Tooltip placement="topLeft" title={item}>
+          {item}
+        </Tooltip>
+      ),
+      width: 300
+    },
+    {
+      title: 'Protocol',
+      dataIndex: 'protocol',
+      key: 'protocol',
+      width: 80
+    },
+    {
+      title: 'Host',
+      dataIndex: 'host',
+      key: 'host',
+      ellipsis: true,
+      render: (item) => (
+        <Tooltip placement="topLeft" title={item}>
+          {item}
+        </Tooltip>
+      )
+    },
+    {
+      title: 'Path',
+      dataIndex: 'pathname',
+      key: 'pathname',
+      ellipsis: true,
+      render: (item) => (
+        <Tooltip placement="topLeft" title={item}>
+          {item}
+        </Tooltip>
+      )
+    },
+    {
+      title: 'Method',
+      dataIndex: 'method',
+      key: 'method',
+      width: 90
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      width: 60
+    },
+    {
+      title: 'MatchRules',
+      dataIndex: 'matchedRules',
+      key: 'matchedRules',
+      render(_, record: Log) {
+        return record.matchedRules.join(',')
+      }
+    },
+    {
+      title: 'Time',
+      dataIndex: 'time',
+      key: 'time',
+      width: 80,
+      render(_, record: Log) {
+        return record.finishTime ? `${record.finishTime - record.startTime}ms` : ''
+      }
+    }
+  ]
+
+  const columnConfig = (
+    <Space direction="vertical">
+      {allColumns.map((column) => (
+        <Checkbox key={column.key}>{column.title}</Checkbox>
+      ))}
+    </Space>
+  )
+
   useEffect(() => {
     if (searchValue) {
       setResultLogs(proxyLogs.filter((log) => log.url.includes(searchValue)))
@@ -162,7 +248,7 @@ function NetworkPage(): JSX.Element {
 
   return (
     <Flex className="app-page page-network" vertical>
-      <Flex gap={4} style={{ paddingBottom: '10px' }}>
+      <Flex gap={8} style={{ paddingBottom: '10px' }}>
         <Input
           placeholder="Search URL"
           className="app-control app-input network-input"
@@ -181,7 +267,9 @@ function NetworkPage(): JSX.Element {
             )}
           </Tooltip>
           <Tooltip title="Config network column">
-            <ControlOutlined style={{ fontSize: QueryIconSize }} />
+            <Popover content={columnConfig} placement="bottomRight">
+              <ControlOutlined style={{ fontSize: QueryIconSize }} />
+            </Popover>
           </Tooltip>
         </Space>
       </Flex>
