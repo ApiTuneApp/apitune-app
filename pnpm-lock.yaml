@@ -80,6 +80,9 @@ importers:
       pako:
         specifier: ^2.1.0
         version: 2.1.0
+      react-resizable:
+        specifier: ^3.0.5
+        version: 3.0.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-responsive-carousel:
         specifier: ^3.2.23
         version: 3.2.23
@@ -1297,6 +1300,10 @@ packages:
 
   clone-response@1.0.3:
     resolution: {integrity: sha512-ROoL94jJH2dUVML2Y/5PEDNaSHgeOdSDicUyS7izcF63G6sTc/FTjLub4b8Il9S8S0beOfYt0TaA5qvFK+w0wA==}
+
+  clsx@1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
 
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==, tarball: https://r2.cnpmjs.org/co/-/co-4.6.0.tgz}
@@ -2796,6 +2803,12 @@ packages:
     peerDependencies:
       react: ^18.2.0
 
+  react-draggable@4.4.6:
+    resolution: {integrity: sha512-LtY5Xw1zTPqHkVmtM3X8MUOxNDOUhv/khTgBgrUvwaS064bwVvxT+q5El0uUFNx5IEPKXuRejr7UqLwBIg5pdw==}
+    peerDependencies:
+      react: '>= 16.3.0'
+      react-dom: '>= 16.3.0'
+
   react-easy-swipe@0.0.21:
     resolution: {integrity: sha512-OeR2jAxdoqUMHIn/nS9fgreI5hSpgGoL5ezdal4+oO7YSSgJR8ga+PkYGJrSrJ9MKlPcQjMQXnketrD7WNmNsg==, tarball: https://r2.cnpmjs.org/react-easy-swipe/-/react-easy-swipe-0.0.21.tgz}
     engines: {node: '>= 6'}
@@ -2812,6 +2825,11 @@ packages:
   react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
+
+  react-resizable@3.0.5:
+    resolution: {integrity: sha512-vKpeHhI5OZvYn82kXOs1bC8aOXktGU5AmKAgaZS4F5JPburCtbmDPqE7Pzp+1kN4+Wb81LlF33VpGwWwtXem+w==}
+    peerDependencies:
+      react: '>= 16.3'
 
   react-responsive-carousel@3.2.23:
     resolution: {integrity: sha512-pqJLsBaKHWJhw/ItODgbVoziR2z4lpcJg+YwmRlSk4rKH32VE633mAtZZ9kDXjy4wFO+pgUZmDKPsPe1fPmHCg==}
@@ -4739,6 +4757,8 @@ snapshots:
     dependencies:
       mimic-response: 1.0.1
 
+  clsx@1.2.1: {}
+
   co@4.6.0: {}
 
   color-convert@1.9.3:
@@ -6506,6 +6526,13 @@ snapshots:
       react: 18.2.0
       scheduler: 0.23.0
 
+  react-draggable@4.4.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      clsx: 1.2.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
   react-easy-swipe@0.0.21:
     dependencies:
       prop-types: 15.8.1
@@ -6517,6 +6544,14 @@ snapshots:
   react-lifecycles-compat@3.0.4: {}
 
   react-refresh@0.14.0: {}
+
+  react-resizable@3.0.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-draggable: 4.4.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+    transitivePeerDependencies:
+      - react-dom
 
   react-responsive-carousel@3.2.23:
     dependencies:

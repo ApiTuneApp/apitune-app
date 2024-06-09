@@ -1,12 +1,14 @@
 import './network.less'
+import 'react-resizable/css/styles.css'
 
 import { Flex, Input, Space, Table, Tooltip } from 'antd'
+import { ColumnType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
+import { Resizable } from 'react-resizable'
 
 import {
   ClearOutlined,
   CloseOutlined,
-  ControlOutlined,
   HolderOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined
@@ -15,12 +17,38 @@ import LogDetail from '@renderer/components/log-detail'
 import { useUxStore } from '@renderer/store/ux'
 import { Log } from '@shared/contract'
 
-const appSidebarWidth = 76
 const appHeaderHeight = 40
 const networkPagePadding = 40
 const MinDrawerHeight = 20
 const MaxDarwerHeight = 1000
 const QueryIconSize = 16
+
+const ResizableTitle = (props: any) => {
+  const { onResize, width, ...restProps } = props
+
+  if (!width) {
+    return <th {...restProps} />
+  }
+
+  return (
+    <Resizable
+      width={width}
+      height={0}
+      handle={
+        <span
+          className="react-resizable-handle"
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+        />
+      }
+      onResize={onResize}
+      draggableOpts={{ enableUserSelectHack: false }}
+    >
+      <th {...restProps} />
+    </Resizable>
+  )
+}
 
 function NetworkPage(): JSX.Element {
   const proxyLogs = useUxStore((state) => state.proxyLogs)
@@ -35,8 +63,7 @@ function NetworkPage(): JSX.Element {
   const [curLog, setCurLog] = useState<Log | undefined>()
   const [drawerHeight, setDrawerHeight] = useState(0)
   const [searchValue, setSearchValue] = useState('')
-
-  const columns = [
+  const columnBase = [
     {
       title: 'Id',
       dataIndex: 'id',
@@ -48,12 +75,12 @@ function NetworkPage(): JSX.Element {
       dataIndex: 'url',
       key: 'url',
       ellipsis: true,
+      width: 300,
       render: (item) => (
         <Tooltip placement="topLeft" title={item}>
           {item}
         </Tooltip>
-      ),
-      width: 300
+      )
     },
     {
       title: 'Protocol',
@@ -66,6 +93,7 @@ function NetworkPage(): JSX.Element {
       dataIndex: 'host',
       key: 'host',
       ellipsis: true,
+      width: 100,
       render: (item) => (
         <Tooltip placement="topLeft" title={item}>
           {item}
@@ -77,6 +105,7 @@ function NetworkPage(): JSX.Element {
       dataIndex: 'pathname',
       key: 'pathname',
       ellipsis: true,
+      width: 140,
       render: (item) => (
         <Tooltip placement="topLeft" title={item}>
           {item}
@@ -99,6 +128,7 @@ function NetworkPage(): JSX.Element {
       title: 'MatchRules',
       dataIndex: 'matchedRules',
       key: 'matchedRules',
+      width: 140,
       render(_, record: Log) {
         return record.matchedRules.join(',')
       }
@@ -113,6 +143,30 @@ function NetworkPage(): JSX.Element {
       }
     }
   ]
+
+  const [columns, setColumns] = useState<ColumnType<any>[]>(columnBase)
+
+  const columnsWithResizeHandlers = columns.map((col, index) => ({
+    ...col,
+    onHeaderCell: (column: ColumnType<any>) =>
+      ({
+        width: column.width,
+        onResize: (e: any, { size }: { size: any }) => handleResize(index)(e, { size })
+      }) as any
+  }))
+
+  const handleResize =
+    (index) =>
+    (e, { size }) => {
+      setColumns((columns) => {
+        const nextColumns = [...columns]
+        nextColumns[index] = {
+          ...nextColumns[index],
+          width: size.width
+        }
+        return nextColumns
+      })
+    }
 
   useEffect(() => {
     if (searchValue) {
@@ -166,7 +220,13 @@ function NetworkPage(): JSX.Element {
   const tableHeight =
     document.body.offsetHeight - drawerHeight - appHeaderHeight - networkPagePadding
 
-  const tableWidth = document.body.offsetWidth - appSidebarWidth - networkPagePadding
+  const tableWidth = columns.reduce((acc, cur) => acc + (cur.width as number), 0)
+
+  const components = {
+    header: {
+      cell: ResizableTitle
+    }
+  }
 
   return (
     <Flex className="app-page page-network" vertical>
@@ -198,10 +258,11 @@ function NetworkPage(): JSX.Element {
         size="small"
         rowKey="id"
         virtual
-        columns={columns}
+        columns={columnsWithResizeHandlers}
         dataSource={resultLogs}
         pagination={false}
         scroll={{ x: tableWidth, y: tableHeight }}
+        components={components}
         rowClassName={(record) => {
           return curLog && record.id === curLog.id ? 'ant-table-row-selected' : ''
         }}
