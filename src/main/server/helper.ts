@@ -47,7 +47,7 @@ export function pipeSocket(from: Socket, to: Socket) {
     t: Date.now(),
     socket: from
   })
-  from.setTimeout(20 * 1e3)
+  // from.setTimeout(20 * 1e3)
   from.setKeepAlive(false)
   from.on('data', (chunk) => {
     to.write(chunk)

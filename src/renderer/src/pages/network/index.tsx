@@ -180,9 +180,9 @@ function NetworkPage(): JSX.Element {
               <PauseCircleOutlined onClick={handlePauseClick} style={{ fontSize: QueryIconSize }} />
             )}
           </Tooltip>
-          <Tooltip title="Config network column">
+          {/* <Tooltip title="Config network column">
             <ControlOutlined style={{ fontSize: QueryIconSize }} />
-          </Tooltip>
+          </Tooltip> */}
         </Space>
       </Flex>
       <Table

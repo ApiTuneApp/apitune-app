@@ -97,11 +97,11 @@ export default function (ctx: Context) {
       }
     )
 
-    serverReq.on('timeout', () => {
-      serverReq.destroy()
-      console.log('server req timeout ===>', url)
-      reject('server req timeout')
-    })
+    // serverReq.on('timeout', () => {
+    //   serverReq.destroy()
+    //   console.log('server req timeout ===>', url)
+    //   reject('server req timeout')
+    // })
 
     serverReq.on('error', (err: Error) => {
       let message: string
