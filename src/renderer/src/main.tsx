@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client'
 import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 import App from './App'
+import ErrorPage from './pages/error'
 import NetworkPage from './pages/network'
 import RulesPage from './pages/rules'
 import NewRulePage from './pages/rules/new-rule'
@@ -46,7 +47,8 @@ const router = createHashRouter([
         path: 'settings',
         element: <SettingsPage />
       }
-    ]
+    ],
+    errorElement: <ErrorPage />
   }
 ])
 
