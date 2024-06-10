@@ -16,6 +16,9 @@ import {
 import LogDetail from '@renderer/components/log-detail'
 import { useUxStore } from '@renderer/store/ux'
 import { Log } from '@shared/contract'
+import { findGroupOrRule } from '@shared/utils'
+import { useRuleStore } from '@renderer/store'
+import { NavLink } from 'react-router-dom'
 
 const appHeaderHeight = 40
 const networkPagePadding = 40
@@ -55,6 +58,8 @@ function NetworkPage(): JSX.Element {
   const handleClearLog = useUxStore((state) => state.clearProxyLogs)
   const recordPaused = useUxStore((state) => state.logPaused)
   const setRecordPaused = useUxStore((state) => state.setLogPaused)
+
+  const apiRules = useRuleStore((state) => state.apiRules)
 
   const stopRecordStr = 'Stop recording network log'
   const startRecordStr = 'Record network log'
@@ -128,9 +133,23 @@ function NetworkPage(): JSX.Element {
       title: 'MatchRules',
       dataIndex: 'matchedRules',
       key: 'matchedRules',
+      ellipsis: true,
       width: 140,
       render(_, record: Log) {
-        return record.matchedRules.join(',')
+        return (
+          <Space size="small">
+            {record.matchedRules.map((ruleId) => {
+              const rule = findGroupOrRule(apiRules, ruleId)
+              return rule ? (
+                <NavLink key={ruleId} to={`/rules/edit/${rule.id}`}>
+                  {rule.name}
+                </NavLink>
+              ) : (
+                ''
+              )
+            })}
+          </Space>
+        )
       }
     },
     {

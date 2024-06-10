@@ -35,7 +35,6 @@ app.use(async (ctx: Context, next: Next) => {
   // define custom ctx properties
   // 命中的规则
   ctx.matchedRules = []
-  ctx.matchedRulesIds = []
 
   // 要发往远端的请求参数
   ctx.remoteRequestOptions = {

@@ -13,7 +13,7 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
   // Store log before request send
   const log: Log = {
     id: genLogId(),
-    matchedRules: ctx.matchedRulesIds,
+    matchedRules: ctx.matchedRules,
     method: ctx.method,
     protocol: ctx.remoteRequestOptions.url?.protocol,
     host: ctx.host,
