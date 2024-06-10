@@ -120,6 +120,71 @@ function NewRulePage(): JSX.Element {
     if (key === RuleType.RequestHeader || key === RuleType.ResponseHeader) {
       initValue.value = [{ type: 'add', name: '', value: '' }]
     }
+
+    if (key === RuleType.RequestFunction) {
+      initValue.value = `/**
+ * You can modify request body here,
+ * the context variables you can use:
+ *  * {
+ *  _ctx: Context, // Koa context
+    request: { // Request infor
+        url: {
+            host: '',
+            href: '',
+            protocol: '',
+            pathname: ''
+        },
+        ip: '',
+        headers: {}, //Request headers
+    },
+    params: {}, // Request parameters, you can get GET or POST params here
+    requestBody: {}, // Request body
+    requestHeaders：: {}, // Request headers
+   }
+
+   Code examples:
+   1. Change request headers:
+    requestHeaders.xxx = 'xxx'
+   3. Change request body:
+    if(requestBody.type == 1) {
+      requestBody.aaa = 1
+    }
+ */`
+    }
+
+    if (key === RuleType.ResponseFunction) {
+      initValue.value = `/**
+ * You can modify response value here,
+ * the context variables you can use:
+ *  * {
+ *  _ctx: Context, // Koa context
+    request: { // Request infor
+        url: {
+            host: '',
+            href: '',
+            protocol: '',
+            pathname: ''
+        },
+        ip: '',
+        headers: {}, //Request headers
+    },
+    params: {}, // Request parameters, you can get GET or POST params here
+    responseBody: {}, // Response data
+    responseHeaders: {}, // Response headers
+    responseStatus: 200, // Response status
+   }
+
+   Code examples:
+   1. Change response data:
+    responseBody = { aaa: 123 }
+   2. Change response headers:
+    responseHeaders.xxx = 'xxx'
+   3. Change response data by request params:
+    if(params.type == 1) {
+     responseBody = {bbb: 111}
+    }
+ */`
+    }
     add(initValue)
   }
 
