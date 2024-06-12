@@ -12,6 +12,7 @@ import {
   Select,
   Space,
   Switch,
+  Tabs,
   Tooltip,
   Typography
 } from 'antd'
@@ -40,6 +41,7 @@ import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
+import MonacoEditor from '@renderer/components/monaco-editor'
 
 const { Text } = Typography
 
@@ -393,38 +395,62 @@ function NewRulePage(): JSX.Element {
           }}
           onCancel={() => setShowMatchTestModal(false)}
         />
+        <Tabs
+          defaultActiveKey="rule"
+          items={[
+            {
+              key: 'rule',
+              label: 'Rules',
+              children: (
+                <Form.List name="modifyList">
+                  {(fields, { add, remove }) => (
+                    <>
+                      <Dropdown
+                        menu={{
+                          items: AddRulesMenu,
+                          onClick: (item) => handleAddRuleClick(item.key as RuleType, add)
+                        }}
+                      >
+                        <Button type="primary" style={{ margin: '8px 0' }}>
+                          <Space>
+                            Add Rules
+                            <DownOutlined />
+                          </Space>
+                        </Button>
+                      </Dropdown>
+                      {form.getFieldValue('modifyList').map((rule, index) => (
+                        <div
+                          key={index}
+                          style={{ position: 'relative' }}
+                          className="paper-block e2"
+                        >
+                          <Tooltip title="remove rule" placement="top" arrow>
+                            <DeleteOutlined
+                              style={{
+                                position: 'absolute',
+                                top: '15px',
+                                right: '15px',
+                                zIndex: 999
+                              }}
+                              onClick={() => remove(index)}
+                            />
+                          </Tooltip>
 
-        <Form.List name="modifyList">
-          {(fields, { add, remove }) => (
-            <>
-              <Dropdown
-                menu={{
-                  items: AddRulesMenu,
-                  onClick: (item) => handleAddRuleClick(item.key as RuleType, add)
-                }}
-              >
-                <Button type="primary" style={{ margin: '8px 0' }}>
-                  <Space>
-                    Add Rules
-                    <DownOutlined />
-                  </Space>
-                </Button>
-              </Dropdown>
-              {form.getFieldValue('modifyList').map((rule, index) => (
-                <div key={index} style={{ position: 'relative' }} className="paper-block e2">
-                  <Tooltip title="remove rule" placement="top" arrow>
-                    <DeleteOutlined
-                      style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 999 }}
-                      onClick={() => remove(index)}
-                    />
-                  </Tooltip>
-
-                  {getAddRuleValueComponent(rule, index)}
-                </div>
-              ))}
-            </>
-          )}
-        </Form.List>
+                          {getAddRuleValueComponent(rule, index)}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </Form.List>
+              )
+            },
+            {
+              key: 'test',
+              label: 'Tests',
+              children: <MonacoEditor defaultLanguage="javascript" height={400} />
+            }
+          ]}
+        />
       </Form>
     </div>
   )
