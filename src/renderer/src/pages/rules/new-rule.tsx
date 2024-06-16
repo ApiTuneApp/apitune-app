@@ -235,7 +235,8 @@ function NewRulePage(): JSX.Element {
           describe: values.description,
           enable: values.enable,
           matches: values.matches,
-          modifyList: values.modifyList
+          modifyList: values.modifyList,
+          testScript: values.testScript
         })
       )
       showAddRuleResult(result)
@@ -247,7 +248,8 @@ function NewRulePage(): JSX.Element {
           describe: values.description,
           enable: values.enable,
           matches: values.matches,
-          modifyList: values.modifyList
+          modifyList: values.modifyList,
+          testScript: values.testScript
         }),
         { groupId: groupId as string }
       )
@@ -445,9 +447,13 @@ function NewRulePage(): JSX.Element {
               )
             },
             {
-              key: 'test',
-              label: 'Tests',
-              children: <MonacoEditor defaultLanguage="javascript" height={400} />
+              key: 'testScript',
+              label: 'Test&Script',
+              children: (
+                <Form.Item name="testScript">
+                  <MonacoEditor defaultLanguage="javascript" height={400} />
+                </Form.Item>
+              )
             }
           ]}
         />

@@ -162,6 +162,7 @@ export interface RuleData {
   kind: 'rule'
   modifyList: Array<Modify | RedirectModify | HeaderModify | BodyModify | FunctionMoidfy>
   updateTime: number
+  testScript?: string
 }
 
 export interface RuleGroup {
