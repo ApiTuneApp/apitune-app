@@ -158,8 +158,6 @@ function NetworkPage(): JSX.Element {
       key: 'time',
       width: 80,
       render(_, record: Log) {
-        // @ts-ignore error page debug
-        console.log('record', record.finishTime.join(''))
         return record.finishTime ? `${record.finishTime - record.startTime}ms` : ''
       }
     }
