@@ -374,16 +374,16 @@ function NewRulePage(): JSX.Element {
               </Tooltip>
             </Flex>
           </Flex>
-          <Form.Item
-            noStyle
-            name={['matches', 'methods']}
-            style={{ display: showReqMethodsFilter ? 'block' : 'none' }}
-          >
+          <Form.Item noStyle name={['matches', 'methods']}>
             <Select
               allowClear
               mode="multiple"
               placeholder="Select methods (leave empty to match all)"
-              style={{ width: '100%', marginTop: '8px' }}
+              style={{
+                width: '100%',
+                marginTop: '8px',
+                display: showReqMethodsFilter ? 'block' : 'none'
+              }}
               options={reqMethods}
             />
           </Form.Item>
