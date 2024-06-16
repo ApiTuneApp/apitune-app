@@ -67,4 +67,12 @@ app.use(async (ctx: Context, next: Next) => {
 })
 app.use(testScriptMiddleware)
 
+app.use(async (ctx, next) => {
+  try {
+    await next()
+  } catch (err) {
+    console.error('koa error', err)
+  }
+})
+
 export const handleRequest = app.callback()

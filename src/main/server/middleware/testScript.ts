@@ -1,8 +1,16 @@
+import { expect } from 'chai'
+import { app } from 'electron'
 import { Context, Next } from 'koa'
 import Mocha from 'mocha'
-import { expect } from 'chai'
+import path from 'node:path'
 import vm from 'node:vm'
+import { Worker } from 'node:worker_threads'
+
 import { RuleData } from '../../../shared/contract'
+
+// TODO: check production path
+const mochaWoker = path.join(app.getAppPath(), 'src/main/workers/mocha-worker.js')
+console.log('mochaWoker path', mochaWoker)
 
 // Create a Mocha instance
 const mochaInstance = new Mocha()
@@ -51,29 +59,60 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
     }
   }
 
-  if (shouldRun) {
-    const results = {
-      passed: [],
-      failed: []
-    } as any
+  const worker = new Worker(mochaWoker, {
+    workerData: {
+      matchedRuleDetails
+    }
+  })
 
-    // Run the Mocha instance
-    const runner = mochaInstance.run()
-    runner.on('pass', (test) => {
-      results.passed.push(test.title)
-    })
+  worker.on('message', (data) => {
+    console.log('Message received from worker:', data)
+  })
 
-    runner.on('fail', (test, err) => {
-      results.failed.push({ title: test.title, error: err.message })
-    })
+  worker.on('error', (error) => {
+    console.error('Worker error:', error)
+    worker.terminate()
+  })
 
-    runner.on('end', () => {
-      console.log('Test Results:')
-      console.log('Passed:', results.passed.length, 'tests')
-      results.passed.forEach((testTitle) => console.log(`✓ ${testTitle}`))
+  worker.on('exit', (code) => {
+    if (code !== 0) {
+      console.error(`Worker stopped with exit code ${code}`)
+    }
+    worker.terminate()
+  })
 
-      console.log('Failed:', results.failed.length, 'tests')
-      results.failed.forEach(({ title, error }) => console.log(`✕ ${title}: ${error}`))
-    })
-  }
+  // if (shouldRun) {
+  //   const results = {
+  //     passed: [],
+  //     failed: []
+  //   } as any
+
+  //   try {
+  //     mochaInstance.allowUncaught(false)
+
+  //     mochaInstance.uncaught = function (err) {
+  //       console.error('mocha test error', err)
+  //     }
+  //     // Run the Mocha instance
+  //     const runner = mochaInstance.run()
+  //     runner.on('pass', (test) => {
+  //       results.passed.push(test.title)
+  //     })
+
+  //     runner.on('fail', (test, err) => {
+  //       results.failed.push({ title: test.title, error: err.message })
+  //     })
+
+  //     runner.on('end', () => {
+  //       console.log('Test Results:')
+  //       console.log('Passed:', results.passed.length, 'tests')
+  //       results.passed.forEach((testTitle) => console.log(`✓ ${testTitle}`))
+
+  //       console.log('Failed:', results.failed.length, 'tests')
+  //       results.failed.forEach(({ title, error }) => console.log(`✕ ${title}: ${error}`))
+  //     })
+  //   } catch (error) {
+  //     console.error('mocha run error', error)
+  //   }
+  // }
 }
