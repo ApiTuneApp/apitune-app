@@ -6,10 +6,17 @@ import { RuleData } from '../../../shared/contract'
 
 // Create a Mocha instance
 const mochaInstance = new Mocha()
+const testMap = [] as Array<{
+  title: string
+  testFunc: () => void
+}>
 
 const at = {
   test: function (title, testFunc) {
-    return { title, testFunc }
+    testMap.push({
+      title,
+      testFunc
+    })
   }
 }
 
@@ -29,10 +36,14 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
   for (const rule of matchedRuleDetails) {
     if (rule.testScript) {
       try {
-        const scriptRes = vm.runInNewContext(rule.testScript, scriptParseContext)
-        if (scriptRes && scriptRes.title && scriptRes.testFunc) {
-          shouldRun = true
-          mochaInstance.suite.addTest(new Mocha.Test(scriptRes.title, scriptRes.testFunc))
+        vm.runInNewContext(rule.testScript, scriptParseContext)
+        if (testMap && testMap.length) {
+          for (const testItem of testMap) {
+            if (testItem && testItem.title && testItem.testFunc) {
+              shouldRun = true
+              mochaInstance.suite.addTest(new Mocha.Test(testItem.title, testItem.testFunc))
+            }
+          }
         }
       } catch (error) {
         console.error('An error occurred:', error)
