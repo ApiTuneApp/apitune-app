@@ -36,6 +36,7 @@
     "async": "^3.2.5",
     "axios": "^1.6.8",
     "cacheable-lookup": "^6.1.0",
+    "chai": "^4.4.1",
     "electron-json-storage": "^4.6.0",
     "electron-updater": "^6.1.7",
     "ip": "^2.0.1",

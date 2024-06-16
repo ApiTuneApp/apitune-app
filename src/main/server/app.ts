@@ -4,6 +4,7 @@ import config from './config'
 import httpClient from './http-client'
 import LogsMiddleware from './middleware/log'
 import RulesMiddleware from './middleware/rules'
+import testScriptMiddleware from './middleware/testScript'
 
 export const app = new Koa()
 
@@ -33,8 +34,10 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
 
 app.use(async (ctx: Context, next: Next) => {
   // define custom ctx properties
-  // 命中的规则
+  // matched rule ids
   ctx.matchedRules = []
+  // matech rule details
+  ctx.matchedRuleDetails = []
 
   // 要发往远端的请求参数
   ctx.remoteRequestOptions = {
@@ -62,5 +65,6 @@ app.use(async (ctx: Context, next: Next) => {
   await httpClient(ctx)
   await next()
 })
+app.use(testScriptMiddleware)
 
 export const handleRequest = app.callback()

@@ -3,3 +3,6 @@ dist
 out
 .DS_Store
 *.log*
+debug.ts
+debug.js
+

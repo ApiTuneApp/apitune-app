@@ -61,6 +61,7 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
   const matchedRules = enableRuleDataList.filter((rule) => isRuleMatch(ctx, rule))
 
   ctx.matchedRules = matchedRules.map((rule) => rule.id)
+  ctx.matchedRuleDetails = matchedRules
 
   for (const rule of matchedRules) {
     // run rule handler
