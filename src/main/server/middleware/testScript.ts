@@ -59,7 +59,7 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
     }
   }
 
-  const worker = new Worker(mochaWoker, {
+  const worker = new Worker(new URL(mochaWoker, import.meta.url), {
     workerData: {
       matchedRuleDetails
     }
@@ -80,39 +80,4 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
     }
     worker.terminate()
   })
-
-  // if (shouldRun) {
-  //   const results = {
-  //     passed: [],
-  //     failed: []
-  //   } as any
-
-  //   try {
-  //     mochaInstance.allowUncaught(false)
-
-  //     mochaInstance.uncaught = function (err) {
-  //       console.error('mocha test error', err)
-  //     }
-  //     // Run the Mocha instance
-  //     const runner = mochaInstance.run()
-  //     runner.on('pass', (test) => {
-  //       results.passed.push(test.title)
-  //     })
-
-  //     runner.on('fail', (test, err) => {
-  //       results.failed.push({ title: test.title, error: err.message })
-  //     })
-
-  //     runner.on('end', () => {
-  //       console.log('Test Results:')
-  //       console.log('Passed:', results.passed.length, 'tests')
-  //       results.passed.forEach((testTitle) => console.log(`✓ ${testTitle}`))
-
-  //       console.log('Failed:', results.failed.length, 'tests')
-  //       results.failed.forEach(({ title, error }) => console.log(`✕ ${title}: ${error}`))
-  //     })
-  //   } catch (error) {
-  //     console.error('mocha run error', error)
-  //   }
-  // }
 }
