@@ -204,3 +204,29 @@ export type HeaderItem = {
   name: string
   value: string
 }
+
+export type TestCaseItem = {
+  title: string
+  error?: string
+  testFunc?: string
+}
+
+export type TestResultItem = {
+  ruleId: string
+  cases: Array<TestCaseItem>
+  result: {
+    passed: Array<TestCaseItem>
+    failed: Array<TestCaseItem>
+  }
+}
+
+export type TestItem = {
+  logId: string
+  tests: Array<TestResultItem>
+  startTime: number
+  endTime: number
+}
+
+export type LogTestResultMap = {
+  [logId: string]: TestItem
+}

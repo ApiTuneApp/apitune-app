@@ -1,6 +1,12 @@
 import Storage from 'electron-json-storage'
 import packageJson from '../../package.json'
-import { ApiRules, RuleStorage, SettingStorage } from '../shared/contract'
+import {
+  ApiRules,
+  RuleStorage,
+  SettingStorage,
+  LogTestResultMap,
+  TestItem
+} from '../shared/contract'
 import config from './server/config'
 
 export let DefaultRuleData: RuleStorage = {
@@ -73,4 +79,11 @@ export function updateSettingData(
       onSuccess && onSuccess()
     }
   })
+}
+
+export const LogTestResult = {
+  data: {} as LogTestResultMap,
+  updateTestResult(logId: string, result: TestItem) {
+    this.data[logId] = result
+  }
 }

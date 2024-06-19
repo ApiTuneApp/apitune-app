@@ -27,6 +27,9 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
     startTime: Date.now()
   }
 
+  // Used to consume log in other middleware
+  ctx.log = log
+
   // Can't use await here
   getBase64(ctx.remoteRequestBody).then(({ length, base64 }) => {
     log.requestBody = base64

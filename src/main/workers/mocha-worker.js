@@ -1,15 +1,17 @@
 const vm = require('node:vm')
 const Mocha = require('mocha')
 const { expect } = require('chai')
-
-const { workerData } = require('worker_threads')
+const { workerData, parentPort } = require('worker_threads')
 
 const mochaInstance = new Mocha()
-const testMap = []
+const testCaseList = []
+const testResult = []
+const titleRuleMap = {}
+let startTime = null
 
 const at = {
   test: function (title, testFunc) {
-    testMap.push({
+    testCaseList.push({
       title,
       testFunc
     })
@@ -29,13 +31,29 @@ function testRunner(matchedRuleDetails) {
     if (rule.testScript) {
       try {
         vm.runInNewContext(rule.testScript, scriptParseContext)
-        if (testMap && testMap.length) {
-          for (const testItem of testMap) {
-            if (testItem && testItem.title && testItem.testFunc) {
-              shouldRun = true
-              mochaInstance.suite.addTest(new Mocha.Test(testItem.title, testItem.testFunc))
+        if (testCaseList && testCaseList.length) {
+          const testResultItem = {
+            ruleId: rule.id,
+            cases: [],
+            results: {
+              passed: [],
+              failed: []
             }
           }
+          for (const testItem of testCaseList) {
+            if (testItem && testItem.title && testItem.testFunc) {
+              shouldRun = true
+              // To make the test title unique
+              const testTitle = `Rule: ${rule.id} - ${testItem.title}`
+              mochaInstance.suite.addTest(new Mocha.Test(testTitle, testItem.testFunc))
+              testResultItem.cases.push({
+                title: testItem.title,
+                testFunc: testItem.testFunc.toString()
+              })
+              titleRuleMap[testTitle] = rule.id
+            }
+          }
+          testResult.push(testResultItem)
         }
       } catch (error) {
         console.error('An error occurred:', error)
@@ -55,18 +73,46 @@ function testRunner(matchedRuleDetails) {
       mochaInstance.uncaught = function (err) {
         console.error('mocha test error', err)
       }
+      startTime = new Date().getTime()
       // Run the Mocha instance
       const runner = mochaInstance.run()
       runner.on('pass', (test) => {
         results.passed.push(test.title)
+        const targetRuleId = titleRuleMap[test.title]
+        const targetResult = testResult.find((result) => result.ruleId === targetRuleId)
+        if (targetResult) {
+          targetResult.results.passed.push({
+            title: test.title
+          })
+        }
       })
 
       runner.on('fail', (test, err) => {
-        results.failed.push({ title: test.title, error: err.message })
+        results.failed.push({
+          title: test.title,
+          error: err.message
+        })
+        const targetRuleId = titleRuleMap[test.title]
+        const targetResult = testResult.find((result) => result.ruleId === targetRuleId)
+        if (targetResult) {
+          targetResult.results.passed.push({
+            title: test.title,
+            error: err.message,
+            startTime,
+            endTime: new Date().getTime()
+          })
+        }
       })
 
       runner.on('end', () => {
-        console.log('Test Results:')
+        parentPort.postMessage({
+          logId: workerData.logId,
+          tests: testResult,
+          startTime,
+          endTime: new Date().getTime()
+        })
+
+        console.log('---- Test Results: ----')
         console.log('Passed:', results.passed.length, 'tests')
         results.passed.forEach((testTitle) => console.log(`✓ ${testTitle}`))
 
