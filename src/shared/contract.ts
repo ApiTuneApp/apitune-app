@@ -12,7 +12,8 @@ export enum RenderEvent {
   ChangeTheme = 'changeTheme',
   GetAppTheme = 'getAppTheme',
   GetIP = 'getIP',
-  CA = 'CA'
+  CA = 'CA',
+  GetTestResults = 'getTestResults'
 }
 
 export enum MainEvent {

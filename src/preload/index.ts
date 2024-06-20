@@ -6,7 +6,8 @@ import {
   IpcResult,
   ApiRules,
   AddGroupOpts,
-  Theme
+  Theme,
+  TestItem
 } from '../shared/contract'
 
 // Custom APIs for renderer
@@ -52,6 +53,9 @@ const api = {
   },
   ca: (type): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.CA, type)
+  },
+  getTestResults: (logId: number): Promise<TestItem> => {
+    return ipcRenderer.invoke(RenderEvent.GetTestResults, logId)
   }
 }
 

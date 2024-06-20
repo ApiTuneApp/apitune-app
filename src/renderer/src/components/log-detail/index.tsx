@@ -5,6 +5,7 @@ import { Collapse, CollapseProps, Descriptions, Tabs, TabsProps } from 'antd'
 import ReactJson from '@microlink/react-json-view'
 import { Log } from '@shared/contract'
 import { useSettingStore } from '@renderer/store/setting'
+import TestResults from '@renderer/components/test-results'
 
 interface LogDetailProps {
   log: Log
@@ -233,6 +234,11 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
           )}
         </>
       )
+    },
+    {
+      key: 'testResults',
+      label: 'Test Results',
+      children: <TestResults logId={log.id} />
     }
   ]
 

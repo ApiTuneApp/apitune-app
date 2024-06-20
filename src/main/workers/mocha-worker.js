@@ -46,10 +46,10 @@ function testRunner(matchedRuleDetails) {
               // To make the test title unique
               const testTitle = `Rule: ${rule.id} - ${testItem.title}`
               mochaInstance.suite.addTest(new Mocha.Test(testTitle, testItem.testFunc))
-              testResultItem.cases.push({
-                title: testItem.title,
-                testFunc: testItem.testFunc.toString()
-              })
+              // testResultItem.cases.push({
+              //   title: testItem.title,
+              //   testFunc: testItem.testFunc.toString()
+              // })
               titleRuleMap[testTitle] = rule.id
             }
           }
@@ -81,8 +81,12 @@ function testRunner(matchedRuleDetails) {
         const targetRuleId = titleRuleMap[test.title]
         const targetResult = testResult.find((result) => result.ruleId === targetRuleId)
         if (targetResult) {
+          const title = test.title.split(' - ')[1]
+          targetResult.cases.push({
+            title: title
+          })
           targetResult.results.passed.push({
-            title: test.title
+            title: title
           })
         }
       })
@@ -95,11 +99,14 @@ function testRunner(matchedRuleDetails) {
         const targetRuleId = titleRuleMap[test.title]
         const targetResult = testResult.find((result) => result.ruleId === targetRuleId)
         if (targetResult) {
+          const title = test.title.split(' - ')[1]
+          targetResult.cases.push({
+            title: title,
+            error: err.message
+          })
           targetResult.results.passed.push({
-            title: test.title,
-            error: err.message,
-            startTime,
-            endTime: new Date().getTime()
+            title: title,
+            error: err.message
           })
         }
       })

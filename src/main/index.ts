@@ -31,7 +31,8 @@ import {
   initRuntimeRules,
   initSettingData,
   updateRuntimeRules,
-  updateSettingData
+  updateSettingData,
+  LogTestResult
 } from './storage'
 
 initSettingData()
@@ -559,6 +560,12 @@ app.whenReady().then(() => {
       })
     }
     return Promise.resolve()
+  })
+
+  ipcMain.handle(RenderEvent.GetTestResults, (event, logId: string) => {
+    return new Promise((resolve) => {
+      resolve(LogTestResult.data[logId])
+    })
   })
 
   const dataPath = Storage.getDataPath()

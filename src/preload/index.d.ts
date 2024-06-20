@@ -7,7 +7,8 @@ import {
   AddGroupOpts,
   Log,
   SettingStorage,
-  AppTheme
+  AppTheme,
+  TestItem
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -30,6 +31,7 @@ declare global {
       changeTheme: (theme: Theme) => Promise<IpcResult>
       getIp: () => Promise<string>
       ca: (type: CaEventType) => Promise<IpcResult>
+      getTestResults: (logId: number) => Promise<TestItem>
     }
   }
 }
