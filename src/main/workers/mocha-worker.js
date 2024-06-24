@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const { workerData, parentPort } = require('worker_threads')
 
 const mochaInstance = new Mocha()
-const testCaseList = []
+let testCaseList = []
 const testResult = []
 const titleRuleMap = {}
 let startTime = null
@@ -30,6 +30,7 @@ function testRunner(matchedRuleDetails) {
   for (const rule of matchedRuleDetails) {
     if (rule.testScript) {
       try {
+        testCaseList = []
         vm.runInNewContext(rule.testScript, scriptParseContext)
         if (testCaseList && testCaseList.length) {
           const testResultItem = {
