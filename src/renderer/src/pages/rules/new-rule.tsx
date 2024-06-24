@@ -287,8 +287,8 @@ function NewRulePage(): JSX.Element {
       >
         <div className="page-new-header">
           <Flex align="center">
-            <Tooltip title="Go back to rule list">
-              <Button className="normal-link" onClick={() => navigate('/rules/list')} type="link">
+            <Tooltip title="Go back">
+              <Button className="normal-link" onClick={() => navigate(-1)} type="link">
                 <LeftOutlined />
               </Button>
             </Tooltip>

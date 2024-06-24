@@ -14,6 +14,8 @@ export default function TestResults({ logId }: TestResultsProps): JSX.Element {
       window.api.getTestResults(logId).then((result) => {
         if (result) {
           setTestResults(result)
+        } else {
+          setTestResults({} as TestItem)
         }
       })
     }
@@ -34,17 +36,19 @@ export default function TestResults({ logId }: TestResultsProps): JSX.Element {
             <List
               key={test.ruleId}
               header={
-                <>
-                  Rule: <RuleLink id={test.ruleId} />
-                </>
+                <div style={{ fontWeight: 600 }}>
+                  Rule: <RuleLink id={test.ruleId} tab="tests" />
+                </div>
               }
               dataSource={test.cases}
               renderItem={(item) => (
                 <List.Item>
                   <Space>
-                    <Tag color={item.error ? 'error' : 'success'}>
-                      {item.error ? 'Failed' : 'Passed'}
-                    </Tag>
+                    <span style={{ width: '120px' }}>
+                      <Tag color={item.error ? 'error' : 'success'}>
+                        {item.error ? 'Failed' : 'Passed'}
+                      </Tag>
+                    </span>
                     <span>
                       {item.title} {item.error && `: ${item.error}`}
                     </span>
