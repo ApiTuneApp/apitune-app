@@ -21,7 +21,8 @@ const at = {
 const scriptParseContext = vm.createContext({
   expect,
   setTimeout,
-  at
+  at,
+  ...workerData.contexts
 })
 
 function testRunner(matchedRuleDetails) {
@@ -47,10 +48,6 @@ function testRunner(matchedRuleDetails) {
               // To make the test title unique
               const testTitle = `Rule: ${rule.id} - ${testItem.title}`
               mochaInstance.suite.addTest(new Mocha.Test(testTitle, testItem.testFunc))
-              // testResultItem.cases.push({
-              //   title: testItem.title,
-              //   testFunc: testItem.testFunc.toString()
-              // })
               titleRuleMap[testTitle] = rule.id
             }
           }

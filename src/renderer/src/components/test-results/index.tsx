@@ -44,7 +44,7 @@ export default function TestResults({ logId }: TestResultsProps): JSX.Element {
               renderItem={(item) => (
                 <List.Item>
                   <Space>
-                    <span style={{ width: '120px' }}>
+                    <span style={{ width: '120px', display: 'inline-block' }}>
                       <Tag color={item.error ? 'error' : 'success'}>
                         {item.error ? 'Failed' : 'Passed'}
                       </Tag>

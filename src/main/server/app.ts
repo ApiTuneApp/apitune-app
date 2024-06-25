@@ -32,6 +32,9 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
   }
 })
 
+// Test scripts run after all next done, so it should be first middleware
+app.use(testScriptMiddleware)
+
 app.use(async (ctx: Context, next: Next) => {
   // define custom ctx properties
   // matched rule ids
@@ -65,7 +68,6 @@ app.use(async (ctx: Context, next: Next) => {
   await httpClient(ctx)
   await next()
 })
-app.use(testScriptMiddleware)
 
 app.use(async (ctx, next) => {
   try {
