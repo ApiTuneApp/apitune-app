@@ -13,13 +13,13 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
   // Store log before request send
   const log: Log = {
     id: genLogId(),
-    matchedRules: ctx.matchedRules,
+    matchedRules: ctx.state.matchedRules,
     method: ctx.method,
-    protocol: ctx.remoteRequestOptions.url?.protocol,
+    protocol: ctx.state.requestOptions.url?.protocol,
     host: ctx.host,
     url: ctx.href,
     search: ctx.URL.searchParams.toString(),
-    pathname: ctx.remoteRequestOptions.url?.pathname,
+    pathname: ctx.state.requestOptions.url?.pathname,
     clientIp: ctx.socket.localAddress,
     clientPort: ctx.socket.localPort,
     requestHeaders: ctx.headers,
@@ -28,10 +28,10 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
   }
 
   // Used to consume log in other middleware
-  ctx.log = log
+  ctx.state.log = log
 
   // Can't use await here
-  getBase64(ctx.remoteRequestBody).then(({ length, base64 }) => {
+  getBase64(ctx.state.requestBody).then(({ length, base64 }) => {
     log.requestBody = base64
     log.requestBodyLength = length
   })
@@ -41,14 +41,14 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
 
   log.status = ctx.status
   log.message = ctx.message
-  log.responseHeaders = ctx.responseHeaders
-  log.remoteIp = ctx.remoteIp
-  log.remotePort = ctx.remotePort
+  log.responseHeaders = ctx.state.responseHeaders
+  log.remoteIp = ctx.state.remoteIp
+  log.remotePort = ctx.state.remotePort
 
-  const type = ctx.responseHeaders['content-type'] || ''
+  const type = ctx.state.responseHeaders['content-type'] || ''
   log.responeseType = type.split(';', 1)[0]
 
-  getBase64(ctx.responseBody).then(({ base64, length }) => {
+  getBase64(ctx.state.responseBody).then(({ base64, length }) => {
     log.responseBody = base64
     log.responseBodyLength = length
     log.finishTime = Date.now()
@@ -67,14 +67,14 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
 
 //   log.status = ctx.status
 //   log.message = ctx.message
-//   log.responseHeaders = ctx.responseHeaders
-//   log.remoteIp = ctx.remoteIp
-//   log.remotePort = ctx.remotePort
+//   log.responseHeaders = ctx.state.responseHeaders
+//   log.remoteIp = ctx.state.remoteIp
+//   log.remotePort = ctx.state.remotePort
 
-//   const type = ctx.responseHeaders['content-type'] || ''
+//   const type = ctx.state.responseHeaders['content-type'] || ''
 //   log.responeseType = type.split(';', 1)[0]
 
-//   getBase64(ctx.responseBody).then(({ base64, length }) => {
+//   getBase64(ctx.state.responseBody).then(({ base64, length }) => {
 //     log.responseBody = base64
 //     log.responseBodyLength = length
 //     log.finishTime = Date.now()

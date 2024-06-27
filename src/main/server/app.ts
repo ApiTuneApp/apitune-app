@@ -5,8 +5,9 @@ import httpClient from './http-client'
 import LogsMiddleware from './middleware/log'
 import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
+import { IAppState, IAppContext } from '../contracts'
 
-export const app = new Koa()
+export const app = new Koa<IAppState, IAppContext>()
 
 app.use(async function errorHandler(ctx: Context, next: Next) {
   if (ctx.header[config.proxyHeader]) {
@@ -35,29 +36,29 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
 // Test scripts run after all next done, so it should be first middleware
 app.use(testScriptMiddleware)
 
-app.use(async (ctx: Context, next: Next) => {
+app.use(async (ctx, next: Next) => {
   // define custom ctx properties
   // matched rule ids
-  ctx.matchedRules = []
-  // matech rule details
-  ctx.matchedRuleDetails = []
+  ctx.state.matchedRules = []
+  // matched rule details
+  ctx.state.matchedRuleDetails = []
 
   // The request parameters to be sent to the remote end
-  ctx.remoteRequestOptions = {
+  ctx.state.requestOptions = {
     method: ctx.method,
     url: new URL(ctx.href),
     headers: ctx.headers
   }
   // Request body stream to be sent to the far end
-  ctx.remoteRequestBody = ctx.req
-  ctx.responseHeaders = {}
-  ctx.responseBody = null
+  ctx.state.requestBody = ctx.req
+  ctx.state.responseHeaders = {}
+  ctx.state.responseBody = null
 
   console.log('[Start Request] ===> ', ctx.href)
   await next()
 
-  ctx.set(ctx.responseHeaders)
-  ctx.body = ctx.responseBody
+  ctx.set(ctx.state.responseHeaders)
+  ctx.body = ctx.state.responseBody
 })
 
 app.use(RulesMiddleware)

@@ -1,9 +1,10 @@
-import { Context, Next } from 'koa'
+import { Next } from 'koa'
 
 import { RuleData, RuleType } from '../../../shared/contract'
 import { isRuleMatch } from '../../helper'
 import { DefaultRuleData } from '../../storage'
 import * as ruleHandlers from '../rule-handler'
+import { IAppContext } from '../../contracts'
 
 const requestHandlerMap = {
   [RuleType.Redirect]: {
@@ -41,7 +42,7 @@ const responseHanderMap = {
   }
 }
 
-export default async function RulesMiddleware(ctx: Context, next: Next) {
+export default async function RulesMiddleware(ctx: IAppContext, next: Next) {
   const curApiRules = DefaultRuleData.apiRules
 
   // find enabled rule list
@@ -60,8 +61,8 @@ export default async function RulesMiddleware(ctx: Context, next: Next) {
 
   const matchedRules = enableRuleDataList.filter((rule) => isRuleMatch(ctx, rule))
 
-  ctx.matchedRules = matchedRules.map((rule) => rule.id)
-  ctx.matchedRuleDetails = matchedRules
+  ctx.state.matchedRules = matchedRules.map((rule) => rule.id)
+  ctx.state.matchedRuleDetails = matchedRules
 
   for (const rule of matchedRules) {
     // run rule handler

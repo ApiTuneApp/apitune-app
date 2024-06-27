@@ -14,15 +14,15 @@ console.log('mochaWoker path', mochaWoker)
 export default async function testScriptMiddleware(ctx: Context, next: Next) {
   await next()
 
-  const requestBody = Buffer.from(ctx.log.requestBody, 'base64').toString()
-  getBase64(ctx.responseBody).then((responseBodyInfo) => {
-    const responseBody = Buffer.from(ctx.log.responseBody, 'base64').toString()
-    const log = ctx.log as Log
+  const requestBody = Buffer.from(ctx.state.log.requestBody, 'base64').toString()
+  getBase64(ctx.state.responseBody).then((responseBodyInfo) => {
+    const responseBody = Buffer.from(ctx.state.log.responseBody, 'base64').toString()
+    const log = ctx.state.log as Log
 
-    const matchedRuleDetails: Array<RuleData> = ctx.matchedRuleDetails
+    const matchedRuleDetails: Array<RuleData> = ctx.state.matchedRuleDetails
     const worker = new Worker(new URL(mochaWoker, import.meta.url), {
       workerData: {
-        logId: ctx.log?.id,
+        logId: ctx.state.log?.id,
         matchedRuleDetails,
         contexts: {
           ...log,
@@ -35,7 +35,7 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
             clientPort: log.clientPort,
             headers: log.requestHeaders,
             startTime: log.startTime,
-            requestBodyLength: ctx.log.requestBodyLength,
+            requestBodyLength: ctx.state.log.requestBodyLength,
             requestBody
           },
           response: {

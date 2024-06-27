@@ -1,10 +1,9 @@
 import CacheableLookup from 'cacheable-lookup'
 import http, { IncomingMessage } from 'http'
 import https from 'https'
-import { Context } from 'koa'
 import { LookupFunction } from 'net'
-import { URL } from 'url'
 
+import { IAppContext } from '../contracts'
 import config from './config'
 import { toStream } from './helper'
 
@@ -20,9 +19,9 @@ const cacheable = new CacheableLookup({
   maxTtl: 30
 })
 
-export default function (ctx: Context) {
+export default function (ctx: IAppContext) {
   return new Promise<void>((resolve, reject) => {
-    const remoteOptions = ctx.remoteRequestOptions
+    const remoteOptions = ctx.state.requestOptions
     const url = remoteOptions.url
     const client = url.protocol === 'https:' ? https : http
     const agent = url.protocol === 'https:' ? httpsAgent : httpAgent
@@ -32,7 +31,7 @@ export default function (ctx: Context) {
     // delete proxy header
     for (const key in headers) {
       if (key.startsWith('proxy-')) {
-        // 过滤掉
+        // ignore
       } else {
         reqHeaders[key] = headers[key]
       }
@@ -60,15 +59,16 @@ export default function (ctx: Context) {
           console.error(err)
         })
 
-        ctx.remoteIp = serverRes.socket.remoteAddress
-        ctx.remotePort = serverRes.socket.remotePort
+        ctx.state.remoteIp = serverRes.socket.remoteAddress
+        ctx.state.remotePort = serverRes.socket.remotePort
+
         ctx.status = serverRes.statusCode || 0
         ctx.message = serverRes.statusMessage || ''
 
-        ctx.responseHeaders = serverRes.headers
-        ctx.responseBody = serverRes
+        ctx.state.responseHeaders = serverRes.headers as { [key: string]: string | string[] }
+        ctx.state.responseBody = serverRes
 
-        console.log('server res ===> ', ctx.status, ctx.message)
+        console.log('[Server response status] ===> ', ctx.status, ctx.message)
         resolve()
       }
     )
@@ -93,12 +93,12 @@ export default function (ctx: Context) {
         message = err.message
         statusMessage = '${config.name} upstream error'
       }
-      ctx.responseHeaders = {
+      ctx.state.responseHeaders = {
         'content-type': 'text/plain;charset=utf-8'
       }
       ctx.status = status
       ctx.message = statusMessage
-      ctx.responseBody = toStream(`${config.name} request target server failed: ` + message)
+      ctx.state.responseBody = toStream(`${config.name} request target server failed: ` + message)
 
       resolve()
     })
@@ -107,6 +107,6 @@ export default function (ctx: Context) {
       resolve()
     })
 
-    ctx.remoteRequestBody.pipe(serverReq)
+    ctx.state.requestBody.pipe(serverReq)
   })
 }

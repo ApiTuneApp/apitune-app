@@ -1,5 +1,4 @@
 import Axios from 'axios'
-import { Context } from 'koa'
 import * as lodash from 'lodash'
 import replaceStream from 'replacestream'
 import { PassThrough, Readable, Stream, Transform } from 'stream'
@@ -15,27 +14,28 @@ import {
   RuleType,
   SpeedLimitModify
 } from '../../shared/contract'
+import { IAppContext } from '../contracts'
 import { EditBodyOption, EditBodyType } from './contracts'
 import { getBase64, getJson, sandbox, toBuffer, toStream } from './helper'
 
 // keep origin infor
-function saveOriginInfo(ctx: Context, item: object) {
-  if (!ctx.originInfo) {
-    ctx.originInfo = {}
+function saveOriginInfo(ctx: IAppContext, item: object) {
+  if (!ctx.state.originInfo) {
+    ctx.state.originInfo = {}
   }
-  ctx.originInfo = {
-    ...ctx.originInfo,
+  ctx.state.originInfo = {
+    ...ctx.state.originInfo,
     ...item
   }
 }
 
-export function rewrite(ctx: Context, modify: RedirectModify) {
+export function rewrite(ctx: IAppContext, modify: RedirectModify) {
   saveOriginInfo(ctx, {
     href: ctx.href
   })
   const newUrl = new URL(modify.value as string)
-  ctx.remoteRequestOptions.headers.host = newUrl.host
-  const url = ctx.remoteRequestOptions.url
+  ctx.state.requestOptions.headers.host = newUrl.host
+  const url = ctx.state.requestOptions.url
   if (newUrl.protocol) {
     url.protocol = newUrl.protocol.replace(':', '')
   }
@@ -43,11 +43,11 @@ export function rewrite(ctx: Context, modify: RedirectModify) {
   url.pathname = newUrl.pathname
 }
 
-export function requestHeaders(ctx: Context, modify: HeaderModify) {
+export function requestHeaders(ctx: IAppContext, modify: HeaderModify) {
   saveOriginInfo(ctx, {
-    headers: ctx.remoteRequestOptions.headers
+    headers: ctx.state.requestOptions.headers
   })
-  const origHeaders = ctx.remoteRequestOptions.headers
+  const origHeaders = ctx.state.requestOptions.headers
 
   for (const { name, value, type } of modify.value) {
     const key = name.toLowerCase()
@@ -61,24 +61,24 @@ export function requestHeaders(ctx: Context, modify: HeaderModify) {
   }
 }
 
-export function requestBody(ctx: Context, modify: BodyModify) {
+export function requestBody(ctx: IAppContext, modify: BodyModify) {
   saveOriginInfo(ctx, {
-    requestBody: ctx.remoteRequestBody
+    requestBody: ctx.state.requestBody
   })
   beforeModifyReqBody(ctx)
   // TODO: support other EditBodyType
-  ctx.remoteRequestBody = editStream(ctx.remoteRequestBody, {
+  ctx.state.requestBody = editStream(ctx.state.requestBody, {
     type: EditBodyType.overwrite,
     content: modify.value
   })
 }
 
-export function _requestBodyWithOpt(ctx: Context, option: EditBodyOption) {
+export function _requestBodyWithOpt(ctx: IAppContext, option: EditBodyOption) {
   beforeModifyReqBody(ctx)
-  ctx.remoteRequestBody = editStream(ctx.remoteRequestBody, option)
+  ctx.state.requestBody = editStream(ctx.state.requestBody, option)
 }
 
-export async function requestFunction(ctx: Context, modify: FunctionMoidfy) {
+export async function requestFunction(ctx: IAppContext, modify: FunctionMoidfy) {
   const reqBase = await getBase64(ctx.req)
   const bodyStr = reqBase ? reqBase.base64.toString() : null
   const reqBody = getJson(bodyStr)
@@ -102,13 +102,13 @@ export async function requestFunction(ctx: Context, modify: FunctionMoidfy) {
       },
       params,
       requestBody: reqBody,
-      requestHeaders: ctx.remoteRequestOptions.headers
+      requestHeaders: ctx.state.requestOptions.headers
     },
     modify.value
   )
   if (result) {
     if (result.headers) {
-      ctx.remoteRequestOptions.headers = result.headers
+      ctx.state.requestOptions.headers = result.headers
     }
     requestBody(ctx, {
       type: RuleType.RequestBody,
@@ -117,13 +117,13 @@ export async function requestFunction(ctx: Context, modify: FunctionMoidfy) {
   }
 }
 
-export function responseHeaders(ctx: Context, modify: HeaderModify) {
-  const origHeaders = ctx.responseHeaders
+export function responseHeaders(ctx: IAppContext, modify: HeaderModify) {
+  const origHeaders = ctx.state.responseHeaders
 
   for (const { name, value, type } of modify.value) {
     const key = name.toLowerCase()
     if (key === 'set-cookie') {
-      let cookies = origHeaders[key]
+      let cookies = origHeaders[key] as string[]
       if (!cookies) {
         cookies = origHeaders[key] = []
       }
@@ -140,19 +140,19 @@ export function responseHeaders(ctx: Context, modify: HeaderModify) {
   }
 }
 
-export function responseStatus(ctx: Context, statusModiy: ResponseStatusModify) {
+export function responseStatus(ctx: IAppContext, statusModiy: ResponseStatusModify) {
   ctx.status = Number(statusModiy.value)
 }
 
-function beforeModifyReqBody(ctx: Context) {
-  if (ctx.remoteRequestOptions.headers) {
-    delete ctx.remoteRequestOptions.headers['content-length']
+function beforeModifyReqBody(ctx: IAppContext) {
+  if (ctx.state.requestOptions.headers) {
+    delete ctx.state.requestOptions.headers['content-length']
   }
 }
 
-export function responseBody(ctx: Context, bodyModify: BodyModify) {
+export function responseBody(ctx: IAppContext, bodyModify: BodyModify) {
   beforeModifyResBody(ctx)
-  ctx.responseBody = editStream(ctx.responseBody, {
+  ctx.state.responseBody = editStream(ctx.state.responseBody, {
     type: EditBodyType.overwrite,
     content: bodyModify.value
   })
@@ -196,11 +196,11 @@ function editStream(source: Readable, option: EditBodyOption) {
  * @param ctx
  * @param to x kB/s
  */
-export function requestSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
+export function requestSpeedLimit(ctx: IAppContext, modify: SpeedLimitModify) {
   if (!modify.value) {
     return
   }
-  ctx.remoteRequestBody = ctx.remoteRequestBody.pipe(
+  ctx.state.requestBody = ctx.state.requestBody.pipe(
     new Transform({
       transform(chunk, encoding, callback) {
         setTimeout(callback.bind(null, null, chunk), chunk.length / modify.value)
@@ -209,11 +209,11 @@ export function requestSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
   )
 }
 
-export function responseSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
+export function responseSpeedLimit(ctx: IAppContext, modify: SpeedLimitModify) {
   if (!modify) {
     return
   }
-  ctx.responseBody = ctx.responseBody.pipe(
+  ctx.state.responseBody = ctx.state.responseBody.pipe(
     new Transform({
       transform(chunk, encoding, callback) {
         setTimeout(callback.bind(null, null, chunk), chunk.length / modify.value)
@@ -227,8 +227,8 @@ export function responseSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
  * @param ctx
  * @param to 单位ms
  */
-export function requestDelay(ctx: Context, delayModify: DelayModify) {
-  ctx.remoteRequestBody = streamDelay(ctx.remoteRequestBody, delayModify.value)
+export function requestDelay(ctx: IAppContext, delayModify: DelayModify) {
+  ctx.state.requestBody = streamDelay(ctx.state.requestBody, delayModify.value)
 }
 
 /**
@@ -236,42 +236,41 @@ export function requestDelay(ctx: Context, delayModify: DelayModify) {
  * @param ctx
  * @param to ms
  */
-export function responseDelay(ctx: Context, delayModify: DelayModify) {
-  ctx.responseBody = streamDelay(ctx.responseBody, delayModify.value)
+export function responseDelay(ctx: IAppContext, delayModify: DelayModify) {
+  ctx.state.responseBody = streamDelay(ctx.state.responseBody, delayModify.value)
 }
 
 const vmAxios = Axios.create({
   timeout: 10000
 })
 
-export async function responseFunction(ctx: Context, modify: FunctionMoidfy) {
+export async function responseFunction(ctx: IAppContext, modify: FunctionMoidfy) {
   const funStr = modify.value
   if (!funStr) {
     return
   }
   beforeModifyResBody(ctx)
 
-  const oldStream = ctx.responseBody
+  const oldStream = ctx.state.responseBody
   const newStream = new PassThrough()
 
   const oldStatus = ctx.status
 
   try {
-    // This will change ctx.status to 500?
     const resBuf = await toBuffer(oldStream)
     let response = resBuf.toString()
 
     ctx.status = oldStatus
 
-    if (ctx.responseHeaders['content-type']?.startsWith('application/json')) {
+    if ((ctx.state.responseHeaders['content-type'] as string)?.startsWith('application/json')) {
       response = getJson(response)
     }
     // else if (ctx.request.headers['accept']?.startsWith('application/json')) {
     //   response = getJson(response)
     // }
 
-    const requestBody = ctx.log?.requestBody?.toString()
-    const params = ctx.method === 'GET' ? ctx.request.query : getJson(requestBody)
+    const requestBody = ctx.state.log?.requestBody?.toString()
+    const params = ctx.method === 'GET' ? ctx.request.query : getJson(requestBody as string)
 
     const result = await sandbox(
       {
@@ -287,7 +286,7 @@ export async function responseFunction(ctx: Context, modify: FunctionMoidfy) {
         },
         params: params,
         responseBody: response,
-        responseHeaders: ctx.responseHeaders,
+        responseHeaders: ctx.state.responseHeaders,
         responseStatus: ctx.status
       },
       funStr
@@ -296,16 +295,16 @@ export async function responseFunction(ctx: Context, modify: FunctionMoidfy) {
     if (result) {
       const body = await result.responseBody
       ctx.status = Number(result.responseStatus)
-      ctx.responseHeaders = result.responseHeaders
+      ctx.state.responseHeaders = result.responseHeaders
       newStream.end(typeof body === 'string' ? body : JSON.stringify(body))
-      ctx.responseBody = newStream
+      ctx.state.responseBody = newStream
     } else {
       // there is some error in the function
-      ctx.responseBody = oldStream
+      ctx.state.responseBody = oldStream
     }
   } catch (e: any) {
     ctx.status = 500
-    ctx.responseHeaders['content-type'] = 'text/plain; charset=utf-8'
+    ctx.state.responseHeaders['content-type'] = 'text/plain; charset=utf-8'
     newStream.end('ApiTune response function error ' + e.message)
   }
 }
@@ -335,20 +334,20 @@ function streamDelay(old: Stream, to: number) {
  *
  * @param ctx
  */
-function beforeModifyResBody(ctx: Context) {
+function beforeModifyResBody(ctx: IAppContext) {
   // 1. 修改结果体会导致长度变化
   // 2. 且不方便计算最终长度，所以简单使用chunked输出
   // nodejs http.Server 如果没有设置 content-length 就会按chunked输出
-  delete ctx.responseHeaders['content-length']
+  delete ctx.state.responseHeaders['content-length']
   // 解压
   // 修改内容之前需要先解开压缩
-  const contentEncoding = ctx.responseHeaders['content-encoding']
+  const contentEncoding = ctx.state.responseHeaders['content-encoding']
   if (contentEncoding) {
-    delete ctx.responseHeaders['content-encoding']
+    delete ctx.state.responseHeaders['content-encoding']
     if (contentEncoding === 'gzip') {
-      ctx.responseBody = ctx.responseBody.pipe(createGunzip())
+      ctx.state.responseBody = ctx.state.responseBody.pipe(createGunzip())
     } else if (contentEncoding === 'br') {
-      ctx.responseBody = ctx.responseBody.pipe(createBrotliDecompress())
+      ctx.state.responseBody = ctx.state.responseBody.pipe(createBrotliDecompress())
     } else {
       // 在请求时已经限制了只能用 gzip 和 br, 遇到其他，就时错误算法, 无法解压，也就不能修改内部
       console.error({
