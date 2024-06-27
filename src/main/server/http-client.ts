@@ -21,8 +21,6 @@ const cacheable = new CacheableLookup({
 })
 
 export default function (ctx: Context) {
-  // ctx.clientType = 'http';
-
   return new Promise<void>((resolve, reject) => {
     const remoteOptions = ctx.remoteRequestOptions
     const url = remoteOptions.url
@@ -31,7 +29,7 @@ export default function (ctx: Context) {
     const headers = remoteOptions.headers
     const reqHeaders: any = {}
 
-    // 删除 proxy header
+    // delete proxy header
     for (const key in headers) {
       if (key.startsWith('proxy-')) {
         // 过滤掉
@@ -40,7 +38,7 @@ export default function (ctx: Context) {
       }
     }
 
-    // 增加标志,避免被继续转发
+    // Add flags to avoid being forwarded
     reqHeaders[config.proxyHeader] = 1
 
     const serverReq = client.request(
@@ -67,30 +65,8 @@ export default function (ctx: Context) {
         ctx.status = serverRes.statusCode || 0
         ctx.message = serverRes.statusMessage || ''
 
-        const resHeaders: any = {}
-        // 过滤返回的header
-        for (const key in serverRes.headers) {
-          if (key === 'connection') {
-            // keep-alive 是http连接的属性 不可传递
-          } else if (key === 'transfer-encoding') {
-            // 是否 chunked
-          } else {
-            // TypeError [ERR_INVALID_HTTP_TOKEN]: Header name must be a valid HTTP token ["access-control-expose-headers "]
-            resHeaders[key.trim()] = serverRes.headers[key]
-          }
-        }
-        ctx.responseHeaders = resHeaders
+        ctx.responseHeaders = serverRes.headers
         ctx.responseBody = serverRes
-
-        // let body ='';
-        // serverRes.on('data', (chunk) => {
-        //   body += chunk;
-        // });
-
-        // serverRes.on('end', () => {
-        //   ctx.realBody = body;
-        //   console.log('server res end ===> ', body);
-        // });
 
         console.log('server res ===> ', ctx.status, ctx.message)
         resolve()
@@ -128,24 +104,8 @@ export default function (ctx: Context) {
     })
 
     serverReq.on('close', () => {
-      ctx.responseHeaders = {
-        'content-type': 'text/plain;charset=utf-8'
-      }
-      ctx.status = 500
-      ctx.message = `${config.name} request closed`
-      ctx.responseBody = toStream('${config.name} equest target server failed: ' + 'timeout')
-
       resolve()
     })
-
-    // 首次超过 120s 则 abort
-    // const timeoutKey = setTimeout(() => {
-    //   if (serverReq.destroyed) return
-
-    //   serverReq.destroy()
-    //   console.error(`${config.name} request abort, requst more then 120s`)
-    //   reject('server req timeout')
-    // }, 120 * 1e3)
 
     ctx.remoteRequestBody.pipe(serverReq)
   })

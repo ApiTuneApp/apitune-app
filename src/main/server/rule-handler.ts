@@ -192,7 +192,7 @@ function editStream(source: Readable, option: EditBodyOption) {
 }
 
 /**
- * 请求限速
+ * request speed limit
  * @param ctx
  * @param to x kB/s
  */
@@ -209,11 +209,6 @@ export function requestSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
   )
 }
 
-/**
- * 响应限速
- * @param ctx
- * @param to x kB/s
- */
 export function responseSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
   if (!modify) {
     return
@@ -228,7 +223,7 @@ export function responseSpeedLimit(ctx: Context, modify: SpeedLimitModify) {
 }
 
 /**
- * 请求延迟
+ * Request delay
  * @param ctx
  * @param to 单位ms
  */
@@ -237,9 +232,9 @@ export function requestDelay(ctx: Context, delayModify: DelayModify) {
 }
 
 /**
- * 响应延迟
+ * Response delay
  * @param ctx
- * @param to 单位ms
+ * @param to ms
  */
 export function responseDelay(ctx: Context, delayModify: DelayModify) {
   ctx.responseBody = streamDelay(ctx.responseBody, delayModify.value)
@@ -259,17 +254,22 @@ export async function responseFunction(ctx: Context, modify: FunctionMoidfy) {
   const oldStream = ctx.responseBody
   const newStream = new PassThrough()
 
-  ctx.responseBody = newStream
+  const oldStatus = ctx.status
 
   try {
+    // This will change ctx.status to 500?
     const resBuf = await toBuffer(oldStream)
     let response = resBuf.toString()
+
+    ctx.status = oldStatus
 
     if (ctx.responseHeaders['content-type']?.startsWith('application/json')) {
       response = getJson(response)
     }
+    // else if (ctx.request.headers['accept']?.startsWith('application/json')) {
+    //   response = getJson(response)
+    // }
 
-    // 从log 中间件获取request信息
     const requestBody = ctx.log?.requestBody?.toString()
     const params = ctx.method === 'GET' ? ctx.request.query : getJson(requestBody)
 
@@ -298,6 +298,10 @@ export async function responseFunction(ctx: Context, modify: FunctionMoidfy) {
       ctx.status = Number(result.responseStatus)
       ctx.responseHeaders = result.responseHeaders
       newStream.end(typeof body === 'string' ? body : JSON.stringify(body))
+      ctx.responseBody = newStream
+    } else {
+      // there is some error in the function
+      ctx.responseBody = oldStream
     }
   } catch (e: any) {
     ctx.status = 500

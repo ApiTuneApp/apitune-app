@@ -42,17 +42,15 @@ app.use(async (ctx: Context, next: Next) => {
   // matech rule details
   ctx.matchedRuleDetails = []
 
-  // 要发往远端的请求参数
+  // The request parameters to be sent to the remote end
   ctx.remoteRequestOptions = {
     method: ctx.method,
     url: new URL(ctx.href),
     headers: ctx.headers
   }
-  // 要发到远端的 request body 流
+  // Request body stream to be sent to the far end
   ctx.remoteRequestBody = ctx.req
-  // 要返回的header
   ctx.responseHeaders = {}
-  // 要返回的结果体
   ctx.responseBody = null
 
   console.log('[Start Request] ===> ', ctx.href)
