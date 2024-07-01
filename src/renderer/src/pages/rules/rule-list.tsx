@@ -1,6 +1,6 @@
 import './rules.less'
 
-import { App, Button, Space, Switch, Table } from 'antd'
+import { App, Button, Space, Switch, Table, Tooltip } from 'antd'
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -11,7 +11,7 @@ import { useRuleStore } from '@renderer/store'
 import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 
 import type { TableProps } from 'antd'
-import { findGroupOrRule } from '@shared/utils'
+import { findGroupOrRule, findParentGroup } from '@shared/utils'
 
 function RuleListPage(): JSX.Element {
   const { modal } = App.useApp()
@@ -113,6 +113,14 @@ function RuleListPage(): JSX.Element {
       dataIndex: 'enable',
       key: 'enable',
       render: (enable, rule) => {
+        const ruleGroup = findParentGroup(apiRules, rule.id)
+        if (ruleGroup && !ruleGroup.enable) {
+          return (
+            <Tooltip title="The rule group is disabled. Please enable it first." arrow>
+              <Switch checked={enable} size="small" disabled />
+            </Tooltip>
+          )
+        }
         return (
           <Switch
             checked={enable}

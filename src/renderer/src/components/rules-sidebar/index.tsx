@@ -17,7 +17,7 @@ import * as Service from '@renderer/services'
 import { useRuleStore } from '@renderer/store'
 import { useUxStore } from '@renderer/store/ux'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
-import { findGroupOrRule } from '@shared/utils'
+import { findGroupOrRule, findParentGroup } from '@shared/utils'
 
 import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
 
@@ -52,6 +52,13 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
 ) {
   const { labelText, rule, onMenuClick, ...others } = props
   const [showMenu, setShowMenu] = React.useState(false)
+  const apiRules = useRuleStore((state) => state.apiRules)
+
+  const ruleGroup = findParentGroup(apiRules, rule.id)
+  let ruleGroupEnable = true
+  if (ruleGroup) {
+    ruleGroupEnable = ruleGroup.enable
+  }
 
   const handleSwitchClick = (e: React.MouseEvent, checked: boolean, ruleId: string) => {
     e.stopPropagation()
@@ -102,9 +109,19 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
           </a>
         </Dropdown>
       ) : (
-        <Tooltip title={rule.enable ? 'Disable rule' : 'Enable rule'} arrow>
+        <Tooltip
+          title={
+            ruleGroupEnable
+              ? rule.enable
+                ? 'Disable rule'
+                : 'Enable rule'
+              : 'The rule group is disabled. Please enable it first.'
+          }
+          arrow
+        >
           <Switch
             size="small"
+            disabled={!ruleGroupEnable}
             checked={rule.enable}
             onClick={(checked, e) => handleSwitchClick(e, checked, rule.id)}
           />

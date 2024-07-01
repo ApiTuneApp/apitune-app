@@ -23,3 +23,16 @@ export function findGroupOrRule(
   }
   return null
 }
+
+export function findParentGroup(rules: ApiRules, id: string): RuleGroup | null {
+  for (const item of rules) {
+    if ((item as RuleGroup).ruleList) {
+      if ((item as RuleGroup).ruleList.some((rule) => rule.id === id)) {
+        return item as RuleGroup
+      }
+      const group = findParentGroup((item as RuleGroup).ruleList, id)
+      if (group) return group
+    }
+  }
+  return null
+}
