@@ -38,10 +38,22 @@ function App(): JSX.Element {
     }
   }, [])
 
+  function autoHideTooltip() {
+    const tooltipList = document.querySelectorAll('.j-autohide-tooltip')
+    if (tooltipList && tooltipList.length) {
+      tooltipList.forEach((tooltip) => {
+        if (!tooltip.classList.contains('ant-tooltip-hidden')) {
+          tooltip.classList.add('ant-tooltip-hidden')
+        }
+      })
+    }
+  }
+
   /**
    * to distinguish different pages to cache
    */
   const cacheKey = useMemo(() => {
+    autoHideTooltip()
     return location.pathname + location.hash
   }, [location])
 

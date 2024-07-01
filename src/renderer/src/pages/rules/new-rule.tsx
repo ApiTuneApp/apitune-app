@@ -288,7 +288,7 @@ function NewRulePage(): JSX.Element {
       >
         <div className="page-new-header">
           <Flex align="center">
-            <Tooltip title="Go back">
+            <Tooltip title="Go back" overlayClassName="j-autohide-tooltip">
               <Button className="normal-link" onClick={() => navigate(-1)} type="link">
                 <LeftOutlined />
               </Button>

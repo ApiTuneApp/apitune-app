@@ -239,19 +239,19 @@ function RulesSidebar(): JSX.Element {
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
-        <Tooltip title="Add Group" arrow>
+        <Tooltip title="Add Group" arrow overlayClassName="j-autohide-tooltip">
           <Button
             type="text"
             icon={<FolderAddOutlined />}
             onClick={() => setAddGroupDialogOpen(true)}
           />
         </Tooltip>
-        <Tooltip title="Add Rule" arrow>
+        <Tooltip title="Add Rule" arrow overlayClassName="j-autohide-tooltip">
           <NavLink to="/rules/new">
             <Button type="text" icon={<PlusSquareOutlined />} />
           </NavLink>
         </Tooltip>
-        <Tooltip title="Go Group List" arrow>
+        <Tooltip title="Go Group List" arrow overlayClassName="j-autohide-tooltip">
           <NavLink to="/rules/list">
             <Button type="text" icon={<UnorderedListOutlined />} />
           </NavLink>
