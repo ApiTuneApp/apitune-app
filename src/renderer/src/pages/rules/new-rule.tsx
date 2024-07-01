@@ -97,6 +97,7 @@ function NewRulePage(): JSX.Element {
   useEffect(() => {
     if (editRule) {
       form.setFieldsValue(editRule)
+      setShowReqMethodsFilter(!!editRule.matches.methods.length)
     }
   }, [editRule])
 
