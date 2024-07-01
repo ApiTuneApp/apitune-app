@@ -10,7 +10,8 @@ import {
   FolderAddOutlined,
   FolderOutlined,
   MoreOutlined,
-  PlusSquareOutlined
+  PlusSquareOutlined,
+  UnorderedListOutlined
 } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
@@ -248,6 +249,11 @@ function RulesSidebar(): JSX.Element {
         <Tooltip title="Add Rule" arrow>
           <NavLink to="/rules/new">
             <Button type="text" icon={<PlusSquareOutlined />} />
+          </NavLink>
+        </Tooltip>
+        <Tooltip title="Go Group List" arrow>
+          <NavLink to="/rules/list">
+            <Button type="text" icon={<UnorderedListOutlined />} />
           </NavLink>
         </Tooltip>
       </Flex>
