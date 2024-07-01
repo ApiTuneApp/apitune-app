@@ -33,6 +33,10 @@ type RuleTreeItemProps = {
 
 const RuleGroupDropdown: MenuProps['items'] = [
   {
+    key: 'ruleGroupEnable',
+    label: 'Enable Rule Group'
+  },
+  {
     key: 'addRule',
     label: 'Add Rule'
   },
@@ -42,7 +46,8 @@ const RuleGroupDropdown: MenuProps['items'] = [
   },
   {
     key: 'delete',
-    label: 'Delete'
+    label: 'Delete',
+    danger: true
   }
 ]
 
@@ -59,6 +64,12 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   if (ruleGroup) {
     ruleGroupEnable = ruleGroup.enable
   }
+  ;(
+    RuleGroupDropdown[0] as {
+      key: string
+      label: string
+    }
+  ).label = ruleGroupEnable ? 'Enable Group' : 'Disable Group'
 
   const handleSwitchClick = (e: React.MouseEvent, checked: boolean, ruleId: string) => {
     e.stopPropagation()
@@ -192,6 +203,12 @@ function RulesSidebar(): JSX.Element {
       setAddGroupDialogOpen(true)
     } else if (menuItem === 'delete') {
       handleDelConfirmOpen()
+    } else if (menuItem === 'ruleGroupEnable') {
+      window.api.enableRule(rule.id, !rule.enable).then((result) => {
+        if (result.status === EventResultStatus.Success) {
+          Service.getApiRules()
+        }
+      })
     }
   }
 
