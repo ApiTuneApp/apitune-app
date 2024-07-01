@@ -9,7 +9,7 @@ export function genLogId() {
   return logId++
 }
 
-export default async function LogsMiddleware(ctx: Context, next: Next) {
+export async function LogRequestMiddleware(ctx: Context, next: Next) {
   // Store log before request send
   const log: Log = {
     id: genLogId(),
@@ -38,6 +38,13 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
 
   // send request, get data
   await next()
+}
+
+export async function LogResponseMiddleware(ctx: Context, next: Next) {
+  // send request, get data
+  await next()
+
+  const log = ctx.state.log
 
   log.status = ctx.status
   log.message = ctx.message
@@ -60,29 +67,3 @@ export default async function LogsMiddleware(ctx: Context, next: Next) {
     proxyLog(log)
   })
 }
-
-// export async function LogResponseMiddleware(ctx: Context, next: Next) {
-//   // send request, get data
-//   await next()
-
-//   log.status = ctx.status
-//   log.message = ctx.message
-//   log.responseHeaders = ctx.state.responseHeaders
-//   log.remoteIp = ctx.state.remoteIp
-//   log.remotePort = ctx.state.remotePort
-
-//   const type = ctx.state.responseHeaders['content-type'] || ''
-//   log.responeseType = type.split(';', 1)[0]
-
-//   getBase64(ctx.state.responseBody).then(({ base64, length }) => {
-//     log.responseBody = base64
-//     log.responseBodyLength = length
-//     log.finishTime = Date.now()
-//     log.responseBodyInfo = getBodyInfo(log)
-
-//     // log.requestBody = Buffer.from(log.requestBody as unknown as string, 'base64')
-//     log.requestBodyInfo = Buffer.from(log.requestBody as unknown as string, 'base64').toString()
-
-//     proxyLog(log)
-//   })
-// }

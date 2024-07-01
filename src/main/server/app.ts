@@ -2,7 +2,7 @@ import Koa, { Context, Next } from 'koa'
 
 import config from './config'
 import httpClient from './http-client'
-import LogsMiddleware from './middleware/log'
+import { LogRequestMiddleware, LogResponseMiddleware } from './middleware/log'
 import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
 import { IAppState, IAppContext } from '../contracts'
@@ -61,8 +61,9 @@ app.use(async (ctx, next: Next) => {
   ctx.body = ctx.state.responseBody
 })
 
+app.use(LogResponseMiddleware)
 app.use(RulesMiddleware)
-app.use(LogsMiddleware)
+app.use(LogRequestMiddleware)
 app.use(async (ctx: Context, next: Next) => {
   await httpClient(ctx)
   await next()
