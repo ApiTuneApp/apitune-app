@@ -1,8 +1,8 @@
 import { RuleType } from './contract'
 
 export const RuleList = [
-  RuleType.Redirect,
-  RuleType.SpeedLimit,
+  RuleType.Rewrite,
+  RuleType.RequestSpeedLimit,
   RuleType.RequestHeader,
   RuleType.RequestBody,
   RuleType.RequestBodyJq,
@@ -18,8 +18,8 @@ export const RuleList = [
 ]
 
 export const RequestRules = [
-  RuleType.Redirect,
-  RuleType.SpeedLimit,
+  RuleType.Rewrite,
+  RuleType.RequestSpeedLimit,
   RuleType.RequestHeader,
   RuleType.RequestBody,
   RuleType.RequestBodyJq,
@@ -289,7 +289,7 @@ export const HTTP_STATUS_CODE = [
 export const ReqMethods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH', 'CONNECT']
 
 export const RequestRuleKeys: RuleType[] = [
-  RuleType.Redirect,
+  RuleType.Rewrite,
   RuleType.RequestHeader,
   RuleType.RequestBody,
   RuleType.RequestBodyJq,
@@ -303,5 +303,5 @@ export const ResponseRuleKeys: RuleType[] = [
   RuleType.ResponseBody,
   RuleType.ResponseBodyJq,
   RuleType.ResponseDelay,
-  RuleType.SpeedLimit
+  RuleType.RequestSpeedLimit
 ]

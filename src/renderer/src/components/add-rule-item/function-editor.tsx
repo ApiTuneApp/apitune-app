@@ -13,7 +13,7 @@ function FunctionEditor({ field, type }: AddRuleValueProps & BodyEditorProps): J
     <Form.Item
       name={[field.name, 'value']}
       rules={[{ required: true, message: 'Function is required' }]}
-      label={`Modify ${type === 'request' ? 'Request' : 'Response'} Body:`}
+      label={`Modify ${type === 'request' ? 'Request' : 'Response'} Body With Javascript:`}
     >
       <MonacoEditor height={400} defaultLanguage="javascript" />
     </Form.Item>

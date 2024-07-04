@@ -7,7 +7,7 @@ import * as ruleHandlers from '../rule-handler'
 import { IAppContext } from '../../contracts'
 
 const requestHandlerMap = {
-  [RuleType.Redirect]: {
+  [RuleType.Rewrite]: {
     handler: ruleHandlers.rewrite
   },
   [RuleType.RequestHeader]: {
@@ -19,7 +19,7 @@ const requestHandlerMap = {
   [RuleType.RequestFunction]: {
     handler: ruleHandlers.requestFunction
   },
-  [RuleType.SpeedLimit]: {
+  [RuleType.RequestSpeedLimit]: {
     handler: ruleHandlers.requestSpeedLimit
   }
 }

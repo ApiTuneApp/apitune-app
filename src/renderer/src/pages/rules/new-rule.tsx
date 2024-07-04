@@ -9,6 +9,7 @@ import {
   Form,
   FormListOperation,
   Input,
+  MenuProps,
   Select,
   Space,
   Switch,
@@ -31,7 +32,7 @@ import { RuleItem } from '@renderer/common/contract'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import FunctionEditor from '@renderer/components/add-rule-item/function-editor'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
-import Redirect from '@renderer/components/add-rule-item/redirect'
+import Rewrite from '@renderer/components/add-rule-item/rewrite'
 import ResponseDelay from '@renderer/components/add-rule-item/response-delay'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
@@ -50,23 +51,84 @@ const reqMethods = ReqMethods.map((item) => ({
   value: item
 }))
 
-const AddRulesMenu: RuleMenuItem[] = [
-  { key: RuleType.Redirect, label: 'ReDirect' },
-  { key: RuleType.SpeedLimit, label: 'Add Speed Limit' },
-  { key: RuleType.RequestHeader, label: 'Modify Request Headers' },
-  { key: RuleType.RequestBody, label: 'Modify Request Body' },
-  { key: RuleType.RequestFunction, label: 'Add Request Function' },
-  { key: RuleType.ResponseHeader, label: 'Modify Response Headers' },
-  { key: RuleType.ResponseBody, label: 'Modify Response Body' },
-  { key: RuleType.ResponseDelay, label: 'Add Response Delay' },
-  // { key: Rules.ResponseFile, label: 'Replace Response With File' },
-  { key: RuleType.ResponseFunction, label: 'Add Response Function' },
-  { key: RuleType.ResponseStatus, label: 'Modify Response Status' }
+const DefaultAddRulesMenu: MenuProps['items'] = [
+  {
+    key: 'request',
+    type: 'group',
+    label: 'Request Modify',
+    children: [
+      {
+        key: RuleType.Rewrite,
+        label: 'Rewrite Request',
+        disabled: false
+      },
+      {
+        key: RuleType.RequestHeader,
+        label: 'Modify Request Headers',
+        disabled: false
+      },
+      {
+        key: RuleType.RequestBody,
+        label: 'Modify Request Body',
+        disabled: false
+      },
+      {
+        key: RuleType.RequestFunction,
+        label: 'Add Request Function',
+        disabled: false
+      },
+      {
+        key: RuleType.RequestSpeedLimit,
+        disabled: false,
+        label: 'Add Request Speed Limit'
+      }
+    ]
+  },
+  {
+    key: 'response',
+    type: 'group',
+    label: 'Response Modify',
+    children: [
+      {
+        key: RuleType.ResponseStatus,
+        disabled: false,
+        label: 'Modify Response Status'
+      },
+      {
+        key: RuleType.ResponseHeader,
+        disabled: false,
+        label: 'Modify Response Headers'
+      },
+      {
+        key: RuleType.ResponseBody,
+        disabled: false,
+        label: 'Modify Response Body'
+      },
+      {
+        key: RuleType.ResponseFunction,
+        disabled: false,
+        label: 'Add Response Function'
+      },
+      {
+        key: RuleType.ResponseDelay,
+        disabled: false,
+        label: 'Add Response Delay'
+      }
+    ]
+  }
 ]
 
-type RuleMenuItem = {
+interface MenuChildItem {
   key: RuleType
   label: string
+  disabled: boolean
+}
+
+interface RuleMenuItem {
+  key: string
+  label: string
+  type: 'group' | null
+  children?: Array<MenuChildItem>
 }
 
 function NewRulePage(): JSX.Element {
@@ -79,6 +141,7 @@ function NewRulePage(): JSX.Element {
 
   const apiRules = useRuleStore((state) => state.apiRules)
   const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
+  const [addRulesMenu, setAddRulesMenu] = useState<MenuProps['items']>(DefaultAddRulesMenu)
 
   const { id: editRuleId } = useParams()
   const editRule = useRuleStore((state) => findGroupOrRule(state.apiRules, editRuleId)) as RuleData
@@ -99,6 +162,22 @@ function NewRulePage(): JSX.Element {
     if (editRule) {
       form.setFieldsValue(editRule)
       setShowReqMethodsFilter(!!editRule.matches.methods.length)
+      setAddRulesMenu((prev) => {
+        // Disable already added rule menu
+        const newMenu = prev!.map((item) => {
+          const menItem = item as RuleMenuItem
+          if (menItem.type === 'group' && menItem.children) {
+            menItem.children = menItem.children.map((child) => {
+              if (editRule.modifyList.some((modify) => modify.type === child.key)) {
+                return { ...child, disabled: true }
+              }
+              return { ...child, disabled: false }
+            })
+          }
+          return menItem
+        })
+        return newMenu
+      })
     }
   }, [editRule])
 
@@ -190,14 +269,30 @@ function NewRulePage(): JSX.Element {
  */`
     }
     add(initValue)
+    // disable same type rule menu
+    setAddRulesMenu((prev) => {
+      const newMenu = prev!.map((item) => {
+        const menItem = item as RuleMenuItem
+        if (menItem.type === 'group' && menItem.children) {
+          menItem.children = menItem.children.map((child) => {
+            if (child.key === key) {
+              return { ...child, disabled: true }
+            }
+            return child
+          })
+        }
+        return item
+      })
+      return newMenu
+    })
   }
 
   const getAddRuleValueComponent = (modify: Modify, index: number) => {
     const field = { name: index, key: index }
     switch (modify.type) {
-      case RuleType.Redirect:
-        return <Redirect form={form} field={field} />
-      case RuleType.SpeedLimit:
+      case RuleType.Rewrite:
+        return <Rewrite form={form} field={field} />
+      case RuleType.RequestSpeedLimit:
         return <SpeedLimit form={form} field={field} />
       case RuleType.RequestHeader:
         return <HeaderEditor form={form} field={field} type="request" />
@@ -410,8 +505,9 @@ function NewRulePage(): JSX.Element {
                   {(fields, { add, remove }) => (
                     <>
                       <Dropdown
+                        trigger={['click']}
                         menu={{
-                          items: AddRulesMenu,
+                          items: addRulesMenu,
                           onClick: (item) => handleAddRuleClick(item.key as RuleType, add)
                         }}
                       >

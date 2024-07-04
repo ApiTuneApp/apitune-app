@@ -91,8 +91,8 @@ export interface Log {
 }
 
 export enum RuleType {
-  Redirect = 'redirect',
-  SpeedLimit = 'speedLimit',
+  Rewrite = 'rewrite',
+  RequestSpeedLimit = 'requestSpeedLimit',
   RequestHeader = 'requestHeader',
   RequestBody = 'requestBody',
   RequestBodyJq = 'requestBodyJq',
@@ -120,7 +120,7 @@ export interface Modify {
 }
 
 export interface RedirectModify extends Modify {
-  type: RuleType.Redirect
+  type: RuleType.Rewrite
   value: string
 }
 
@@ -130,7 +130,7 @@ export interface HeaderModify extends Modify {
 }
 
 export interface SpeedLimitModify extends Modify {
-  type: RuleType.SpeedLimit
+  type: RuleType.RequestSpeedLimit
   value: number
 }
 
@@ -161,7 +161,7 @@ export interface RuleData {
   matches: Match
   enable: boolean
   kind: 'rule'
-  modifyList: Array<Modify | RedirectModify | HeaderModify | BodyModify | FunctionMoidfy>
+  modifyList: Array<Modify>
   updateTime: number
   testScript?: string
 }
