@@ -73,6 +73,7 @@ function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const groupId = searchParams.get('groupId')
+  const targetTab = searchParams.get('tab') || 'rule'
   const { message, modal } = App.useApp()
   const [form] = Form.useForm()
 
@@ -399,10 +400,10 @@ function NewRulePage(): JSX.Element {
           onCancel={() => setShowMatchTestModal(false)}
         />
         <Tabs
-          defaultActiveKey="rule"
+          defaultActiveKey={targetTab}
           items={[
             {
-              key: 'rule',
+              key: 'rules',
               label: 'Rules',
               children: (
                 <Form.List name="modifyList">
@@ -448,12 +449,20 @@ function NewRulePage(): JSX.Element {
               )
             },
             {
-              key: 'testScript',
+              key: 'tests',
               label: 'Test&Script',
               children: (
-                <Form.Item name="testScript">
-                  <MonacoEditor defaultLanguage="javascript" height={400} />
-                </Form.Item>
+                <Flex justify="space-between" style={{ width: '100%' }}>
+                  <Form.Item name="testScript" style={{ flex: 1 }}>
+                    <MonacoEditor defaultLanguage="javascript" height={400} />
+                  </Form.Item>
+                  <div style={{ width: 440, padding: '0 10px' }}>
+                    <div style={{ fontWeight: 'bold' }}>Snippets</div>
+                    <Button type="text">Response status code is 200</Button>
+                    <Button type="text">Response includes expected headers</Button>
+                    <Button type="text">Response status code is 200</Button>
+                  </div>
+                </Flex>
               )
             }
           ]}

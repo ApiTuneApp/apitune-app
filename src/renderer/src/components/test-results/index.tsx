@@ -1,7 +1,8 @@
-import { Descriptions, List, Space, Tag } from 'antd'
+import { Descriptions, Empty, List, Space, Tag, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import RuleLink from '@renderer/components/rule-link'
 import { TestItem } from '@shared/contract'
+import { NavLink } from 'react-router-dom'
 
 interface TestResultsProps {
   logId: number
@@ -22,6 +23,16 @@ export default function TestResults({ logId }: TestResultsProps): JSX.Element {
   }, [logId])
   return (
     <div>
+      {!testResults.startTime && (
+        <Empty
+          description={
+            <Typography.Text>
+              No Test Results <br />
+              <NavLink to="/rules/new?tab=tests">Create new rule to test api result</NavLink>
+            </Typography.Text>
+          }
+        />
+      )}
       {testResults.startTime && (
         <>
           <Descriptions>
