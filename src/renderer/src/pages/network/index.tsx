@@ -73,7 +73,8 @@ function NetworkPage(): JSX.Element {
       title: 'Id',
       dataIndex: 'id',
       key: 'id',
-      width: 60
+      width: 60,
+      sorter: (a: Log, b: Log) => a.id - b.id
     },
     {
       title: 'URL',
@@ -85,13 +86,15 @@ function NetworkPage(): JSX.Element {
         <Tooltip placement="topLeft" title={item}>
           {item}
         </Tooltip>
-      )
+      ),
+      sorter: (a: Log, b: Log) => a.url.localeCompare(b.url)
     },
     {
       title: 'Protocol',
       dataIndex: 'protocol',
       key: 'protocol',
-      width: 80
+      width: 80,
+      sorter: (a: Log, b: Log) => a.protocol.localeCompare(b.protocol)
     },
     {
       title: 'Host',
@@ -99,6 +102,7 @@ function NetworkPage(): JSX.Element {
       key: 'host',
       ellipsis: true,
       width: 100,
+      sorter: (a: Log, b: Log) => a.host.localeCompare(b.host),
       render: (item) => (
         <Tooltip placement="topLeft" title={item}>
           {item}
@@ -111,6 +115,9 @@ function NetworkPage(): JSX.Element {
       key: 'pathname',
       ellipsis: true,
       width: 140,
+      sorter: (a: Log, b: Log) => {
+        return a.pathname?.localeCompare(b.pathname)
+      },
       render: (item) => (
         <Tooltip placement="topLeft" title={item}>
           {item}
@@ -121,13 +128,15 @@ function NetworkPage(): JSX.Element {
       title: 'Method',
       dataIndex: 'method',
       key: 'method',
-      width: 90
+      width: 90,
+      sorter: (a: Log, b: Log) => a.method.localeCompare(b.method)
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      width: 60
+      width: 60,
+      sorter: (a: Log, b: Log) => a.status - b.status
     },
     {
       title: 'MatchRules',
@@ -157,6 +166,11 @@ function NetworkPage(): JSX.Element {
       dataIndex: 'time',
       key: 'time',
       width: 80,
+      sorter: (a: Log, b: Log) => {
+        const aTime = a.finishTime ? a.finishTime - a.startTime : 0
+        const bTime = b.finishTime ? b.finishTime - b.startTime : 0
+        return aTime - bTime
+      },
       render(_, record: Log) {
         return record.finishTime ? `${record.finishTime - record.startTime}ms` : ''
       }
