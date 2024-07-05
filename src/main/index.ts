@@ -212,8 +212,8 @@ app.whenReady().then(() => {
               rule.enable = enable
               rule.updateTime = new Date().getTime()
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
-                log.error('[EnableRule]Failed to storage rule', error)
                 if (error) {
+                  log.error('[EnableRule]Failed to storage rule', error)
                   reject({
                     status: EventResultStatus.Error,
                     error: error.message

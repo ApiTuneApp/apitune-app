@@ -1,3 +1,4 @@
+import log from 'electron-log/main'
 import child_process from 'node:child_process'
 import { Socket } from 'node:net'
 import { finished, PassThrough, Readable, Stream } from 'node:stream'
@@ -64,7 +65,7 @@ export function pipeSocket(from: Socket, to: Socket) {
     // 2s 后强制 destroy 掉 socket
     setTimeout(() => {
       if (!from.destroyed) {
-        console.log({
+        log.info('[PipSocket]From socket destroyed', {
           t: new Date(),
           type: 'force-destroy-socket',
           localAddress: from.localAddress,
@@ -75,7 +76,7 @@ export function pipeSocket(from: Socket, to: Socket) {
         from.destroy()
       }
       if (!to.destroyed) {
-        console.log({
+        log.info('[PipSocket]To socket destroyed', {
           t: new Date(),
           type: 'force-destroy-socket',
           localAddress: to.localAddress,
@@ -260,7 +261,7 @@ export async function sandbox(sandbox: any, script: string) {
     })
     return sandbox
   } catch (error) {
-    console.log('sandbox error', error)
+    log.error('[Sandbox]error', error)
   }
 }
 
@@ -272,7 +273,7 @@ export function getJson(data: string | null): any {
   try {
     result = JSON.parse(data)
   } catch (error) {
-    // console.log('getJson error', error)
+    log.error('[GetJson] error', error)
   }
   return result
 }

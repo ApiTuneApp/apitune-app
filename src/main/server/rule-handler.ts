@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import log from 'electron-log/main'
 import * as lodash from 'lodash'
 import replaceStream from 'replacestream'
 import { PassThrough, Readable, Stream, Transform } from 'stream'
@@ -349,13 +350,8 @@ function beforeModifyResBody(ctx: IAppContext) {
     } else if (contentEncoding === 'br') {
       ctx.state.responseBody = ctx.state.responseBody.pipe(createBrotliDecompress())
     } else {
-      // 在请求时已经限制了只能用 gzip 和 br, 遇到其他，就时错误算法, 无法解压，也就不能修改内部
-      console.error({
-        message: 'content-encoding error',
-        extra: {
-          contentEncoding
-        }
-      })
+      // 在请求时已经限制了只能用 gzip 和 br, 遇到其他错误算法, 无法解压，也就不能修改内部
+      log.error('[BeforeModifyResBody]Content-encoding not support', contentEncoding)
     }
   }
 }

@@ -1,5 +1,6 @@
 const vm = require('node:vm')
 const Mocha = require('mocha')
+const log = require('electron-log')
 const { expect } = require('chai')
 const { workerData, parentPort } = require('worker_threads')
 
@@ -54,7 +55,7 @@ function testRunner(matchedRuleDetails) {
           testResult.push(testResultItem)
         }
       } catch (error) {
-        console.error('An error occurred:', error)
+        log.error('[TestWorker]Run scripts error', error)
       }
     }
   }
@@ -69,7 +70,7 @@ function testRunner(matchedRuleDetails) {
       mochaInstance.allowUncaught(false)
 
       mochaInstance.uncaught = function (err) {
-        console.error('mocha test error', err)
+        log.error('[TestWorker]Test run error', err)
       }
       startTime = new Date().getTime()
       // Run the Mocha instance
@@ -117,15 +118,16 @@ function testRunner(matchedRuleDetails) {
           endTime: new Date().getTime()
         })
 
-        console.log('---- Test Results: ----')
-        console.log('Passed:', results.passed.length, 'tests')
-        results.passed.forEach((testTitle) => console.log(`✓ ${testTitle}`))
+        log.debug('[TestWorker]Passed:', results.passed.length, 'tests')
+        results.passed.forEach((testTitle) => log.debug(`[TestWorker]Success: ${testTitle}`))
 
-        console.log('Failed:', results.failed.length, 'tests')
-        results.failed.forEach(({ title, error }) => console.log(`✕ ${title}: ${error}`))
+        log.debug('[TestWorker]Failed:', results.failed.length, 'tests')
+        results.failed.forEach(({ title, error }) =>
+          log.debug(`[TestWorker]Failed: ${title}: ${error}`)
+        )
       })
     } catch (error) {
-      console.error('mocha run error', error)
+      log.error('[TestWorker]Test run error', error)
     }
   }
 }

@@ -1,4 +1,5 @@
 import { app } from 'electron'
+import * as electronLog from 'electron-log/main'
 import { Context, Next } from 'koa'
 import path from 'node:path'
 import { Worker } from 'node:worker_threads'
@@ -9,7 +10,7 @@ import { getBase64 } from '../helper'
 
 // TODO: check production path
 const mochaWoker = path.join(app.getAppPath(), 'src/main/workers/mocha-worker.js')
-console.log('mochaWoker path', mochaWoker)
+electronLog.info('[TestScript]mochaWoker path', mochaWoker)
 
 export default async function testScriptMiddleware(ctx: Context, next: Next) {
   await next()
@@ -54,18 +55,18 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
     })
 
     worker.on('message', (data: TestItem) => {
-      console.log('Message received from worker:', data)
+      electronLog.info('[TestScript]Worker result:', data)
       LogTestResult.updateTestResult(data.logId, data)
     })
 
     worker.on('error', (error) => {
-      console.error('Worker error:', error)
+      electronLog.error('[TestScript]Worker error:', error)
       // worker.terminate()
     })
 
     worker.on('exit', (code) => {
       if (code !== 0) {
-        console.error(`Worker stopped with exit code ${code}`)
+        electronLog.error(`[TestScript]Worker stopped with exit code ${code}`)
       }
       worker.terminate()
     })

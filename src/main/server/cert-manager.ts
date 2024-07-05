@@ -1,3 +1,4 @@
+import log from 'electron-log/main'
 import CertManager from 'node-easy-cert'
 import os from 'node:os'
 
@@ -37,7 +38,7 @@ class ExtendedCertManager {
       // @ts-ignore We should get result from callback, but it's not implemented in node-easy-cert
       this.mgr.ifRootCATrusted(callback)
     } catch (error) {
-      console.error('Failed to check if Root CA is trusted:', error)
+      log.error('[CA]Failed to check if Root CA is trusted:', error)
     }
     return false
   }
@@ -46,7 +47,7 @@ class ExtendedCertManager {
     try {
       return this.mgr.isRootCAFileExists()
     } catch (error) {
-      console.error('Failed to check if Root CA is trusted:', error)
+      log.error('[CA]Failed to check if Root CA is trusted:', error)
     }
     return false
   }
@@ -70,18 +71,16 @@ class ExtendedCertManager {
         command = `certutil -user -verifystore Root ${this.commanName}`
         break
       default:
-        console.log(`${os.platform()} is not supported for systemwide proxy`)
+        log.debug(`${os.platform()} is not supported for systemwide proxy`)
         return false
     }
 
     try {
       status = !!execScriptSync(command)
-      console.log('Found CA already installed')
+      log.debug('Found CA already installed')
     } catch (err) {
-      console.error(err)
-      console.log('CA not found')
+      log.debug('CA not found')
     }
-    // console.log(status);
     return status
   }
 
@@ -98,7 +97,6 @@ class ExtendedCertManager {
       -r trustRoot \
       -k $HOME/Library/Keychains/login.keychain \\"${rootCAPath}\\"\
       " with prompt "ApiTune wants to store SSL certificate to keychain."'`
-      console.log('command', command)
       result = execScriptSync(command)
     }
     return result

@@ -74,11 +74,11 @@ export default function (ctx: IAppContext) {
       }
     )
 
-    // serverReq.on('timeout', () => {
-    //   serverReq.destroy()
-    //   console.log('server req timeout ===>', url)
-    //   reject('server req timeout')
-    // })
+    serverReq.on('timeout', () => {
+      serverReq.destroy()
+      log.info('[HttpClient]Server req timeout ===>', url)
+      reject('server req timeout')
+    })
 
     serverReq.on('error', (err: Error) => {
       let message: string

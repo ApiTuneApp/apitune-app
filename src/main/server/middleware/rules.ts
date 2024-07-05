@@ -1,4 +1,5 @@
 import { Next } from 'koa'
+import log from 'electron-log/main'
 
 import { RuleData, RuleType } from '../../../shared/contract'
 import { isRuleMatch } from '../../helper'
@@ -69,7 +70,7 @@ export default async function RulesMiddleware(ctx: IAppContext, next: Next) {
     for (const modify of rule.modifyList) {
       const handler = requestHandlerMap[modify.type]
       if (handler) {
-        console.log('start handle request rule ===>', rule, modify)
+        log.info('[RuleMiddleware]Start request rule', rule, modify)
         await handler.handler(ctx, modify)
       }
     }
@@ -82,7 +83,7 @@ export default async function RulesMiddleware(ctx: IAppContext, next: Next) {
     for (const modify of rule.modifyList) {
       const handler = responseHanderMap[modify.type]
       if (handler) {
-        console.log('start handle response rule ===>', rule, modify)
+        log.info('[RuleMiddleware]Start response rule', rule, modify)
         await handler.handler(ctx, modify)
       }
     }
