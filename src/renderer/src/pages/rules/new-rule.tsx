@@ -44,6 +44,8 @@ import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@share
 import { findGroupOrRule } from '@shared/utils'
 import MonacoEditor from '@renderer/components/monaco-editor'
 
+import { SnippetType, getSnippet } from '@renderer/common/snippets'
+
 const { Text } = Typography
 
 const reqMethods = ReqMethods.map((item) => ({
@@ -188,7 +190,7 @@ function NewRulePage(): JSX.Element {
     if (result.status === EventResultStatus.Success) {
       message.success(`Rule ${editRuleId ? 'edited' : 'added'} successfully`, () => {
         Service.getApiRules()
-        navigate('/rules/list')
+        // navigate('/rules/list')
       })
     } else {
       message.error(`Error: ${result.error}`)
@@ -373,6 +375,15 @@ function NewRulePage(): JSX.Element {
     })
   }
 
+  const insertSnippet = (type: SnippetType) => {
+    const currentValue = form.getFieldValue('testScript')
+      ? form.getFieldValue('testScript') + '\n\n'
+      : ''
+    form.setFieldsValue({
+      testScript: currentValue + getSnippet(type)
+    })
+  }
+
   return (
     <div className="page-new">
       <Form
@@ -552,11 +563,19 @@ function NewRulePage(): JSX.Element {
                   <Form.Item name="testScript" style={{ flex: 1 }}>
                     <MonacoEditor defaultLanguage="javascript" height={400} />
                   </Form.Item>
-                  <div style={{ width: 440, padding: '0 10px' }}>
+                  <div style={{ minWidth: 240, padding: '0 10px' }}>
                     <div style={{ fontWeight: 'bold' }}>Snippets</div>
-                    <Button type="text">Response status code is 200</Button>
-                    <Button type="text">Response includes expected headers</Button>
-                    <Button type="text">Response status code is 200</Button>
+                    <Flex vertical align="flex-start">
+                      <Button type="text" onClick={() => insertSnippet('responseStatus200')}>
+                        Response status code is 200
+                      </Button>
+                      <Button type="text" onClick={() => insertSnippet('expectedHeaders')}>
+                        Response includes expected headers
+                      </Button>
+                      <Button type="text" onClick={() => insertSnippet('asyncTest')}>
+                        Should pass in async script
+                      </Button>
+                    </Flex>
                   </div>
                 </Flex>
               )
