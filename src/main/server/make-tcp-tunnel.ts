@@ -1,4 +1,6 @@
-import { connect, Socket, NetConnectOpts } from 'net'
+import log from 'electron-log/main'
+import { connect, NetConnectOpts, Socket } from 'net'
+
 import { pipeSocket } from './helper'
 
 export function makeTcpTunnel(
@@ -18,6 +20,6 @@ export function makeTcpTunnel(
   })
 
   socket.on('error', (err: Error) => {
-    console.error('makeTcpTunnel conn', err)
+    log.error('[makeTcpTunnel]error', err)
   })
 }

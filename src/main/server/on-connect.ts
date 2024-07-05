@@ -1,16 +1,18 @@
+import log from 'electron-log/main'
 import { IncomingMessage } from 'http'
 import { Socket } from 'net'
-import { isHttps } from './helper'
-import { decodeHttps } from './decode-https'
-import { makeTcpTunnel } from './make-tcp-tunnel'
+
 import config from './config'
 import { HttpsControl } from './contracts'
+import { decodeHttps } from './decode-https'
+import { isHttps } from './helper'
+import { makeTcpTunnel } from './make-tcp-tunnel'
 
 export async function onConnect(req: IncomingMessage, socket: Socket, head: Buffer) {
   socket.on('error', (err: Error) => {
-    console.error('onConnect', err)
+    log.error('[OnConnect]Error', err)
   })
-  console.log('connect request ===>', req.url, head.toString())
+  log.info('[OnConnect]Url', req.url)
 
   // connect 返回接受代理握手
   socket.write('HTTP/1.1 200 Connection Established\r\n')
@@ -38,17 +40,12 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
 
   if (isHttps(head)) {
     if (/[^a-z]$/.test(host)) {
-      console.error({
-        message: 'https host error',
-        extra: {
-          url
-        }
-      })
-      // 透明代理
+      log.info('[OnConnect]Https host invalid', url)
+      // do nothing
     } else {
       const httpsControl = getHttpsControl(host, socket)
       if (httpsControl === 'decode') {
-        // https 请求解码
+        // https decode
         decodeHttps(host, socket, head)
         return
       } else {
@@ -66,14 +63,10 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
       }
     } else {
       // 对于其他 connect 请求，采取透明代理
-      console.log({
-        message: 'other connection',
-        extra: {
-          url,
-          headerStr
-        }
+      log.info('[OnConnect]Pass tunnel', {
+        url,
+        headerStr
       })
-      // 透明代理
     }
   }
   makeTcpTunnel(socket, head, tcpOption, otherOption)

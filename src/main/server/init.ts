@@ -1,3 +1,4 @@
+import log from 'electron-log/main'
 import * as http from 'http'
 
 import { handleRequest } from './app'
@@ -5,11 +6,11 @@ import { onConnect } from './on-connect'
 import { onUpgrade } from './on-upgrade'
 
 process.on('uncaughtException', (e) => {
-  console.log('uncaughtException', e)
+  log.error('Server uncaughtException', e)
 })
 
 process.on('unhandledRejection', (e) => {
-  console.log('unhandledRejection', e)
+  log.error('Server unhandledRejection', e)
 })
 
 export let httpServer: http.Server
@@ -28,11 +29,12 @@ export function initServer(
   newHttpServer.on('upgrade', onUpgrade)
   newHttpServer
     .listen(port, '127.0.0.1', () => {
-      console.log(`Server is listening on port ${port}`)
+      log.info(`Apitune proxy server is listening on port ${port}`)
       httpServer = newHttpServer
       success && success(newHttpServer)
     })
     .on('error', (e) => {
+      log.error('Apitune proxy server start fail', e)
       fail && fail(e)
     })
   return newHttpServer
@@ -40,7 +42,6 @@ export function initServer(
 
 function stopServer(oldServer: http.Server, newHttpServer?: http.Server) {
   oldServer.close(() => {
-    console.log('Server stopped')
     newHttpServer && (httpServer = newHttpServer)
   })
 }

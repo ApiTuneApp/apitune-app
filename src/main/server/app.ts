@@ -1,11 +1,12 @@
+import log from 'electron-log/main'
 import Koa, { Context, Next } from 'koa'
 
+import { IAppContext, IAppState } from '../contracts'
 import config from './config'
 import httpClient from './http-client'
 import { LogRequestMiddleware, LogResponseMiddleware } from './middleware/log'
 import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
-import { IAppState, IAppContext } from '../contracts'
 
 export const app = new Koa<IAppState, IAppContext>()
 
@@ -25,8 +26,8 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
     } else {
       ctx.status = 500
       ctx.message = 'Proxy internal error'
-      console.error(err)
     }
+    log.error('[AppMiddleware]Proxy internal error', err)
 
     ctx.set('content-type', 'text/plain;charset=utf-8')
     ctx.body = 'Proxy Error: ' + err.message
@@ -54,7 +55,7 @@ app.use(async (ctx, next: Next) => {
   ctx.state.responseHeaders = {}
   ctx.state.responseBody = null
 
-  console.log('[Start Request] ===> ', ctx.href)
+  log.info('[AppMiddleware]Start Request', ctx.href)
   await next()
 
   ctx.set(ctx.state.responseHeaders)
@@ -73,7 +74,7 @@ app.use(async (ctx, next) => {
   try {
     await next()
   } catch (err) {
-    console.error('koa error', err)
+    log.error('[AppMiddleware]Server middleware error', err)
   }
 })
 

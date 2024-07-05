@@ -50,6 +50,9 @@ importers:
       electron-json-storage:
         specifier: ^4.6.0
         version: 4.6.0
+      electron-log:
+        specifier: ^5.1.5
+        version: 5.1.5
       electron-updater:
         specifier: ^6.1.7
         version: 6.1.7
@@ -1557,6 +1560,10 @@ packages:
 
   electron-json-storage@4.6.0:
     resolution: {integrity: sha512-gAgNsnA7tEtV9LzzOnZTyVIb3cQtCva+bEBVT5pbRGU8ZSZTVKPBrTxIAYjeVfdSjyNXgfb1mr/CZrOJgeHyqg==}
+
+  electron-log@5.1.5:
+    resolution: {integrity: sha512-vuq10faUAxRbILgQx7yHoMObKZDEfj7hMSZrJPsVrDNeCpV/HN11dU7QuY4UDUe055pzBxhSCB3m0+6D3Aktjw==}
+    engines: {node: '>= 14'}
 
   electron-publish@24.8.1:
     resolution: {integrity: sha512-IFNXkdxMVzUdweoLJNXSupXkqnvgbrn3J4vognuOY06LaS/m0xvfFYIf+o1CM8if6DuWYWoQFKPcWZt/FUjZPw==}
@@ -5170,6 +5177,8 @@ snapshots:
       mkdirp: 0.5.6
       rimraf: 2.7.1
       write-file-atomic: 2.4.3
+
+  electron-log@5.1.5: {}
 
   electron-publish@24.8.1:
     dependencies:

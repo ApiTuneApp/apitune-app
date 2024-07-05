@@ -1,4 +1,5 @@
 import CacheableLookup from 'cacheable-lookup'
+import log from 'electron-log/main'
 import http, { IncomingMessage } from 'http'
 import https from 'https'
 import { LookupFunction } from 'net'
@@ -56,7 +57,7 @@ export default function (ctx: IAppContext) {
 
         // record error
         serverRes.on('error', (err) => {
-          console.error(err)
+          log.error('[HttpClient]Server response error', err)
         })
 
         ctx.state.remoteIp = serverRes.socket.remoteAddress
@@ -68,7 +69,7 @@ export default function (ctx: IAppContext) {
         ctx.state.responseHeaders = serverRes.headers as { [key: string]: string | string[] }
         ctx.state.responseBody = serverRes
 
-        console.log('[Server response status] ===> ', ctx.status, ctx.message)
+        log.info('[HttpClient]Server response', ctx.status, ctx.message)
         resolve()
       }
     )
