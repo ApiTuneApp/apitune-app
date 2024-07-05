@@ -16,9 +16,16 @@ export async function decodeHttps(hostname: string, socket: Socket, head: Buffer
   const address = httpsServer.address() as any
 
   // tcp 层代理到 中间服务器
-  makeTcpTunnel(socket, head, {
-    port: address.port
-  })
+  makeTcpTunnel(
+    socket,
+    head,
+    {
+      port: address.port
+    },
+    {
+      url: `https://${hostname}`
+    }
+  )
 }
 
 async function getMiddleHttpsServer(hostname: string) {

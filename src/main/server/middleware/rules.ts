@@ -70,7 +70,7 @@ export default async function RulesMiddleware(ctx: IAppContext, next: Next) {
     for (const modify of rule.modifyList) {
       const handler = requestHandlerMap[modify.type]
       if (handler) {
-        log.info('[RuleMiddleware]Start request rule', rule, modify)
+        log.info('[RuleMiddleware]Start request rule', rule.name)
         await handler.handler(ctx, modify)
       }
     }
@@ -83,7 +83,7 @@ export default async function RulesMiddleware(ctx: IAppContext, next: Next) {
     for (const modify of rule.modifyList) {
       const handler = responseHanderMap[modify.type]
       if (handler) {
-        log.info('[RuleMiddleware]Start response rule', rule, modify)
+        log.info('[RuleMiddleware]Start response rule', rule.name)
         await handler.handler(ctx, modify)
       }
     }

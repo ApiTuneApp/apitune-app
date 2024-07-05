@@ -20,6 +20,6 @@ export function makeTcpTunnel(
   })
 
   socket.on('error', (err: Error) => {
-    log.error('[makeTcpTunnel]error', err)
+    log.error('[makeTcpTunnel]error', err, otherOption?.url)
   })
 }

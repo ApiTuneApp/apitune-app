@@ -57,7 +57,7 @@ export default function (ctx: IAppContext) {
 
         // record error
         serverRes.on('error', (err) => {
-          log.error('[HttpClient]Server response error', err)
+          log.error('[HttpClient]Server response error', err, url)
         })
 
         ctx.state.remoteIp = serverRes.socket.remoteAddress
@@ -69,14 +69,14 @@ export default function (ctx: IAppContext) {
         ctx.state.responseHeaders = serverRes.headers as { [key: string]: string | string[] }
         ctx.state.responseBody = serverRes
 
-        log.info('[HttpClient]Server response', ctx.status, ctx.message)
+        log.info('[HttpClient]Server response', ctx.status, ctx.message, url)
         resolve()
       }
     )
 
     serverReq.on('timeout', () => {
       serverReq.destroy()
-      log.info('[HttpClient]Server req timeout ===>', url)
+      log.info('[HttpClient]Server request timeout', url)
       reject('server req timeout')
     })
 
@@ -92,7 +92,7 @@ export default function (ctx: IAppContext) {
       } else {
         status = 502
         message = err.message
-        statusMessage = '${config.name} upstream error'
+        statusMessage = `${config.name} upstream error`
       }
       ctx.state.responseHeaders = {
         'content-type': 'text/plain;charset=utf-8'
@@ -100,11 +100,13 @@ export default function (ctx: IAppContext) {
       ctx.status = status
       ctx.message = statusMessage
       ctx.state.responseBody = toStream(`${config.name} request target server failed: ` + message)
+      log.info('[HttpClient]Server request error', status, message, url)
 
       resolve()
     })
 
     serverReq.on('close', () => {
+      log.info('[HttpClient]Server request close', url)
       resolve()
     })
 

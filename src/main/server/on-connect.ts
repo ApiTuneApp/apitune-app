@@ -10,7 +10,7 @@ import { makeTcpTunnel } from './make-tcp-tunnel'
 
 export async function onConnect(req: IncomingMessage, socket: Socket, head: Buffer) {
   socket.on('error', (err: Error) => {
-    log.error('[OnConnect]Error', err)
+    log.error('[OnConnect]Error', err, req.url)
   })
   log.info('[OnConnect]Url', req.url)
 
@@ -69,7 +69,10 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
       })
     }
   }
-  makeTcpTunnel(socket, head, tcpOption, otherOption)
+  makeTcpTunnel(socket, head, tcpOption, {
+    ...otherOption,
+    url
+  })
 }
 
 export function getHttpsControl(hostname: string, socket: Socket): HttpsControl {
