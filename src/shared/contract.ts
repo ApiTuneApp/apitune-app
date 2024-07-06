@@ -65,7 +65,7 @@ export interface Log {
   // post体长度(byte)
   requestBodyLength?: number
   // 返回状态码
-  status: number
+  status?: number
   // 返回状态码文字
   message?: string
   // 结果header

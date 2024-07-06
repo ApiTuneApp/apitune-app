@@ -18,7 +18,7 @@ export async function LogRequestMiddleware(ctx: Context, next: Next) {
     protocol: ctx.state.requestOptions.url?.protocol,
     host: ctx.host,
     url: ctx.href,
-    search: ctx.URL.searchParams.toString(),
+    search: ctx.URL.searchParams?.toString(),
     pathname: ctx.state.requestOptions.url?.pathname,
     clientIp: ctx.socket.localAddress,
     clientPort: ctx.socket.localPort,
