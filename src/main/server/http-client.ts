@@ -1,12 +1,15 @@
-import CacheableLookup from 'cacheable-lookup'
 import log from 'electron-log/main'
 import http, { IncomingMessage } from 'http'
 import https from 'https'
-import { LookupFunction } from 'net'
+// import * as sslRootCas from 'ssl-root-cas'
+// import CacheableLookup from 'cacheable-lookup'
+// import { LookupFunction } from 'net'
 
 import { IAppContext } from '../contracts'
 import config from './config'
 import { toStream } from './helper'
+
+// https.globalAgent.options.ca = sslRootCas.create()
 
 const httpAgent = new http.Agent({
   keepAlive: false
@@ -16,9 +19,9 @@ const httpsAgent = new https.Agent({
   keepAlive: false
 })
 
-const cacheable = new CacheableLookup({
-  maxTtl: 30
-})
+// const cacheable = new CacheableLookup({
+//   maxTtl: 30
+// })
 
 export default function (ctx: IAppContext) {
   return new Promise<void>((resolve, reject) => {
@@ -46,8 +49,9 @@ export default function (ctx: IAppContext) {
       {
         method: ctx.method,
         headers: reqHeaders,
+        rejectUnauthorized: false,
         // timeout: config.serverRequestTimeout,
-        lookup: cacheable.lookup as unknown as LookupFunction,
+        // lookup: cacheable.lookup as unknown as LookupFunction,
         insecureHTTPParser: true,
         agent
       },
