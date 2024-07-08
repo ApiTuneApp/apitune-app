@@ -3,12 +3,15 @@ import './log-detail.less'
 import { Collapse, CollapseProps, Descriptions, Tabs, TabsProps } from 'antd'
 
 import ReactJson from '@microlink/react-json-view'
-import { Log } from '@shared/contract'
-import { useSettingStore } from '@renderer/store/setting'
 import TestResults from '@renderer/components/test-results'
+import { useSettingStore } from '@renderer/store/setting'
+import { Log } from '@shared/contract'
+
+import MonacoEditor, { supportLanguage } from '../monaco-editor'
 
 interface LogDetailProps {
   log: Log
+  height?: number
 }
 interface LogObjBlockProps {
   data: Record<string, string>
@@ -102,7 +105,57 @@ function isImg(type: string | undefined) {
   return type && type.startsWith('image/')
 }
 
-function LogDetail({ log }: LogDetailProps): JSX.Element {
+function getCodeInfo(type: string | undefined) {
+  const result = {
+    isCode: false,
+    language: '' as supportLanguage
+  }
+  if (type) {
+    if (type.includes('json')) {
+      result.isCode = true
+      result.language = 'json'
+    } else if (type.includes('html')) {
+      result.isCode = true
+      result.language = 'html'
+    } else if (type.includes('javascript')) {
+      result.isCode = true
+      result.language = 'javascript'
+    } else if (type.includes('css')) {
+      result.isCode = true
+      result.language = 'css'
+    } else {
+      result.isCode = false
+    }
+  }
+  return result
+}
+
+function previewComponent(log: Log, height: number | undefined) {
+  const type = log.responseBodyInfo?.type
+  const data = log.responseBodyInfo?.bodyText
+  const appTheme = useSettingStore((state) => state.appTheme)
+  if (isImg(type)) {
+    return <img src={log.url} alt="preview" />
+  }
+  if (log.responseBodyInfo?.isJson) {
+    return (
+      <ReactJson
+        src={log.responseBodyInfo?.data}
+        theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
+        displayDataTypes={false}
+        displayObjectSize={false}
+        name={false}
+      />
+    )
+  }
+  const codeInfo = getCodeInfo(type)
+  if (codeInfo.isCode) {
+    return <MonacoEditor defaultLanguage={codeInfo.language} height={height || 400} value={data} />
+  }
+  return <h4>Can not preview this type, you can see the results in response body</h4>
+}
+
+function LogDetail({ log, height }: LogDetailProps): JSX.Element {
   const requestParams = getRequestParams(log)
   const appTheme = useSettingStore((state) => state.appTheme)
 
@@ -181,7 +234,13 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
     {
       key: 'responseBody',
       label: 'Response Body',
-      children: <div className="raw-content">{log.responseBodyInfo?.bodyText}</div>
+      children: (
+        <MonacoEditor
+          defaultLanguage="plaintext"
+          height={400}
+          value={log.responseBodyInfo?.bodyText}
+        />
+      )
     }
   ]
 
@@ -211,29 +270,7 @@ function LogDetail({ log }: LogDetailProps): JSX.Element {
     {
       key: 'preview',
       label: 'Preview',
-      children: (
-        <>
-          {log.responseBodyInfo?.isJson && (
-            <ReactJson
-              src={log.responseBodyInfo?.data}
-              theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
-              displayDataTypes={false}
-              displayObjectSize={false}
-              name={false}
-            />
-          )}
-          {isImg(log.responseBodyInfo?.type) && <img src={log.url} alt="preview" />}
-          {log.responseBodyInfo?.type === 'html' && (
-            <iframe
-              className="iframe-preview"
-              sandbox=""
-              frameBorder={0}
-              srcDoc={log.responseBodyInfo?.data}
-              title="preview"
-            />
-          )}
-        </>
-      )
+      children: previewComponent(log, height)
     },
     {
       key: 'testResults',

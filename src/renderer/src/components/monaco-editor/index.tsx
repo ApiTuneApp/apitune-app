@@ -29,8 +29,10 @@ self.MonacoEnvironment = {
 
 loader.config({ monaco })
 
+export type supportLanguage = 'json' | 'javascript' | 'html' | 'css' | 'plaintext'
+
 type MonacoEditorProps = {
-  defaultLanguage: 'json' | 'javascript' | 'html' | 'css'
+  defaultLanguage: supportLanguage
   height: number | string
 }
 

@@ -136,7 +136,7 @@ function NetworkPage(): JSX.Element {
       dataIndex: 'status',
       key: 'status',
       width: 60,
-      sorter: (a: Log, b: Log) => a.status - b.status
+      sorter: (a: Log, b: Log) => (a.status && b.status ? a.status - b.status : 0)
     },
     {
       title: 'MatchRules',
@@ -320,7 +320,9 @@ function NetworkPage(): JSX.Element {
           <HolderOutlined className="bottom-resizer-icon" />
         </div>
         <CloseOutlined className="bottom-drawer-close" onClick={handleDrawerClose} />
-        <div className="network-detail">{curLog && <LogDetail log={curLog} />}</div>
+        <div className="network-detail">
+          {curLog && <LogDetail log={curLog} height={drawerHeight} />}
+        </div>
       </div>
     </Flex>
   )

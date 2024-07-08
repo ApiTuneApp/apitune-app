@@ -209,7 +209,7 @@ export function isTextBody(headers: Record<string, string> | undefined) {
   return false
 }
 
-export function getBodyInfo(log: Log) {
+export function getBodyInfo(log: Log): BodyInfo {
   const { responseHeaders, responseBody, responseBodyLength } = log
   const type = responseHeaders ? (responseHeaders['content-type'] || '').split(';', 1)[0] : ''
   const result = {
