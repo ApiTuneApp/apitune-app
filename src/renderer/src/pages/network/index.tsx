@@ -1,7 +1,7 @@
 import './network.less'
 import 'react-resizable/css/styles.css'
 
-import { Button, Flex, Input, Space, Table, Tooltip } from 'antd'
+import { Button, Divider, Dropdown, Flex, Input, Radio, Space, Table, Tooltip } from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
 import { Resizable } from 'react-resizable'
@@ -9,6 +9,7 @@ import { Resizable } from 'react-resizable'
 import {
   ClearOutlined,
   CloseOutlined,
+  FilterOutlined,
   HolderOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined
@@ -24,7 +25,6 @@ const appHeaderHeight = 40
 const networkPagePadding = 40
 const MinDrawerHeight = 20
 const MaxDarwerHeight = 1000
-const QueryIconSize = 16
 
 const ResizableTitle = (props: any) => {
   const { onResize, width, ...restProps } = props
@@ -64,6 +64,7 @@ function NetworkPage(): JSX.Element {
   const stopRecordStr = 'Pause'
   const startRecordStr = 'Resume'
   const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
+  const [showFilter, setShowFilter] = useState(false)
   const [resultLogs, setResultLogs] = useState<Log[]>([])
   const [curLog, setCurLog] = useState<Log | undefined>()
   const [drawerHeight, setDrawerHeight] = useState(0)
@@ -214,6 +215,10 @@ function NetworkPage(): JSX.Element {
     setRecordPaused(!recordPaused)
   }
 
+  const handleShowFilter = function () {
+    setShowFilter(!showFilter)
+  }
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     document.addEventListener('mouseup', handleMouseUp, true)
     document.addEventListener('mousemove', handleMouseMove, true)
@@ -263,28 +268,51 @@ function NetworkPage(): JSX.Element {
 
   return (
     <Flex className="app-page page-network" vertical>
-      <Flex gap={4} style={{ paddingBottom: '10px' }}>
-        <Space>
-          <Input
-            placeholder="Search URL"
-            className="app-control app-input network-input"
-            value={searchValue}
-            onChange={handleSearchChange}
-          />
-          <Button icon={<ClearOutlined />} onClick={handleClearLog}>
-            Clear log
-          </Button>
-          <Button
-            icon={recordPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
-            onClick={handlePauseClick}
-          >
-            {pauseBtnText}
-          </Button>
-          {/* <Tooltip title="Config network column">
+      <Space style={{ paddingBottom: '10px' }}>
+        <Input
+          placeholder="Search URL"
+          className="app-control app-input network-input"
+          value={searchValue}
+          onChange={handleSearchChange}
+        />
+        <Button icon={<ClearOutlined />} onClick={handleClearLog}>
+          Clear log
+        </Button>
+        <Button
+          icon={recordPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
+          onClick={handlePauseClick}
+        >
+          {pauseBtnText}
+        </Button>
+        <Button icon={<FilterOutlined />} onClick={handleShowFilter}>
+          Filter
+        </Button>
+        {/* <Tooltip title="Config network column">
             <ControlOutlined style={{ fontSize: QueryIconSize }} />
           </Tooltip> */}
+      </Space>
+      {showFilter && (
+        <Space style={{ paddingBottom: '10px' }}>
+          <Radio.Group defaultValue="all">
+            <Radio.Button value="all">All</Radio.Button>
+            <Radio.Button value="fetch">Fetch/XHR</Radio.Button>
+            <Radio.Button value="doc">Doc</Radio.Button>
+            <Radio.Button value="css">CSS</Radio.Button>
+            <Radio.Button value="js">JS</Radio.Button>
+            <Radio.Button value="font">font</Radio.Button>
+            <Radio.Button value="img">Img</Radio.Button>
+          </Radio.Group>
+          <Divider type="vertical" />
+          <Radio.Group defaultValue="all">
+            <Radio.Button value="all">All</Radio.Button>
+            <Radio.Button value="1xx">1xx</Radio.Button>
+            <Radio.Button value="2xx">2xx</Radio.Button>
+            <Radio.Button value="3xx">3xx</Radio.Button>
+            <Radio.Button value="4xx">4xx</Radio.Button>
+            <Radio.Button value="5xx">5xx</Radio.Button>
+          </Radio.Group>
         </Space>
-      </Flex>
+      )}
       <Table
         className="network-table"
         size="small"
