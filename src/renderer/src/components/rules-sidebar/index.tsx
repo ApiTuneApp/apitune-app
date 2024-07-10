@@ -35,7 +35,7 @@ type RuleTreeItemProps = {
 const RuleGroupDropdown: MenuProps['items'] = [
   {
     key: 'ruleGroupEnable',
-    label: 'Enable Rule Group'
+    label: 'Enable Group'
   },
   {
     key: 'addRule',
@@ -64,13 +64,13 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   let ruleGroupEnable = true
   if (ruleGroup) {
     ruleGroupEnable = ruleGroup.enable
+    ;(
+      RuleGroupDropdown[0] as {
+        key: string
+        label: string
+      }
+    ).label = !ruleGroupEnable ? 'Enable Group' : 'Disable Group'
   }
-  ;(
-    RuleGroupDropdown[0] as {
-      key: string
-      label: string
-    }
-  ).label = ruleGroupEnable ? 'Enable Group' : 'Disable Group'
 
   const handleSwitchClick = (e: React.MouseEvent, checked: boolean, ruleId: string) => {
     e.stopPropagation()
