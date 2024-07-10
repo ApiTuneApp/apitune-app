@@ -1,7 +1,7 @@
 import './network.less'
 import 'react-resizable/css/styles.css'
 
-import { Flex, Input, Space, Table, Tooltip } from 'antd'
+import { Button, Flex, Input, Space, Table, Tooltip } from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
 import { Resizable } from 'react-resizable'
@@ -61,8 +61,8 @@ function NetworkPage(): JSX.Element {
 
   const apiRules = useRuleStore((state) => state.apiRules)
 
-  const stopRecordStr = 'Stop recording network log'
-  const startRecordStr = 'Record network log'
+  const stopRecordStr = 'Pause'
+  const startRecordStr = 'Resume'
   const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
   const [resultLogs, setResultLogs] = useState<Log[]>([])
   const [curLog, setCurLog] = useState<Log | undefined>()
@@ -210,7 +210,7 @@ function NetworkPage(): JSX.Element {
   }, [proxyLogs])
 
   const handlePauseClick = function () {
-    setPauseBtnText(!recordPaused ? startRecordStr : pauseBtnText)
+    setPauseBtnText(!recordPaused ? startRecordStr : stopRecordStr)
     setRecordPaused(!recordPaused)
   }
 
@@ -264,23 +264,22 @@ function NetworkPage(): JSX.Element {
   return (
     <Flex className="app-page page-network" vertical>
       <Flex gap={4} style={{ paddingBottom: '10px' }}>
-        <Input
-          placeholder="Search URL"
-          className="app-control app-input network-input"
-          value={searchValue}
-          onChange={handleSearchChange}
-        />
         <Space>
-          <Tooltip title="Clear network log">
-            <ClearOutlined onClick={handleClearLog} style={{ fontSize: QueryIconSize }} />
-          </Tooltip>
-          <Tooltip title={pauseBtnText}>
-            {recordPaused ? (
-              <PlayCircleOutlined onClick={handlePauseClick} style={{ fontSize: QueryIconSize }} />
-            ) : (
-              <PauseCircleOutlined onClick={handlePauseClick} style={{ fontSize: QueryIconSize }} />
-            )}
-          </Tooltip>
+          <Input
+            placeholder="Search URL"
+            className="app-control app-input network-input"
+            value={searchValue}
+            onChange={handleSearchChange}
+          />
+          <Button icon={<ClearOutlined />} onClick={handleClearLog}>
+            Clear log
+          </Button>
+          <Button
+            icon={recordPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
+            onClick={handlePauseClick}
+          >
+            {pauseBtnText}
+          </Button>
           {/* <Tooltip title="Config network column">
             <ControlOutlined style={{ fontSize: QueryIconSize }} />
           </Tooltip> */}
