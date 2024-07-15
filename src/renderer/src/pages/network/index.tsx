@@ -1,7 +1,18 @@
 import './network.less'
 import 'react-resizable/css/styles.css'
 
-import { Button, Divider, Dropdown, Flex, Input, Radio, Space, Table, Tooltip } from 'antd'
+import {
+  Button,
+  Divider,
+  Dropdown,
+  Flex,
+  Input,
+  Radio,
+  RadioChangeEvent,
+  Space,
+  Table,
+  Tooltip
+} from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { useCallback, useEffect, useState } from 'react'
 import { Resizable } from 'react-resizable'
@@ -69,6 +80,8 @@ function NetworkPage(): JSX.Element {
   const [curLog, setCurLog] = useState<Log | undefined>()
   const [drawerHeight, setDrawerHeight] = useState(0)
   const [searchValue, setSearchValue] = useState('')
+  const [logType, setLogType] = useState('all')
+  const [logStatus, setLogStatus] = useState('all')
   const columnBase = [
     {
       title: 'Id',
@@ -242,12 +255,87 @@ function NetworkPage(): JSX.Element {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
-    if (e.target.value) {
-      setResultLogs(proxyLogs.filter((log) => log.url.includes(e.target.value)))
+  }
+
+  const handleLogTypeChange = ({ target: { value } }: RadioChangeEvent) => {
+    setLogType(value)
+  }
+
+  const handleLogStatusChange = ({ target: { value } }: RadioChangeEvent) => {
+    setLogStatus(value)
+  }
+
+  const filterLogUrl = (logs: Log[], searchValue: string): Log[] => {
+    if (searchValue) {
+      return proxyLogs.filter((log) => log.url.includes(searchValue))
     } else {
-      setResultLogs(proxyLogs)
+      return logs
     }
   }
+  const filterLogType = (logs: Log[], logType: string): Log[] => {
+    switch (logType) {
+      case 'all':
+        return logs
+      case 'fetch':
+        return logs.filter((log) => {
+          const resType = log.responseHeaders['content-type']
+          return resType && (resType.includes('json') || resType.includes('text'))
+        })
+      case 'doc':
+        return logs.filter((log) => {
+          const resType = log.responseHeaders['content-type']
+          return resType && resType.includes('html')
+        })
+      case 'css':
+        return logs.filter((log) => {
+          const resType = log.responseHeaders['content-type']
+          return resType && resType.includes('css')
+        })
+      case 'js':
+        return logs.filter((log) => {
+          const resType = log.responseHeaders['content-type']
+          return resType && resType.includes('javascript')
+        })
+      case 'font':
+        return logs.filter((log) => {
+          const resType = log.responseHeaders['content-type']
+          return resType && resType.includes('font')
+        })
+      case 'img':
+        return logs.filter((log) => {
+          const resType = log.responseHeaders['content-type']
+          return resType && resType.includes('image')
+        })
+      default:
+        return logs
+    }
+  }
+
+  const fitlerLogStatus = (logs: Log[], logStatus: string): Log[] => {
+    switch (logStatus) {
+      case 'all':
+        return logs
+      case '1xx':
+        return logs.filter((log) => log.status && log.status < 200)
+      case '2xx':
+        return logs.filter((log) => log.status && log.status >= 200 && log.status < 300)
+      case '3xx':
+        return logs.filter((log) => log.status && log.status >= 300 && log.status < 400)
+      case '4xx':
+        return logs.filter((log) => log.status && log.status >= 400 && log.status < 500)
+      case '5xx':
+        return logs.filter((log) => log.status && log.status >= 500)
+      default:
+        return logs
+    }
+  }
+
+  useEffect(() => {
+    const r1 = filterLogUrl(proxyLogs, searchValue)
+    const r2 = filterLogType(r1, logType)
+    const r3 = fitlerLogStatus(r2, logStatus)
+    setResultLogs(r3)
+  }, [searchValue, logType, logStatus])
 
   const handleRowClick = (record: Log) => {
     setCurLog(record)
@@ -270,6 +358,7 @@ function NetworkPage(): JSX.Element {
     <Flex className="app-page page-network" vertical>
       <Space style={{ paddingBottom: '10px' }}>
         <Input
+          allowClear
           placeholder="Search URL"
           className="app-control app-input network-input"
           value={searchValue}
@@ -293,7 +382,7 @@ function NetworkPage(): JSX.Element {
       </Space>
       {showFilter && (
         <Space style={{ paddingBottom: '10px' }}>
-          <Radio.Group defaultValue="all">
+          <Radio.Group defaultValue="all" onChange={handleLogTypeChange}>
             <Radio.Button value="all">All</Radio.Button>
             <Radio.Button value="fetch">Fetch/XHR</Radio.Button>
             <Radio.Button value="doc">Doc</Radio.Button>
@@ -303,7 +392,7 @@ function NetworkPage(): JSX.Element {
             <Radio.Button value="img">Img</Radio.Button>
           </Radio.Group>
           <Divider type="vertical" />
-          <Radio.Group defaultValue="all">
+          <Radio.Group defaultValue="all" onChange={handleLogStatusChange}>
             <Radio.Button value="all">All</Radio.Button>
             <Radio.Button value="1xx">1xx</Radio.Button>
             <Radio.Button value="2xx">2xx</Radio.Button>
