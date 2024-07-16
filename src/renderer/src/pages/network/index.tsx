@@ -339,7 +339,7 @@ function NetworkPage(): JSX.Element {
     const r2 = filterLogType(r1, logType)
     const r3 = fitlerLogStatus(r2, logStatus)
     setResultLogs(r3)
-  }, [showRuleMatched, searchValue, logType, logStatus])
+  }, [showRuleMatched, searchValue, logType, logStatus, proxyLogs])
 
   const handleRowClick = (record: Log) => {
     console.log('cur log', record)
