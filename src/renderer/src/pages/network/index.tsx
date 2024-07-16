@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Resizable } from 'react-resizable'
 
 import {
+  ApiOutlined,
   ClearOutlined,
   CloseOutlined,
   FilterOutlined,
@@ -82,6 +83,8 @@ function NetworkPage(): JSX.Element {
   const [searchValue, setSearchValue] = useState('')
   const [logType, setLogType] = useState('all')
   const [logStatus, setLogStatus] = useState('all')
+  const [showRuleMatched, setShowRuleMatched] = useState(false)
+
   const columnBase = [
     {
       title: 'Id',
@@ -330,12 +333,21 @@ function NetworkPage(): JSX.Element {
     }
   }
 
+  const filterRuleMatched = (logs: Log[], showRuleMatched: boolean): Log[] => {
+    if (showRuleMatched) {
+      return logs.filter((log) => log.matchedRules.length > 0)
+    } else {
+      return logs
+    }
+  }
+
   useEffect(() => {
-    const r1 = filterLogUrl(proxyLogs, searchValue)
+    const r0 = filterRuleMatched(proxyLogs, showRuleMatched)
+    const r1 = filterLogUrl(r0, searchValue)
     const r2 = filterLogType(r1, logType)
     const r3 = fitlerLogStatus(r2, logStatus)
     setResultLogs(r3)
-  }, [searchValue, logType, logStatus])
+  }, [showRuleMatched, searchValue, logType, logStatus])
 
   const handleRowClick = (record: Log) => {
     setCurLog(record)
@@ -375,6 +387,13 @@ function NetworkPage(): JSX.Element {
         </Button>
         <Button icon={<FilterOutlined />} onClick={handleShowFilter}>
           Filter
+        </Button>
+        <Button
+          icon={<ApiOutlined />}
+          danger={showRuleMatched}
+          onClick={() => setShowRuleMatched(!showRuleMatched)}
+        >
+          Rule Matched
         </Button>
         {/* <Tooltip title="Config network column">
             <ControlOutlined style={{ fontSize: QueryIconSize }} />
