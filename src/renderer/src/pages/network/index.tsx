@@ -419,7 +419,7 @@ function NetworkPage(): JSX.Element {
         className="network-table"
         size="small"
         rowKey="id"
-        virtual
+        virtual={false}
         columns={columnsWithResizeHandlers}
         dataSource={resultLogs}
         pagination={false}
