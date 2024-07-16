@@ -33,8 +33,8 @@ import { findGroupOrRule } from '@shared/utils'
 import { useRuleStore } from '@renderer/store'
 import { NavLink } from 'react-router-dom'
 
-const appHeaderHeight = 40
-const networkPagePadding = 40
+const AppHeaderHeight = 40
+const NetworkPagePadding = 40
 const MinDrawerHeight = 20
 const MaxDarwerHeight = 1000
 
@@ -218,14 +218,6 @@ function NetworkPage(): JSX.Element {
       })
     }
 
-  useEffect(() => {
-    if (searchValue) {
-      setResultLogs(proxyLogs.filter((log) => log.url.includes(searchValue)))
-    } else {
-      setResultLogs(proxyLogs)
-    }
-  }, [proxyLogs])
-
   const handlePauseClick = function () {
     setPauseBtnText(!recordPaused ? startRecordStr : stopRecordStr)
     setRecordPaused(!recordPaused)
@@ -356,7 +348,7 @@ function NetworkPage(): JSX.Element {
   }
 
   const tableHeight =
-    document.body.offsetHeight - drawerHeight - appHeaderHeight - networkPagePadding
+    document.body.offsetHeight - drawerHeight - AppHeaderHeight - NetworkPagePadding - 50
 
   const tableWidth = columns.reduce((acc, cur) => acc + (cur.width as number), 0)
 
