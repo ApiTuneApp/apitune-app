@@ -342,9 +342,11 @@ function NetworkPage(): JSX.Element {
   }, [showRuleMatched, searchValue, logType, logStatus])
 
   const handleRowClick = (record: Log) => {
-    setCurLog(record)
     console.log('cur log', record)
-    setDrawerHeight(400)
+    setCurLog(record)
+    if (!drawerHeight) {
+      setDrawerHeight(400)
+    }
   }
 
   const tableHeight =
