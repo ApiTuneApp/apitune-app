@@ -57,7 +57,7 @@ const DefaultAddRulesMenu: MenuProps['items'] = [
   {
     key: 'request',
     type: 'group',
-    label: 'Request Modify',
+    label: 'Request Modify:',
     children: [
       {
         key: RuleType.Rewrite,
@@ -89,7 +89,7 @@ const DefaultAddRulesMenu: MenuProps['items'] = [
   {
     key: 'response',
     type: 'group',
-    label: 'Response Modify',
+    label: 'Response Modify:',
     children: [
       {
         key: RuleType.ResponseStatus,
@@ -164,22 +164,7 @@ function NewRulePage(): JSX.Element {
     if (editRule) {
       form.setFieldsValue(editRule)
       setShowReqMethodsFilter(!!editRule.matches.methods.length)
-      setAddRulesMenu((prev) => {
-        // Disable already added rule menu
-        const newMenu = prev!.map((item) => {
-          const menItem = item as RuleMenuItem
-          if (menItem.type === 'group' && menItem.children) {
-            menItem.children = menItem.children.map((child) => {
-              if (editRule.modifyList.some((modify) => modify.type === child.key)) {
-                return { ...child, disabled: true }
-              }
-              return { ...child, disabled: false }
-            })
-          }
-          return menItem
-        })
-        return newMenu
-      })
+      setMenuDisabled()
     }
   }, [editRule])
 
@@ -284,6 +269,25 @@ function NewRulePage(): JSX.Element {
           })
         }
         return item
+      })
+      return newMenu
+    })
+  }
+
+  function setMenuDisabled() {
+    setAddRulesMenu((prev) => {
+      // Disable already added rule menu
+      const newMenu = prev!.map((item) => {
+        const menItem = item as RuleMenuItem
+        if (menItem.type === 'group' && menItem.children) {
+          menItem.children = menItem.children.map((child) => {
+            if (editRule.modifyList.some((modify) => modify.type === child.key)) {
+              return { ...child, disabled: true }
+            }
+            return { ...child, disabled: false }
+          })
+        }
+        return menItem
       })
       return newMenu
     })
@@ -543,7 +547,10 @@ function NewRulePage(): JSX.Element {
                                 right: '15px',
                                 zIndex: 999
                               }}
-                              onClick={() => remove(index)}
+                              onClick={() => {
+                                remove(index)
+                                setMenuDisabled()
+                              }}
                             />
                           </Tooltip>
 
