@@ -70,30 +70,15 @@ function getRequestParams(log: Log) {
       isJson: true,
       data
     }
-  } else {
-    if (requestHeaders['content-type'] === 'application/x-www-form-urlencoded') {
-      try {
-        return {
-          isJson: true,
-          data: parseURLEncoded(atob(requestBody!.toString()))
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
   }
-  let isJson = true,
-    result,
-    data
-  if (isJson && requestBody) {
-    try {
-      // data = atob(requestBody.toString())
-      // data= requestBodyInfo;
-      result = eval('(' + requestBodyInfo + ')')
-    } catch (error) {
-      isJson = false
-      result = data
-    }
+  let isJson = false
+  let result = requestBodyInfo
+  try {
+    result = JSON.parse(requestBodyInfo as string)
+    isJson = typeof result === 'object'
+  } catch (error) {
+    isJson = false
+    result = requestBodyInfo
   }
   return {
     isJson,
@@ -197,14 +182,14 @@ function LogDetail({ log, height }: LogDetailProps): JSX.Element {
       label: 'Request Parameters',
       children: requestParams.isJson ? (
         <ReactJson
-          src={requestParams.data}
+          src={requestParams.data as Record<string, unknown>}
           theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
           displayDataTypes={false}
           displayObjectSize={false}
           name={false}
         />
       ) : (
-        <div className="raw-content">{requestParams.data}</div>
+        <div className="raw-content">{requestParams.data as string}</div>
       )
     }
   ]
