@@ -11,6 +11,7 @@ import RulesPage from './pages/rules'
 import NewRulePage from './pages/rules/new-rule'
 import RuleListPage from './pages/rules/rule-list'
 import SettingsPage from './pages/settings'
+import TestScriptsPage from './pages/test-scripts'
 
 const router = createHashRouter([
   {
@@ -42,6 +43,10 @@ const router = createHashRouter([
             element: <NewRulePage />
           }
         ]
+      },
+      {
+        path: 'testScripts',
+        element: <TestScriptsPage />
       },
       {
         path: 'settings',
