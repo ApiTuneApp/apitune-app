@@ -7,13 +7,18 @@ import {
   ApiRules,
   AddGroupOpts,
   Theme,
-  TestItem
+  TestItem,
+  LogTestResultMap,
+  Log
 } from '../shared/contract'
 
 // Custom APIs for renderer
 const api = {
   onProxyLog: (callback): void => {
     ipcRenderer.on(MainEvent.ProxyLog, (_, log) => callback(log))
+  },
+  getProxyLogs: (): Promise<Log[]> => {
+    return ipcRenderer.invoke(RenderEvent.GetProxyLogs)
   },
   clearupEvent: (event: MainEvent | RenderEvent): void => {
     ipcRenderer.removeAllListeners(event)
@@ -56,6 +61,9 @@ const api = {
   },
   getTestResults: (logId: number): Promise<TestItem> => {
     return ipcRenderer.invoke(RenderEvent.GetTestResults, logId)
+  },
+  getAllTestResults: (): Promise<LogTestResultMap> => {
+    return ipcRenderer.invoke(RenderEvent.GetAllTestResults)
   }
 }
 

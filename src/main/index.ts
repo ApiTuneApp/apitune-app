@@ -33,7 +33,8 @@ import {
   initSettingData,
   LogTestResult,
   updateRuntimeRules,
-  updateSettingData
+  updateSettingData,
+  MemeoryLogStorage
 } from './storage'
 
 initSettingData()
@@ -578,6 +579,18 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.GetTestResults, (event, logId: string) => {
     return new Promise((resolve) => {
       resolve(LogTestResult.data[logId])
+    })
+  })
+
+  ipcMain.handle(RenderEvent.GetAllTestResults, (event) => {
+    return new Promise((resolve) => {
+      resolve(LogTestResult.data)
+    })
+  })
+
+  ipcMain.handle(RenderEvent.GetProxyLogs, (event) => {
+    return new Promise((resolve) => {
+      resolve(MemeoryLogStorage.data)
     })
   })
 

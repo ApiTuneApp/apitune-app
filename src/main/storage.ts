@@ -6,7 +6,8 @@ import {
   RuleStorage,
   SettingStorage,
   LogTestResultMap,
-  TestItem
+  TestItem,
+  Log
 } from '../shared/contract'
 import config from './server/config'
 
@@ -87,5 +88,18 @@ export const LogTestResult = {
   data: {} as LogTestResultMap,
   updateTestResult(logId: string, result: TestItem) {
     this.data[logId] = result
+  }
+}
+
+export const MemeoryLogStorage = {
+  data: [] as Log[],
+  add(log: Log) {
+    this.data.push(log)
+  },
+  clear() {
+    this.data = []
+  },
+  get(id: number) {
+    return this.data.find((log) => log.id === id)
   }
 }

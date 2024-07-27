@@ -8,7 +8,8 @@ import {
   Log,
   SettingStorage,
   AppTheme,
-  TestItem
+  TestItem,
+  LogTestResultMap
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -18,6 +19,7 @@ declare global {
     electron: ElectronAPI
     api: {
       onProxyLog: (callback: onProxyLogCallback) => void
+      getProxyLogs: () => Promise<Log[]>
       getApiRules: () => Promise<ApiRules>
       clearupEvent: (event: MainEvent | RenderEvent) => void
       addRule: (ruleStr: string, opts?: AddGroupOpts) => Promise<IpcResult>
@@ -32,6 +34,7 @@ declare global {
       getIp: () => Promise<string>
       ca: (type: CaEventType) => Promise<IpcResult>
       getTestResults: (logId: number) => Promise<TestItem>
+      getAllTestResults: () => Promise<LogTestResultMap>
     }
   }
 }

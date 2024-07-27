@@ -12,6 +12,7 @@ import MonacoEditor, { supportLanguage } from '../monaco-editor'
 interface LogDetailProps {
   log: Log
   height?: number
+  hideTestResult?: boolean
 }
 interface LogObjBlockProps {
   data: Record<string, string>
@@ -140,7 +141,7 @@ function previewComponent(log: Log, height: number | undefined) {
   return <h4>Can not preview this type, you can see the results in response body</h4>
 }
 
-function LogDetail({ log, height }: LogDetailProps): JSX.Element {
+function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element {
   const requestParams = getRequestParams(log)
   const appTheme = useSettingStore((state) => state.appTheme)
 
@@ -229,7 +230,7 @@ function LogDetail({ log, height }: LogDetailProps): JSX.Element {
     }
   ]
 
-  const items: TabsProps['items'] = [
+  let items: TabsProps['items'] = [
     {
       key: 'request',
       label: 'Request',
@@ -263,6 +264,10 @@ function LogDetail({ log, height }: LogDetailProps): JSX.Element {
       children: <TestResults logId={log.id} />
     }
   ]
+
+  if (hideTestResult) {
+    items = items.filter((item) => item.key !== 'testResults')
+  }
 
   return (
     <Tabs defaultActiveKey="request" items={items} style={{ padding: '0 10px', height: '100%' }} />
