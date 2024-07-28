@@ -32,6 +32,7 @@ import { Log } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
 import { useRuleStore } from '@renderer/store'
 import { NavLink } from 'react-router-dom'
+import { useEffectOnActive } from 'keepalive-for-react'
 
 const AppHeaderHeight = 40
 const NetworkPagePadding = 40
@@ -84,6 +85,23 @@ function NetworkPage(): JSX.Element {
   const [logType, setLogType] = useState('all')
   const [logStatus, setLogStatus] = useState('all')
   const [showRuleMatched, setShowRuleMatched] = useState(false)
+
+  useEffectOnActive(
+    () => {
+      const target = document.getElementsByClassName(
+        'ant-table-tbody-virtual-holder-inner'
+      )[0] as HTMLElement
+      if (target) {
+        /**
+         * When table set virtual to true, the table will show blank after swithing from sidebar.
+         * The issue seems to be caused by the virtual table set reset transform style
+         */
+        target.style.transform = 'none'
+      }
+    },
+    true,
+    []
+  )
 
   const columnBase = [
     {
@@ -419,7 +437,7 @@ function NetworkPage(): JSX.Element {
         className="network-table"
         size="small"
         rowKey="id"
-        virtual={false}
+        virtual={true}
         columns={columnsWithResizeHandlers}
         dataSource={resultLogs}
         pagination={false}
