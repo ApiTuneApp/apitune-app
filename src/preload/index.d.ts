@@ -35,6 +35,7 @@ declare global {
       ca: (type: CaEventType) => Promise<IpcResult>
       getTestResults: (logId: number) => Promise<TestItem>
       getAllTestResults: () => Promise<LogTestResultMap>
+      clearTestResult: () => Promise<IpcResult>
     }
   }
 }

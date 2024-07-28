@@ -64,6 +64,9 @@ const api = {
   },
   getAllTestResults: (): Promise<LogTestResultMap> => {
     return ipcRenderer.invoke(RenderEvent.GetAllTestResults)
+  },
+  clearTestResult: (): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.ClearTestResult)
   }
 }
 

@@ -88,6 +88,9 @@ export const LogTestResult = {
   data: {} as LogTestResultMap,
   updateTestResult(logId: string, result: TestItem) {
     this.data[logId] = result
+  },
+  clearTestResult() {
+    this.data = {}
   }
 }
 

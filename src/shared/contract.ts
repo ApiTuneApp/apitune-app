@@ -15,7 +15,8 @@ export enum RenderEvent {
   CA = 'CA',
   GetTestResults = 'getTestResults',
   GetAllTestResults = 'getAllTestResults',
-  GetProxyLogs = 'getProxyLogs'
+  GetProxyLogs = 'getProxyLogs',
+  ClearTestResult = 'clearTestResult'
 }
 
 export enum MainEvent {

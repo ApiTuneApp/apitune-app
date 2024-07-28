@@ -594,6 +594,15 @@ app.whenReady().then(() => {
     })
   })
 
+  ipcMain.handle(RenderEvent.ClearTestResult, (event) => {
+    return new Promise((resolve) => {
+      LogTestResult.clearTestResult()
+      resolve({
+        status: EventResultStatus.Success
+      })
+    })
+  })
+
   const dataPath = Storage.getDataPath()
   log.debug('datapath =>> ', dataPath)
 

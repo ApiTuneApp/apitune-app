@@ -1,9 +1,11 @@
-import { Log, TestItem } from '@shared/contract'
-import { Flex, Collapse, Space, Divider, Button, Tabs } from 'antd'
-import { useState } from 'react'
+import { Button, Collapse, Divider, Empty, Flex, Popconfirm, Space, Tabs } from 'antd'
 import { useEffectOnActive } from 'keepalive-for-react'
-import TestResults from '@renderer/components/test-results'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import LogDetail from '@renderer/components/log-detail'
+import TestResults from '@renderer/components/test-results'
+import { Log, TestItem } from '@shared/contract'
 
 type TestResultItem = {
   testResult: TestItem
@@ -13,6 +15,7 @@ type TestResultItem = {
 export default function TestScriptsPage() {
   const [testResultList, setTestResultList] = useState<TestResultItem[]>([])
   const [activeKey, setActiveKey] = useState<string | string[]>()
+  const navigate = useNavigate()
 
   useEffectOnActive(
     () => {
@@ -93,9 +96,49 @@ export default function TestScriptsPage() {
     setActiveKey(key)
   }
 
+  const goCreateTest = () => {
+    navigate('/rules/new?tab=tests')
+  }
+
+  const clearTestResult = () => {
+    window.api.clearTestResult().then(() => {
+      setTestResultList([])
+    })
+  }
+
   return (
     <Flex className="app-page" vertical>
-      <Collapse items={items} activeKey={activeKey} onChange={onCollapseChange} />
+      {testResultList.length > 0 && (
+        <>
+          <div>
+            <Button type="primary" onClick={goCreateTest} style={{ marginRight: 10 }}>
+              Add rule to create a test
+            </Button>
+            {/* <Popconfirm
+              title="Are you sure to clear all test result?"
+              description="Your will not be able to recover the result!"
+              onConfirm={clearTestResult}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button danger>Clear all result</Button>
+            </Popconfirm> */}
+          </div>
+          <Collapse
+            items={items}
+            activeKey={activeKey}
+            onChange={onCollapseChange}
+            style={{ marginTop: 10 }}
+          />
+        </>
+      )}
+      {testResultList.length === 0 && (
+        <Empty>
+          <Button type="primary" onClick={goCreateTest}>
+            Add rule to create a test
+          </Button>
+        </Empty>
+      )}
     </Flex>
   )
 }
