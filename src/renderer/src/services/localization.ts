@@ -78,7 +78,9 @@ export const strings = new LocalizedStrings({
     actions: 'Actions',
     ruleName: 'Rule Name',
     description: 'Description',
-    ruleEnabled: 'Rule Enabled'
+    ruleEnabled: 'Rule Enabled',
+    myWorkspace: 'My Workspace',
+    proxyServerListeningOn: 'Proxy server listening on'
   },
   zh: {
     backHome: '返回首页',
@@ -156,6 +158,8 @@ export const strings = new LocalizedStrings({
     actions: '操作',
     ruleName: '规则名称',
     description: '描述',
-    ruleEnabled: '规则是否启用'
+    ruleEnabled: '规则是否启用',
+    myWorkspace: '我的工作区',
+    proxyServerListeningOn: '代理服务器监听地址'
   }
 })

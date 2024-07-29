@@ -1,8 +1,10 @@
-import { useSettingStore } from '@renderer/store/setting'
 import './header.less'
 
 import { Badge, Typography } from 'antd'
 import { useEffect, useState } from 'react'
+
+import { strings } from '@renderer/services/localization'
+import { useSettingStore } from '@renderer/store/setting'
 
 const { Text } = Typography
 
@@ -17,7 +19,7 @@ function Header(): JSX.Element {
 
   return (
     <div className="app-header">
-      <Text>My Workspace</Text>
+      <Text>{strings.myWorkspace}</Text>
       <div className="ip-item">
         <Badge status="success" style={{ marginRight: 4 }} />
         <Text
@@ -26,7 +28,7 @@ function Header(): JSX.Element {
             tooltips: ['Copy server address', 'Copied!']
           }}
         >
-          Proxy server listening on:{ip + ':' + port}
+          {strings.proxyServerListeningOn}:{ip + ':' + port}
         </Text>
       </div>
       <div className="profile"></div>
