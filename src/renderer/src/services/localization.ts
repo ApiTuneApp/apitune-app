@@ -49,7 +49,10 @@ export const strings = new LocalizedStrings({
     request: 'Request',
     response: 'Response',
     preview: 'Preview',
-    statusCode: 'Status Code'
+    statusCode: 'Status Code',
+    noTestResults: 'No Test Results',
+    createNewTest: 'Create new rule to test api result',
+    rule: 'Rule'
   },
   zh: {
     backHome: '返回首页',
@@ -99,6 +102,9 @@ export const strings = new LocalizedStrings({
     request: '请求',
     response: '响应',
     preview: '预览',
-    statusCode: '状态码'
+    statusCode: '状态码',
+    noTestResults: '没有测试结果',
+    createNewTest: '创建新规则以测试 API 结果',
+    rule: '规则'
   }
 })

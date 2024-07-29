@@ -1,8 +1,10 @@
 import { Descriptions, Empty, List, Space, Tag, Typography } from 'antd'
 import { useEffect, useState } from 'react'
-import RuleLink from '@renderer/components/rule-link'
-import { TestItem } from '@shared/contract'
 import { NavLink } from 'react-router-dom'
+
+import RuleLink from '@renderer/components/rule-link'
+import { strings } from '@renderer/services/localization'
+import { TestItem } from '@shared/contract'
 
 interface TestResultsProps {
   logId: number
@@ -27,8 +29,8 @@ export default function TestResults({ logId }: TestResultsProps): JSX.Element {
         <Empty
           description={
             <Typography.Text>
-              No Test Results <br />
-              <NavLink to="/rules/new?tab=tests">Create new rule to test api result</NavLink>
+              {strings.noTestResults} <br />
+              <NavLink to="/rules/new?tab=tests">{strings.addRuleToCreateTest}</NavLink>
             </Typography.Text>
           }
         />
@@ -48,7 +50,7 @@ export default function TestResults({ logId }: TestResultsProps): JSX.Element {
               key={test.ruleId}
               header={
                 <div style={{ fontWeight: 600 }}>
-                  Rule: <RuleLink id={test.ruleId} tab="tests" />
+                  {strings.rule}: <RuleLink id={test.ruleId} tab="tests" />
                 </div>
               }
               dataSource={test.cases}
