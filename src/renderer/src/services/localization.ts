@@ -22,7 +22,20 @@ export const strings = new LocalizedStrings({
     testFailed: 'Failed',
     testPassed: 'Passed',
     testResults: 'Test Results',
-    reqDetails: 'Request Details'
+    reqDetails: 'Request Details',
+    somethingWrong: 'Oops! Something went wrong with your operation.',
+    clearLog: 'Clear Log',
+    filter: 'Filter',
+    ruleMatched: 'Rule Matched',
+    all: 'All',
+    pause: 'Pause',
+    resume: 'Resume',
+    protocol: 'Protocol',
+    host: 'Host',
+    path: 'Path',
+    status: 'Status',
+    matchedRules: 'MatchedRules',
+    method: 'Method'
   },
   zh: {
     backHome: '返回首页',
@@ -45,6 +58,19 @@ export const strings = new LocalizedStrings({
     testFailed: '失败用例',
     testPassed: '通过用例',
     testResults: '测试结果',
-    reqDetails: '请求详情'
+    reqDetails: '请求详情',
+    somethingWrong: '哎呀！您的操作出了点问题。',
+    clearLog: '清空日志',
+    filter: '过滤',
+    ruleMatched: '已匹配规则',
+    all: '全部',
+    pause: '暂停',
+    resume: '继续',
+    protocol: '协议',
+    host: '域名',
+    path: '路径',
+    status: '状态',
+    matchedRules: '匹配规则',
+    method: '方法'
   }
 })

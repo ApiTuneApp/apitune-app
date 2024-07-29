@@ -1,21 +1,12 @@
 import './network.less'
 import 'react-resizable/css/styles.css'
 
-import {
-  Button,
-  Divider,
-  Dropdown,
-  Flex,
-  Input,
-  Radio,
-  RadioChangeEvent,
-  Space,
-  Table,
-  Tooltip
-} from 'antd'
+import { Button, Divider, Flex, Input, Radio, RadioChangeEvent, Space, Table, Tooltip } from 'antd'
 import { ColumnType } from 'antd/es/table'
+import { useEffectOnActive } from 'keepalive-for-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Resizable } from 'react-resizable'
+import { NavLink } from 'react-router-dom'
 
 import {
   ApiOutlined,
@@ -27,12 +18,12 @@ import {
   PlayCircleOutlined
 } from '@ant-design/icons'
 import LogDetail from '@renderer/components/log-detail'
+import { strings } from '@renderer/services/localization'
+import { useRuleStore } from '@renderer/store'
 import { useUxStore } from '@renderer/store/ux'
 import { Log } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
-import { useRuleStore } from '@renderer/store'
-import { NavLink } from 'react-router-dom'
-import { useEffectOnActive } from 'keepalive-for-react'
+import { useSettingStore } from '@renderer/store/setting'
 
 const AppHeaderHeight = 40
 const NetworkPagePadding = 40
@@ -71,11 +62,12 @@ function NetworkPage(): JSX.Element {
   const handleClearLog = useUxStore((state) => state.clearProxyLogs)
   const recordPaused = useUxStore((state) => state.logPaused)
   const setRecordPaused = useUxStore((state) => state.setLogPaused)
+  const { language } = useSettingStore((state) => state)
 
   const apiRules = useRuleStore((state) => state.apiRules)
 
-  const stopRecordStr = 'Pause'
-  const startRecordStr = 'Resume'
+  const stopRecordStr = strings.pause
+  const startRecordStr = strings.resume
   const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
   const [showFilter, setShowFilter] = useState(false)
   const [resultLogs, setResultLogs] = useState<Log[]>([])
@@ -125,14 +117,14 @@ function NetworkPage(): JSX.Element {
       sorter: (a: Log, b: Log) => a.url.localeCompare(b.url)
     },
     {
-      title: 'Protocol',
+      title: strings.protocol,
       dataIndex: 'protocol',
       key: 'protocol',
       width: 80,
       sorter: (a: Log, b: Log) => a.protocol.localeCompare(b.protocol)
     },
     {
-      title: 'Host',
+      title: strings.host,
       dataIndex: 'host',
       key: 'host',
       ellipsis: true,
@@ -145,7 +137,7 @@ function NetworkPage(): JSX.Element {
       )
     },
     {
-      title: 'Path',
+      title: strings.path,
       dataIndex: 'pathname',
       key: 'pathname',
       ellipsis: true,
@@ -160,21 +152,21 @@ function NetworkPage(): JSX.Element {
       )
     },
     {
-      title: 'Method',
+      title: strings.method,
       dataIndex: 'method',
       key: 'method',
       width: 90,
       sorter: (a: Log, b: Log) => a.method.localeCompare(b.method)
     },
     {
-      title: 'Status',
+      title: strings.status,
       dataIndex: 'status',
       key: 'status',
       width: 60,
       sorter: (a: Log, b: Log) => (a.status && b.status ? a.status - b.status : 0)
     },
     {
-      title: 'MatchRules',
+      title: strings.matchedRules,
       dataIndex: 'matchedRules',
       key: 'matchedRules',
       ellipsis: true,
@@ -211,6 +203,11 @@ function NetworkPage(): JSX.Element {
       }
     }
   ]
+
+  useEffect(() => {
+    setColumns(columnBase)
+    setPauseBtnText(!recordPaused ? startRecordStr : stopRecordStr)
+  }, [language])
 
   const [columns, setColumns] = useState<ColumnType<any>[]>(columnBase)
 
@@ -389,7 +386,7 @@ function NetworkPage(): JSX.Element {
           onChange={handleSearchChange}
         />
         <Button icon={<ClearOutlined />} onClick={handleClearLog}>
-          Clear log
+          {strings.clearLog}
         </Button>
         <Button
           icon={recordPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
@@ -398,14 +395,14 @@ function NetworkPage(): JSX.Element {
           {pauseBtnText}
         </Button>
         <Button icon={<FilterOutlined />} onClick={handleShowFilter}>
-          Filter
+          {strings.filter}
         </Button>
         <Button
           icon={<ApiOutlined />}
           danger={showRuleMatched}
           onClick={() => setShowRuleMatched(!showRuleMatched)}
         >
-          Rule Matched
+          {strings.ruleMatched}
         </Button>
         {/* <Tooltip title="Config network column">
             <ControlOutlined style={{ fontSize: QueryIconSize }} />
@@ -414,7 +411,7 @@ function NetworkPage(): JSX.Element {
       {showFilter && (
         <Space style={{ paddingBottom: '10px' }}>
           <Radio.Group defaultValue="all" onChange={handleLogTypeChange}>
-            <Radio.Button value="all">All</Radio.Button>
+            <Radio.Button value="all">{strings.all}</Radio.Button>
             <Radio.Button value="fetch">Fetch/XHR</Radio.Button>
             <Radio.Button value="doc">Doc</Radio.Button>
             <Radio.Button value="css">CSS</Radio.Button>
@@ -424,7 +421,7 @@ function NetworkPage(): JSX.Element {
           </Radio.Group>
           <Divider type="vertical" />
           <Radio.Group defaultValue="all" onChange={handleLogStatusChange}>
-            <Radio.Button value="all">All</Radio.Button>
+            <Radio.Button value="all">{strings.all}</Radio.Button>
             <Radio.Button value="1xx">1xx</Radio.Button>
             <Radio.Button value="2xx">2xx</Radio.Button>
             <Radio.Button value="3xx">3xx</Radio.Button>
