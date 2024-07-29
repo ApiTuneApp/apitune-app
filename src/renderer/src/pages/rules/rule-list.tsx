@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom'
 import { ExclamationCircleFilled } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
+import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
 
@@ -35,12 +36,15 @@ function RuleListPage(): JSX.Element {
   const handleDelConfirmOpen = (id: string) => {
     const curRule = findGroupOrRule(apiRules, id)
     modal.confirm({
-      title: `Are you sure delete "${curRule?.name}"?`,
+      title: strings.formatString(strings.deleteTitle, curRule!.name),
       icon: <ExclamationCircleFilled />,
-      content: `Your will not be able to recover this rule${curRule?.kind === 'group' ? ' group' : ''}!`,
-      okText: 'Yes',
+      content: strings.formatString(
+        strings.deleteDesc,
+        curRule!.kind === 'group' ? strings.group : strings.rule
+      ),
+      okText: strings.yes,
       okType: 'danger',
-      cancelText: 'No',
+      cancelText: strings.no,
       onOk: async () => {
         const result = await window.api.deleteRule(id)
         if (result.status === EventResultStatus.Success) {
@@ -52,12 +56,12 @@ function RuleListPage(): JSX.Element {
 
   const groupColumns: TableProps<ApiRuleItem>['columns'] = [
     {
-      title: 'Group Name',
+      title: strings.ruleGroupName,
       dataIndex: 'name',
       key: 'name'
     },
     {
-      title: 'Group Enabled',
+      title: strings.description,
       dataIndex: 'enable',
       key: 'enable',
       render: (enable, rule) => {
@@ -71,7 +75,7 @@ function RuleListPage(): JSX.Element {
       }
     },
     {
-      title: 'Updated on',
+      title: strings.updatedOn,
       dataIndex: 'updateTime',
       key: 'updateTime',
       render: (updateTime) => {
@@ -79,14 +83,14 @@ function RuleListPage(): JSX.Element {
       }
     },
     {
-      title: 'Actions',
+      title: strings.actions,
       key: 'actions',
       render: (text, record) => {
         return (
           <Space size="middle">
-            <Button onClick={(e) => handleGroupRename(record.id)}>Rename</Button>
+            <Button onClick={(e) => handleGroupRename(record.id)}>{strings.rename}</Button>
             <Button danger onClick={(e) => handleDelConfirmOpen(record.id)}>
-              Delete
+              {strings.delete}
             </Button>
           </Space>
         )
@@ -96,7 +100,7 @@ function RuleListPage(): JSX.Element {
 
   const ruleColumns: TableProps<RuleData>['columns'] = [
     {
-      title: 'Rule Name',
+      title: strings.ruleName,
       dataIndex: 'name',
       key: 'name',
       render: (_, r) => {
@@ -104,12 +108,12 @@ function RuleListPage(): JSX.Element {
       }
     },
     {
-      title: 'Description',
+      title: strings.description,
       dataIndex: 'description',
       key: 'description'
     },
     {
-      title: 'Rule Enabled',
+      title: strings.ruleEnabled,
       dataIndex: 'enable',
       key: 'enable',
       render: (enable, rule) => {
@@ -131,7 +135,7 @@ function RuleListPage(): JSX.Element {
       }
     },
     {
-      title: 'Updated on',
+      title: strings.updatedOn,
       dataIndex: 'updateTime',
       key: 'updateTime',
       render: (updateTime) => {
@@ -139,13 +143,13 @@ function RuleListPage(): JSX.Element {
       }
     },
     {
-      title: 'Actions',
+      title: strings.actions,
       key: 'actions',
       render: (text, record) => {
         return (
           <Space size="middle">
             <Button type="text" danger onClick={(e) => handleDelConfirmOpen(record.id)}>
-              Delete
+              {strings.delete}
             </Button>
           </Space>
         )

@@ -181,12 +181,15 @@ function RulesSidebar(): JSX.Element {
 
   const handleDelConfirmOpen = () => {
     modal.confirm({
-      title: `Are you sure delete "${apiRules.find((r) => r.id === editGroupId)?.name}"?`,
+      title: strings.formatString(
+        strings.deleteTitle,
+        apiRules.find((r) => r.id === editGroupId)!.name
+      ),
       icon: <ExclamationCircleFilled />,
-      content: 'Your will not be able to recover this rule group!',
-      okText: 'Yes',
+      content: strings.formatString(strings.deleteDesc, strings.group),
+      okText: strings.yes,
       okType: 'danger',
-      cancelText: 'No',
+      cancelText: strings.no,
       onOk() {
         handleDelConfirm()
       }

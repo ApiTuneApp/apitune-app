@@ -1,3 +1,4 @@
+import { group } from 'console'
 import LocalizedStrings from 'react-localization'
 
 export const strings = new LocalizedStrings({
@@ -65,7 +66,19 @@ export const strings = new LocalizedStrings({
     goGroupList: 'Go Group List',
     edit: 'Edit',
     new: 'New',
-    ruleGroupName: 'Rule Group Name'
+    ruleGroupName: 'Rule Group Name',
+    group: 'group',
+    deleteTitle: 'Are you sure delete "{0}"?',
+    deleteDesc: 'Your will not be able to recover this {0}!',
+    yes: 'Yes',
+    no: 'No',
+    groupName: 'Group Name',
+    groupEnabled: 'Group Enabled',
+    updatedOn: 'Updated on',
+    actions: 'Actions',
+    ruleName: 'Rule Name',
+    description: 'Description',
+    ruleEnabled: 'Rule Enabled'
   },
   zh: {
     backHome: '返回首页',
@@ -131,6 +144,18 @@ export const strings = new LocalizedStrings({
     goGroupList: '前往分组列表',
     edit: '编辑',
     new: '新建',
-    ruleGroupName: '规则组名称'
+    group: '分组',
+    ruleGroupName: '规则组名称',
+    deleteTitle: '确定要删除 "{0}" 吗？',
+    deleteDesc: '您将无法恢复此规则{0}！',
+    yes: '是',
+    no: '否',
+    groupName: '分组名称',
+    groupEnabled: '分组是否启用',
+    updatedOn: '更新时间',
+    actions: '操作',
+    ruleName: '规则名称',
+    description: '描述',
+    ruleEnabled: '规则是否启用'
   }
 })
