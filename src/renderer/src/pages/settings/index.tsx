@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { CloseCircleOutlined, DownloadOutlined, FileProtectOutlined } from '@ant-design/icons'
 import { useSettingStore } from '@renderer/store/setting'
 import { EventResultStatus, RenderEvent } from '@shared/contract'
+import { strings } from '@renderer/services/localization'
 
 const { Text } = Typography
 
@@ -75,6 +76,7 @@ function SettingsPage(): JSX.Element {
     window.api.changeLanguage(e.target.value).then((res) => {
       if (res.status === EventResultStatus.Success) {
         setLanguage(e.target.value)
+        strings.setLanguage(e.target.value)
       }
     })
   }
@@ -82,37 +84,37 @@ function SettingsPage(): JSX.Element {
   return (
     <div className="app-page page-settings">
       <Typography.Title level={4} style={{ marginBottom: 20 }}>
-        Settings
+        {strings.settings}
       </Typography.Title>
       <Form layout="vertical">
         <Space direction="vertical" size="middle" style={{ width: '60%' }}>
-          <Form.Item label="CA">
+          <Form.Item label={strings.ca}>
             <Space direction="vertical" size="small">
               {caTrust ? (
-                <Tag color="success">ApiTune CA Certificate Installed</Tag>
+                <Tag color="success">{strings.caInstalled}</Tag>
               ) : (
                 <Space direction="vertical">
                   <Text type="danger">
-                    <CloseCircleOutlined /> ApiTune CA Certificate Not Trusted
+                    <CloseCircleOutlined /> {strings.caNotTrust}
                   </Text>
                   <Button
                     icon={<FileProtectOutlined />}
                     iconPosition="start"
                     onClick={() => trustCa()}
                   >
-                    Trust ApiTune CA
+                    {strings.trustCa}
                   </Button>
-                  <Text type="secondary">(Require root privileges)</Text>
+                  <Text type="secondary">({strings.requireRoot})</Text>
                 </Space>
               )}
               <Button icon={<DownloadOutlined />} onClick={() => exportCaFile()}>
-                Export CA File
+                {strings.exportCa}
               </Button>
             </Space>
           </Form.Item>
 
           <Space>
-            <Form.Item label="Proxy Port">
+            <Form.Item label={strings.proxyPort}>
               <Space.Compact block>
                 <InputNumber
                   min={1024}
@@ -123,13 +125,13 @@ function SettingsPage(): JSX.Element {
                   onChange={(value) => setProxyPort(Number(value))}
                 ></InputNumber>
                 <Button type="primary" disabled={proxyPort == port} onClick={changePort}>
-                  Update
+                  {strings.update}
                 </Button>
               </Space.Compact>
             </Form.Item>
           </Space>
           <Space>
-            <Form.Item label="Themes">
+            <Form.Item label={strings.themes}>
               <Select
                 value={theme}
                 style={{ width: 250 }}
@@ -142,7 +144,7 @@ function SettingsPage(): JSX.Element {
               />
             </Form.Item>
           </Space>
-          <Form.Item label="Language">
+          <Form.Item label={strings.language}>
             <Radio.Group onChange={handleLanguageChange} value={language}>
               <Radio value={'en'}>English</Radio>
               <Radio value={'zh'}>中文</Radio>

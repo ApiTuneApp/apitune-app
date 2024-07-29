@@ -1,6 +1,8 @@
 import { Button, Result } from 'antd'
 import { NavLink, useRouteError } from 'react-router-dom'
 
+import { strings } from '@renderer/services/localization'
+
 function ErrorPage(): JSX.Element {
   // const error = useRouteError()
   // console.log('error', error)
@@ -10,7 +12,7 @@ function ErrorPage(): JSX.Element {
       title="Oops! Something went wrong with your operation."
       extra={
         <NavLink to={'/'}>
-          <Button type="primary">Back Homepage</Button>
+          <Button type="primary">{strings.backHome}</Button>
         </NavLink>
       }
     />
