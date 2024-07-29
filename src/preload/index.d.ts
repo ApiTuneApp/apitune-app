@@ -36,6 +36,7 @@ declare global {
       getTestResults: (logId: number) => Promise<TestItem>
       getAllTestResults: () => Promise<LogTestResultMap>
       clearTestResult: () => Promise<IpcResult>
+      changeLanguage: (language: SettingStorage['language']) => Promise<IpcResult>
     }
   }
 }

@@ -89,6 +89,9 @@ importers:
       pako:
         specifier: ^2.1.0
         version: 2.1.0
+      react-localization:
+        specifier: ^1.0.19
+        version: 1.0.19(react@18.2.0)
       react-resizable:
         specifier: ^3.0.5
         version: 3.0.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -2270,6 +2273,9 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==, tarball: https://r2.cnpmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz}
 
+  localized-strings@0.2.4:
+    resolution: {integrity: sha512-TKDhqFPkIIN/if2FSvVVZTaM/GP9TzfgdQ2uY65mr32xgFu5nqkKXprXbzy5rfx32DF5LDvS/y1UqYF/mAscYA==}
+
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==, tarball: https://r2.cnpmjs.org/locate-path/-/locate-path-6.0.0.tgz}
     engines: {node: '>=10'}
@@ -2935,6 +2941,11 @@ packages:
 
   react-lifecycles-compat@3.0.4:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==, tarball: https://r2.cnpmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz}
+
+  react-localization@1.0.19:
+    resolution: {integrity: sha512-f4E6T8xRis19K8qMOnnhjGV2quy1YH2lrSsnAiytvgt7uOSp6WgDhrZH6XZEaEFqupTOCFSf8uagIoIAkjl4JA==}
+    peerDependencies:
+      react: ^18.0.0 || ^17.0.0 || ^16.0.0 || ^15.6.0
 
   react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
@@ -6092,6 +6103,8 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
+  localized-strings@0.2.4: {}
+
   locate-path@6.0.0:
     dependencies:
       p-locate: 5.0.0
@@ -6813,6 +6826,11 @@ snapshots:
   react-is@18.2.0: {}
 
   react-lifecycles-compat@3.0.4: {}
+
+  react-localization@1.0.19(react@18.2.0):
+    dependencies:
+      localized-strings: 0.2.4
+      react: 18.2.0
 
   react-refresh@0.14.0: {}
 

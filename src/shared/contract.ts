@@ -16,7 +16,9 @@ export enum RenderEvent {
   GetTestResults = 'getTestResults',
   GetAllTestResults = 'getAllTestResults',
   GetProxyLogs = 'getProxyLogs',
-  ClearTestResult = 'clearTestResult'
+  ClearTestResult = 'clearTestResult',
+  GetLanguage = 'getLanguage',
+  ChangeLanguage = 'changeLanguage'
 }
 
 export enum MainEvent {
@@ -185,6 +187,7 @@ export interface SettingStorage {
   version: string
   port: number
   theme: Theme
+  language: 'zh' | 'en'
 }
 
 export type ApiRuleItem = RuleGroup | RuleData

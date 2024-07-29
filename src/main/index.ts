@@ -405,6 +405,9 @@ app.whenReady().then(() => {
 
   ipcMain.handle(RenderEvent.GetSettings, (event) => {
     return new Promise((resolve, reject) => {
+      const local = app.getLocale() // en-US
+      // const sysLocal = app.getSystemLocale() // en-CN
+      // const lang = app.getPreferredSystemLanguages() [ 'en-CN', 'zh-Hans-CN' ]
       try {
         const data = Storage.getSync(config.SettingDefaultStorageKey)
         if (data) {
@@ -412,8 +415,20 @@ app.whenReady().then(() => {
           if (data.theme !== 'system') {
             nativeTheme.themeSource = data.theme
           }
+          if (!data.language) {
+            if (local && local.includes('zh')) {
+              data.language = 'zh'
+            } else {
+              data.language = 'en'
+            }
+          }
           resolve(data)
         } else {
+          if (local && local.includes('zh')) {
+            DefaultSettingData.language = 'zh'
+          } else {
+            DefaultSettingData.language = 'en'
+          }
           resolve(DefaultSettingData)
         }
       } catch (error) {
@@ -464,6 +479,32 @@ app.whenReady().then(() => {
       } catch (error) {
         resolve('light')
       }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.GetLanguage, (event) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const local = app.getLocale() // en-US
+        if (local && local.includes('zh')) {
+          resolve('zh')
+        } else {
+          resolve('en')
+        }
+      } catch (error) {
+        resolve('en')
+      }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.ChangeLanguage, (event, language: 'zh' | 'en') => {
+    return new Promise((resolve, reject) => {
+      updateSettingData({
+        language
+      })
+      resolve({
+        status: EventResultStatus.Success
+      })
     })
   })
 

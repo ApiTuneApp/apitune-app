@@ -43,7 +43,8 @@ export function updateRuntimeRules(apiRules: ApiRules) {
 export let DefaultSettingData: SettingStorage = {
   version: packageJson.version,
   port: config.port,
-  theme: 'system'
+  theme: 'system',
+  language: 'en'
 }
 
 export function initSettingData() {

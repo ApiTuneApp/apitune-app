@@ -9,7 +9,8 @@ import {
   Theme,
   TestItem,
   LogTestResultMap,
-  Log
+  Log,
+  SettingStorage
 } from '../shared/contract'
 
 // Custom APIs for renderer
@@ -52,6 +53,12 @@ const api = {
   },
   changeTheme: (theme: Theme): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.ChangeTheme, theme)
+  },
+  getLanguage: (): Promise<string> => {
+    return ipcRenderer.invoke(RenderEvent.GetLanguage)
+  },
+  changeLanguage: (language: SettingStorage['language']): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.ChangeLanguage, language)
   },
   getIp: (): Promise<string> => {
     return ipcRenderer.invoke(RenderEvent.GetIP)

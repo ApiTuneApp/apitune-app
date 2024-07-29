@@ -1,4 +1,4 @@
-import { App, Button, Form, InputNumber, Select, Space, Tag, Typography } from 'antd'
+import { App, Button, Form, InputNumber, Radio, Select, Space, Tag, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
 import { CloseCircleOutlined, DownloadOutlined, FileProtectOutlined } from '@ant-design/icons'
@@ -10,7 +10,9 @@ const { Text } = Typography
 function SettingsPage(): JSX.Element {
   const { message } = App.useApp()
 
-  const { port, theme, setTheme, setAppTheme } = useSettingStore((state) => state)
+  const { port, theme, language, setTheme, setAppTheme, setLanguage } = useSettingStore(
+    (state) => state
+  )
   const [proxyPort, setProxyPort] = useState(port)
   const [caTrust, setCaTrust] = useState(false)
 
@@ -65,6 +67,14 @@ function SettingsPage(): JSX.Element {
     window.api.ca('export').then((res) => {
       if (res.status === EventResultStatus.Success) {
         message.success('CA File exported')
+      }
+    })
+  }
+
+  const handleLanguageChange = (e) => {
+    window.api.changeLanguage(e.target.value).then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        setLanguage(e.target.value)
       }
     })
   }
@@ -132,6 +142,12 @@ function SettingsPage(): JSX.Element {
               />
             </Form.Item>
           </Space>
+          <Form.Item label="Language">
+            <Radio.Group onChange={handleLanguageChange} value={language}>
+              <Radio value={'en'}>English</Radio>
+              <Radio value={'zh'}>中文</Radio>
+            </Radio.Group>
+          </Form.Item>
         </Space>
       </Form>
     </div>
