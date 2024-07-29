@@ -288,7 +288,8 @@ function NewRulePage(): JSX.Element {
         const menItem = item as RuleMenuItem
         if (menItem.type === 'group' && menItem.children) {
           menItem.children = menItem.children.map((child) => {
-            if (editRule.modifyList.some((modify) => modify.type === child.key)) {
+            const curModifyList = form.getFieldValue('modifyList')
+            if (curModifyList.some((modify) => modify.type === child.key)) {
               return { ...child, disabled: true }
             }
             return { ...child, disabled: false }
