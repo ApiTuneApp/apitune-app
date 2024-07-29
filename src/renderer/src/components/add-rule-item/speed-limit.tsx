@@ -1,15 +1,16 @@
 import { Form, Input } from 'antd'
 
+import { strings } from '@renderer/services/localization'
 import { AddRuleValueProps } from '@renderer/common/contract'
 
 function SpeedLimit({ field }: AddRuleValueProps): JSX.Element {
   return (
     <Form.Item
-      label="Speed limit:"
+      label={strings.speedLimit + ':'}
       name={[field.name, 'value']}
-      rules={[{ required: true, message: 'Speed limit is required' }]}
+      rules={[{ required: true, message: strings.speedLimitRequired }]}
     >
-      <Input type="number" placeholder="please input speed limit" addonAfter="KB/s" />
+      <Input type="number" placeholder={strings.inputSpeedLimit} addonAfter="KB/s" />
     </Form.Item>
   )
 }

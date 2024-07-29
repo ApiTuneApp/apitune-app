@@ -1,6 +1,7 @@
 import { Form } from 'antd'
 
 import { AddRuleValueProps } from '@renderer/common/contract'
+import { strings } from '@renderer/services/localization'
 
 import MonacoEditor from '../monaco-editor'
 
@@ -12,8 +13,13 @@ function BodyEditor({ field, type }: AddRuleValueProps & BodyEditorProps): JSX.E
   return (
     <Form.Item
       name={[field.name, 'value']}
-      rules={[{ required: true, message: 'Body Rule is required' }]}
-      label={`Modify ${type === 'request' ? 'Request' : 'Response'} Body:`}
+      rules={[{ required: true, message: strings.bodyRuleRequired }]}
+      label={
+        strings.formatString(
+          strings.modifyBody,
+          type === 'request' ? strings.request : strings.response
+        ) + ':'
+      }
     >
       <MonacoEditor height={200} defaultLanguage="json" />
     </Form.Item>

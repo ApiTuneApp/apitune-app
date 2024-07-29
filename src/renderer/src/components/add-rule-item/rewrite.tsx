@@ -1,18 +1,19 @@
 import { Form, Input } from 'antd'
 
+import { strings } from '@renderer/services/localization'
 import { AddRuleValueProps } from '@renderer/common/contract'
 
 function Rewrite({ field }: AddRuleValueProps): JSX.Element {
   return (
     <Form.Item
-      label="Rewrite to:"
+      label={strings.rewriteTo + ':'}
       name={[field.name, 'value']}
       rules={[
-        { required: true, message: 'Rewrite url is required' },
-        { type: 'url', message: 'Invalid url' }
+        { required: true, message: strings.rewriteUrlRequired },
+        { type: 'url', message: strings.invalidUrl }
       ]}
     >
-      <Input placeholder="please input rewrite url" />
+      <Input placeholder={strings.inputRewriteUrl} />
     </Form.Item>
   )
 }
