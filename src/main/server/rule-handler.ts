@@ -351,7 +351,7 @@ function beforeModifyResBody(ctx: IAppContext) {
       ctx.state.responseBody = ctx.state.responseBody.pipe(createBrotliDecompress())
     } else {
       // 在请求时已经限制了只能用 gzip 和 br, 遇到其他错误算法, 无法解压，也就不能修改内部
-      log.error('[BeforeModifyResBody]Content-encoding not support', contentEncoding)
+      log.error('[BeforeModifyResBody] Content-encoding not support', contentEncoding)
     }
   }
 }

@@ -10,7 +10,7 @@ import { getBase64 } from '../helper'
 
 // TODO: check production path
 const mochaWoker = path.join(app.getAppPath(), 'src/main/workers/mocha-worker.js')
-electronLog.info('[TestScript]mochaWoker path', mochaWoker)
+electronLog.info('[TestScript] mochaWoker path', mochaWoker)
 
 export default async function testScriptMiddleware(ctx: Context, next: Next) {
   await next()
@@ -55,18 +55,18 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
     })
 
     worker.on('message', (data: TestItem) => {
-      electronLog.info('[TestScript]Worker result:', data)
+      electronLog.info('[TestScript] Worker result:', data)
       LogTestResult.updateTestResult(data.logId, data)
     })
 
     worker.on('error', (error) => {
-      electronLog.error('[TestScript]Worker error:', error)
+      electronLog.error('[TestScript] Worker error:', error)
       // worker.terminate()
     })
 
     worker.on('exit', (code) => {
       if (code !== 0) {
-        electronLog.error(`[TestScript]Worker stopped with exit code ${code}`)
+        electronLog.error(`[TestScript] Worker stopped with exit code ${code}`)
       }
       worker.terminate()
     })

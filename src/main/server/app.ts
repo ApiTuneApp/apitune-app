@@ -27,7 +27,7 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
       ctx.status = 500
       ctx.message = 'Proxy internal error'
     }
-    log.error('[AppMiddleware]Proxy internal error', err)
+    log.error('[AppMiddleware] Proxy internal error', err)
 
     ctx.set('content-type', 'text/plain;charset=utf-8')
     ctx.body = 'Proxy Error: ' + err.message
@@ -55,7 +55,7 @@ app.use(async (ctx, next: Next) => {
   ctx.state.responseHeaders = {}
   ctx.state.responseBody = null
 
-  log.info('[AppMiddleware]Start Request', ctx.href)
+  log.info('[AppMiddleware] Start Request', ctx.href)
   await next()
 
   ctx.set(ctx.state.responseHeaders)
@@ -74,7 +74,7 @@ app.use(async (ctx, next) => {
   try {
     await next()
   } catch (err) {
-    log.error('[AppMiddleware]Server middleware error', err)
+    log.error('[AppMiddleware] Server middleware error', err)
   }
 })
 

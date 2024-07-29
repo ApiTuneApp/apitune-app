@@ -24,7 +24,7 @@ export function initRuntimeRules() {
       // if there is no version string, we treat that something is wrong in config, so we set it to default value
       defaultData = DefaultRuleData
       Storage.set(config.RuleDefaultStorageKey, defaultData, (error) => {
-        if (error) log.error('[initRuntimeRules]Storage error', error)
+        if (error) log.error('[initRuntimeRules] Storage error', error)
       })
     }
     DefaultRuleData = {
@@ -32,7 +32,7 @@ export function initRuntimeRules() {
       apiRules: defaultData.apiRules || []
     }
   } catch (error) {
-    log.error('[initRuntimeRules]Failed', error)
+    log.error('[initRuntimeRules] Failed', error)
   }
 }
 
@@ -53,7 +53,7 @@ export function initSettingData() {
     if (!defaultData || !defaultData.version) {
       defaultData = DefaultSettingData
       Storage.set(config.SettingDefaultStorageKey, defaultData, (error) => {
-        if (error) log.error('[initSettingData]Storage error', error)
+        if (error) log.error('[initSettingData] Storage error', error)
       })
     }
     DefaultSettingData = {
@@ -61,7 +61,7 @@ export function initSettingData() {
       ...defaultData
     }
   } catch (error) {
-    log.error('[initSettingData]Failed', error)
+    log.error('[initSettingData] Failed', error)
   }
 }
 
@@ -77,7 +77,7 @@ export function updateSettingData(
 
   Storage.set(config.SettingDefaultStorageKey, DefaultSettingData, (error) => {
     if (error) {
-      log.error('[updateSettingData]Storage error', error)
+      log.error('[updateSettingData] Storage error', error)
       onError && onError(error)
     } else {
       onSuccess && onSuccess()

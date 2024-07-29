@@ -10,9 +10,9 @@ import { makeTcpTunnel } from './make-tcp-tunnel'
 
 export async function onConnect(req: IncomingMessage, socket: Socket, head: Buffer) {
   socket.on('error', (err: Error) => {
-    log.error('[OnConnect]Error', err, req.url)
+    log.error('[OnConnect] Error', err, req.url)
   })
-  log.info('[OnConnect]Url', req.url)
+  log.info('[OnConnect] Url', req.url)
 
   // connect 返回接受代理握手
   socket.write('HTTP/1.1 200 Connection Established\r\n')
@@ -40,7 +40,7 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
 
   if (isHttps(head)) {
     if (/[^a-z]$/.test(host)) {
-      log.info('[OnConnect]Https host invalid', url)
+      log.info('[OnConnect] Https host invalid', url)
       // do nothing
     } else {
       const httpsControl = getHttpsControl(host, socket)
@@ -63,7 +63,7 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
       }
     } else {
       // 对于其他 connect 请求，采取透明代理
-      log.info('[OnConnect]Pass tunnel', {
+      log.info('[OnConnect] Pass tunnel', {
         url,
         headerStr
       })

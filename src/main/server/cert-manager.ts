@@ -38,7 +38,7 @@ class ExtendedCertManager {
       // @ts-ignore We should get result from callback, but it's not implemented in node-easy-cert
       this.mgr.ifRootCATrusted(callback)
     } catch (error) {
-      log.error('[CA]Failed to check if Root CA is trusted:', error)
+      log.error('[CA] Failed to check if Root CA is trusted:', error)
     }
     return false
   }
@@ -47,7 +47,7 @@ class ExtendedCertManager {
     try {
       return this.mgr.isRootCAFileExists()
     } catch (error) {
-      log.error('[CA]Failed to check if Root CA is trusted:', error)
+      log.error('[CA] Failed to check if Root CA is trusted:', error)
     }
     return false
   }

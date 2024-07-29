@@ -127,7 +127,7 @@ app.whenReady().then(() => {
         }
         Storage.set(key, data, (error) => {
           if (error) {
-            log.error('[AddRule]Failed to storage rule:', error)
+            log.error('[AddRule] Failed to storage rule:', error)
             reject({
               status: EventResultStatus.Error,
               error: error.message
@@ -140,7 +140,7 @@ app.whenReady().then(() => {
           }
         })
       } catch (error) {
-        log.error('[AddRule]Failed', error)
+        log.error('[AddRule] Failed', error)
         reject({
           status: EventResultStatus.Error,
           error: error
@@ -162,7 +162,7 @@ app.whenReady().then(() => {
               Object.assign(rule, ruleObj)
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
-                  log.error('[UpdateRule]Failed to storage rule:', error)
+                  log.error('[UpdateRule] Failed to storage rule:', error)
                   reject({
                     status: EventResultStatus.Error,
                     error: error.message
@@ -193,7 +193,7 @@ app.whenReady().then(() => {
           })
         }
       } catch (error) {
-        log.error('[UpdateRule]Failed', error)
+        log.error('[UpdateRule] Failed', error)
         reject({
           status: EventResultStatus.Error,
           error: error
@@ -214,7 +214,7 @@ app.whenReady().then(() => {
               rule.updateTime = new Date().getTime()
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
-                  log.error('[EnableRule]Failed to storage rule', error)
+                  log.error('[EnableRule] Failed to storage rule', error)
                   reject({
                     status: EventResultStatus.Error,
                     error: error.message
@@ -245,7 +245,7 @@ app.whenReady().then(() => {
           })
         }
       } catch (error) {
-        log.error('[EnableRule]Failed', error)
+        log.error('[EnableRule] Failed', error)
         reject({
           status: EventResultStatus.Error,
           error: error
@@ -266,7 +266,7 @@ app.whenReady().then(() => {
               rule.updateTime = new Date().getTime()
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
-                  log.error('[UpdateRuleGroupName]Failed to storage rule', error)
+                  log.error('[UpdateRuleGroupName] Failed to storage rule', error)
                   reject({
                     status: EventResultStatus.Error,
                     error: error.message
@@ -297,7 +297,7 @@ app.whenReady().then(() => {
           })
         }
       } catch (error) {
-        log.error('[UpdateRuleGroupName]Failed', error)
+        log.error('[UpdateRuleGroupName] Failed', error)
         reject({
           status: EventResultStatus.Error,
           error: error
@@ -318,7 +318,7 @@ app.whenReady().then(() => {
               data.apiRules.splice(index, 1)
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
-                  log.error('[DeleteRule][group]Failed to storage rule', error)
+                  log.error('[DeleteRule][group] Failed to storage rule', error)
                   reject({
                     status: EventResultStatus.Error,
                     error: error.message
@@ -342,7 +342,7 @@ app.whenReady().then(() => {
                 group.ruleList.splice(index, 1)
                 Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                   if (error) {
-                    log.error('[DeleteRule][rule]Failed to storage rule', error)
+                    log.error('[DeleteRule][rule] Failed to storage rule', error)
                     reject({
                       status: EventResultStatus.Error,
                       error: error.message
@@ -379,7 +379,7 @@ app.whenReady().then(() => {
           })
         }
       } catch (error) {
-        log.error('[DeleteRule]Failed', error)
+        log.error('[DeleteRule] Failed', error)
         reject({
           status: EventResultStatus.Error,
           error: error
@@ -450,7 +450,7 @@ app.whenReady().then(() => {
           })
         },
         (error) => {
-          log.error('[ChangePort]Failed', error)
+          log.error('[ChangePort] Failed', error)
           reject({
             status: EventResultStatus.Error,
             error: error.message
@@ -564,7 +564,7 @@ app.whenReady().then(() => {
         } else {
           const result = crtMgr.installRootCA()
           if (result.error) {
-            log.error('[CA]Failed to trust Root CA:', result.error)
+            log.error('[CA] Failed to trust Root CA:', result.error)
             resolve({
               status: EventResultStatus.Error,
               error: 'Failed to trust Root CA'
@@ -598,7 +598,7 @@ app.whenReady().then(() => {
                 const destinationPath = result.filePath
                 fs.copyFile(sourcePath, destinationPath, (error) => {
                   if (error) {
-                    log.error('[CA]Failed to copy file:', error)
+                    log.error('[CA] Failed to copy file:', error)
                     resolve({
                       status: EventResultStatus.Error,
                       error: 'Failed to copy file'

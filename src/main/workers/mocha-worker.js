@@ -55,7 +55,7 @@ function testRunner(matchedRuleDetails) {
           testResult.push(testResultItem)
         }
       } catch (error) {
-        log.error('[TestWorker]Run scripts error', error)
+        log.error('[TestWorker] Run scripts error', error)
       }
     }
   }
@@ -70,7 +70,7 @@ function testRunner(matchedRuleDetails) {
       mochaInstance.allowUncaught(false)
 
       mochaInstance.uncaught = function (err) {
-        log.error('[TestWorker]Test run error', err)
+        log.error('[TestWorker] Test run error', err)
       }
       startTime = new Date().getTime()
       // Run the Mocha instance
@@ -127,7 +127,7 @@ function testRunner(matchedRuleDetails) {
         )
       })
     } catch (error) {
-      log.error('[TestWorker]Test run error', error)
+      log.error('[TestWorker] Test run error', error)
     }
   }
 }
