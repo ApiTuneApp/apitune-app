@@ -38,6 +38,7 @@ import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import SpeedLimit from '@renderer/components/add-rule-item/speed-limit'
 import MatchTestModal from '@renderer/components/match-test-modal'
 import * as Service from '@renderer/services'
+import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@shared/contract'
@@ -45,6 +46,7 @@ import { findGroupOrRule } from '@shared/utils'
 import MonacoEditor from '@renderer/components/monaco-editor'
 
 import { SnippetType, getSnippet } from '@renderer/common/snippets'
+import { useSettingStore } from '@renderer/store/setting'
 
 const { Text } = Typography
 
@@ -52,73 +54,6 @@ const reqMethods = ReqMethods.map((item) => ({
   label: item,
   value: item
 }))
-
-const DefaultAddRulesMenu: MenuProps['items'] = [
-  {
-    key: 'request',
-    type: 'group',
-    label: 'Request Modify:',
-    children: [
-      {
-        key: RuleType.Rewrite,
-        label: 'Rewrite Request',
-        disabled: false
-      },
-      {
-        key: RuleType.RequestHeader,
-        label: 'Modify Request Headers',
-        disabled: false
-      },
-      {
-        key: RuleType.RequestBody,
-        label: 'Modify Request Body',
-        disabled: false
-      },
-      {
-        key: RuleType.RequestFunction,
-        label: 'Add Request Function',
-        disabled: false
-      },
-      {
-        key: RuleType.RequestSpeedLimit,
-        disabled: false,
-        label: 'Add Request Speed Limit'
-      }
-    ]
-  },
-  {
-    key: 'response',
-    type: 'group',
-    label: 'Response Modify:',
-    children: [
-      {
-        key: RuleType.ResponseStatus,
-        disabled: false,
-        label: 'Modify Response Status'
-      },
-      {
-        key: RuleType.ResponseHeader,
-        disabled: false,
-        label: 'Modify Response Headers'
-      },
-      {
-        key: RuleType.ResponseBody,
-        disabled: false,
-        label: 'Modify Response Body'
-      },
-      {
-        key: RuleType.ResponseFunction,
-        disabled: false,
-        label: 'Add Response Function'
-      },
-      {
-        key: RuleType.ResponseDelay,
-        disabled: false,
-        label: 'Add Response Delay'
-      }
-    ]
-  }
-]
 
 interface MenuChildItem {
   key: RuleType
@@ -135,11 +70,79 @@ interface RuleMenuItem {
 
 function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
+  const { language } = useSettingStore((state) => state)
   const [searchParams] = useSearchParams()
   const groupId = searchParams.get('groupId')
   const targetTab = searchParams.get('tab') || 'rule'
   const { message, modal } = App.useApp()
   const [form] = Form.useForm()
+
+  const DefaultAddRulesMenu: MenuProps['items'] = [
+    {
+      key: 'request',
+      type: 'group',
+      label: strings.requestModify + ':',
+      children: [
+        {
+          key: RuleType.Rewrite,
+          label: strings.rewriteRequest,
+          disabled: false
+        },
+        {
+          key: RuleType.RequestHeader,
+          label: strings.modifyReqHeaders,
+          disabled: false
+        },
+        {
+          key: RuleType.RequestBody,
+          label: strings.modifyReqBody,
+          disabled: false
+        },
+        {
+          key: RuleType.RequestFunction,
+          label: strings.addReqFunction,
+          disabled: false
+        },
+        {
+          key: RuleType.RequestSpeedLimit,
+          disabled: false,
+          label: strings.addReqSpeedLimit
+        }
+      ]
+    },
+    {
+      key: 'response',
+      type: 'group',
+      label: strings.responseModify + ':',
+      children: [
+        {
+          key: RuleType.ResponseStatus,
+          disabled: false,
+          label: strings.modifyResStatus
+        },
+        {
+          key: RuleType.ResponseHeader,
+          disabled: false,
+          label: strings.modifyResHeaders
+        },
+        {
+          key: RuleType.ResponseBody,
+          disabled: false,
+          label: strings.modifyResBody
+        },
+        {
+          key: RuleType.ResponseFunction,
+          disabled: false,
+          label: strings.addResFunction
+        },
+        {
+          key: RuleType.ResponseDelay,
+          disabled: false,
+          label: strings.addResDelay
+        }
+      ]
+    }
+  ]
 
   const apiRules = useRuleStore((state) => state.apiRules)
   const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
@@ -159,6 +162,10 @@ function NewRulePage(): JSX.Element {
     },
     modifyList: []
   }
+
+  useEffect(() => {
+    setAddRulesMenu(DefaultAddRulesMenu)
+  }, [language])
 
   useEffect(() => {
     if (editRule) {
@@ -193,11 +200,11 @@ function NewRulePage(): JSX.Element {
 
     if (key === RuleType.RequestFunction) {
       initValue.value = `/**
- * You can modify request body here,
- * the context variables you can use:
+ * ${strings.formatString(strings.youCanModify, strings.requestBody.toLowerCase())},
+ * ${strings.contextVarYouCanUse}:
  *  * {
- *  _ctx: Context, // Koa context
-    request: { // Request infor
+ *  _ctx: Context, // ${strings.koaContext}
+    request: { // ${strings.requestInfo}
         url: {
             host: '',
             href: '',
@@ -205,17 +212,17 @@ function NewRulePage(): JSX.Element {
             pathname: ''
         },
         ip: '',
-        headers: {}, //Request headers
+        headers: {}, // ${strings.requestHeaders}
     },
-    params: {}, // Request parameters, you can get GET or POST params here
-    requestBody: {}, // Request body
-    requestHeaders：: {}, // Request headers
+    params: {}, // ${strings.reqParamsDesc}
+    requestBody: {}, // ${strings.requestBody}
+    requestHeaders：: {}, // ${strings.requestHeaders}
    }
 
-   Code examples:
-   1. Change request headers:
+   ${strings.codeExamples}:
+   1. ${strings.formatString(strings.changeTarget, strings.requestHeaders.toLowerCase())}:
     requestHeaders.xxx = 'xxx'
-   3. Change request body:
+   2. ${strings.formatString(strings.changeTarget, strings.requestBody.toLowerCase())}:
     if(requestBody.type == 1) {
       requestBody.aaa = 1
     }
@@ -224,11 +231,11 @@ function NewRulePage(): JSX.Element {
 
     if (key === RuleType.ResponseFunction) {
       initValue.value = `/**
- * You can modify response value here,
- * the context variables you can use:
+ * ${strings.formatString(strings.youCanModify, strings.responseBody.toLowerCase())},
+ * ${strings.contextVarYouCanUse}:
  *  * {
- *  _ctx: Context, // Koa context
-    request: { // Request infor
+ *  _ctx: Context, // ${strings.koaContext}
+    request: { // ${strings.requestInfo}
         url: {
             host: '',
             href: '',
@@ -236,20 +243,20 @@ function NewRulePage(): JSX.Element {
             pathname: ''
         },
         ip: '',
-        headers: {}, //Request headers
+        headers: {}, // ${strings.requestHeaders}
     },
-    params: {}, // Request parameters, you can get GET or POST params here
-    responseBody: {}, // Response data
-    responseHeaders: {}, // Response headers
-    responseStatus: 200, // Response status
+    params: {}, // ${strings.reqParamsDesc}
+    responseBody: {}, // ${strings.responseBody}
+    responseHeaders: {}, // ${strings.responseHeaders}
+    responseStatus: 200, // ${strings.statusCode}
    }
 
-   Code examples:
-   1. Change response data:
+   ${strings.codeExamples}:
+   1. ${strings.formatString(strings.changeTarget, strings.responseBody.toLowerCase())}:
     responseBody = { aaa: 123 }
-   2. Change response headers:
+   2. ${strings.formatString(strings.changeTarget, strings.responseHeaders.toLowerCase())}:
     responseHeaders.xxx = 'xxx'
-   3. Change response data by request params:
+   3. ${strings.changeByReqParams}:
     if(params.type == 1) {
      responseBody = {bbb: 111}
     }
@@ -326,7 +333,7 @@ function NewRulePage(): JSX.Element {
       if (!editRule) {
         showAddRuleResult({
           status: EventResultStatus.Error,
-          error: 'Rule not found'
+          error: strings.ruleNotFound
         })
         return
       }
@@ -363,12 +370,12 @@ function NewRulePage(): JSX.Element {
   const handleDelConfirmOpen = (id: string) => {
     const curRule = findGroupOrRule(apiRules, id)
     modal.confirm({
-      title: `Are you sure delete "${curRule?.name}"?`,
+      title: strings.formatString(strings.deleteTitle, curRule!.name),
       icon: <ExclamationCircleFilled />,
-      content: 'Your will not be able to recover this rule!',
-      okText: 'Yes',
+      content: strings.formatString(strings.deleteDesc, strings.rule),
+      okText: strings.yes,
       okType: 'danger',
-      cancelText: 'No',
+      cancelText: strings.no,
       onOk: async () => {
         const result = await window.api.deleteRule(id)
         if (result.status === EventResultStatus.Success) {
@@ -405,76 +412,96 @@ function NewRulePage(): JSX.Element {
               </Button>
             </Tooltip>
             {editRuleId ? (
-              <Text>Edit Rule / {editRule?.name}</Text>
+              <Text>
+                {strings.editRule} / {editRule?.name}
+              </Text>
             ) : (
-              <Text>{groupId ? curRuleGroup?.name + ' / ' : ''}Create New Rule</Text>
+              <Text>
+                {groupId ? curRuleGroup?.name + ' / ' : ''}
+                {strings.createNewRule}
+              </Text>
             )}
           </Flex>
           <Space>
             <Form.Item name="enable" noStyle>
               <Switch
                 style={{ marginRight: '10px' }}
-                checkedChildren="Enabled"
-                unCheckedChildren="Disabled"
+                checkedChildren={strings.enabled}
+                unCheckedChildren={strings.enabled}
               ></Switch>
             </Form.Item>
             <Button type="primary" onClick={() => form.submit()}>
-              Save
+              {strings.save}
             </Button>
             {editRuleId && (
               <Button danger onClick={() => handleDelConfirmOpen(editRuleId)}>
-                Delete
+                {strings.delete}
               </Button>
             )}
           </Space>
         </div>
         <div className="paper-block e2">
-          <div className="paper-title">Rule Info: </div>
-          <Form.Item name="name" rules={[{ required: true, message: 'Rule name is required' }]}>
-            <Input placeholder="Add Rule Name" />
+          <div className="paper-title">{strings.ruleInfo}: </div>
+          <Form.Item
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: strings.formatString(strings.isRequired, strings.ruleName) as string
+              }
+            ]}
+          >
+            <Input placeholder={strings.addRuleName} />
           </Form.Item>
           <Form.Item name="description">
-            <Input.TextArea placeholder="Add Rule Description (Optional)" />
+            <Input.TextArea placeholder={strings.addRuleDescription} />
           </Form.Item>
         </div>
 
         <div className="paper-block e2">
-          <div className="paper-title">Match Rules: </div>
+          <div className="paper-title">{strings.matchRules}: </div>
           <Flex gap={4} style={{ paddingBottom: '4px' }} align="baseline">
             <Form.Item name={['matches', 'matchType']} noStyle>
               <Select
+                style={{ width: 100 }}
                 options={[
-                  { label: 'URL', value: 'url' },
-                  { label: 'Host', value: 'host' },
-                  { label: 'Path', value: 'path' }
+                  { label: strings.url, value: 'url' },
+                  { label: strings.host, value: 'host' },
+                  { label: strings.path, value: 'path' }
                 ]}
               />
             </Form.Item>
             <Form.Item name={['matches', 'matchMode']} noStyle>
               <Select
+                style={{ width: 180 }}
                 options={[
-                  { label: 'Contains', value: 'contains' },
-                  { label: 'Equals', value: 'equals' },
-                  { label: 'Matches(Regex)', value: 'matches' }
+                  { label: strings.contains, value: 'contains' },
+                  { label: strings.equals, value: 'equals' },
+                  { label: strings.matchesRegex, value: 'matches' }
                 ]}
               />
             </Form.Item>
             <Form.Item
               name={['matches', 'value']}
               style={{ flex: 1 }}
-              rules={[{ required: true, message: 'Match value is required' }]}
+              rules={[
+                {
+                  required: true,
+                  message: strings.formatString(strings.isRequired, strings.matchValue) as string
+                }
+              ]}
               noStyle
             >
-              <Input placeholder="Match Value" />
+              <Input placeholder={strings.matchValue} />
             </Form.Item>
             <Flex style={{ position: 'relative', top: 4 }}>
-              <Tooltip title="Test macth rules">
+              <Tooltip title={strings.testMatchValue}>
                 <ExperimentOutlined
                   style={{ fontSize: '16px', marginLeft: '8px' }}
                   onClick={() => setShowMatchTestModal(true)}
                 />
               </Tooltip>
-              <Tooltip title="Request methods filter">
+              <Tooltip title={strings.reqMethodsFilter}>
                 <DownCircleOutlined
                   onClick={() => setShowReqMethodsFilter(!showReqMethodsFilter)}
                   style={{
@@ -490,7 +517,7 @@ function NewRulePage(): JSX.Element {
             <Select
               allowClear
               mode="multiple"
-              placeholder="Select methods (leave empty to match all)"
+              placeholder={strings.selectMethods}
               style={{
                 width: '100%',
                 marginTop: '8px',
@@ -514,7 +541,7 @@ function NewRulePage(): JSX.Element {
           items={[
             {
               key: 'rules',
-              label: 'Rules',
+              label: strings.rules,
               children: (
                 <Form.List name="modifyList">
                   {(fields, { add, remove }) => (
@@ -528,7 +555,7 @@ function NewRulePage(): JSX.Element {
                       >
                         <Button type="primary" style={{ margin: '8px 0' }}>
                           <Space>
-                            Add Rules
+                            {strings.addRules}
                             <DownOutlined />
                           </Space>
                         </Button>
@@ -539,7 +566,7 @@ function NewRulePage(): JSX.Element {
                           style={{ position: 'relative' }}
                           className="paper-block e2"
                         >
-                          <Tooltip title="remove rule" placement="top" arrow>
+                          <Tooltip title={strings.removeRule} placement="top" arrow>
                             <DeleteOutlined
                               style={{
                                 position: 'absolute',
@@ -564,14 +591,14 @@ function NewRulePage(): JSX.Element {
             },
             {
               key: 'tests',
-              label: 'Test&Script',
+              label: strings.testAndScripts,
               children: (
                 <Flex justify="space-between" style={{ width: '100%' }}>
                   <Form.Item name="testScript" style={{ flex: 1 }}>
                     <MonacoEditor defaultLanguage="javascript" height={400} />
                   </Form.Item>
                   <div style={{ minWidth: 240, padding: '0 10px' }}>
-                    <div style={{ fontWeight: 'bold' }}>Snippets</div>
+                    <div style={{ fontWeight: 'bold' }}>{strings.snippets}</div>
                     <Flex vertical align="flex-start">
                       <Button type="text" onClick={() => insertSnippet('responseStatus200')}>
                         Response status code is 200
