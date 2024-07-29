@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import LogDetail from '@renderer/components/log-detail'
 import TestResults from '@renderer/components/test-results'
 import { Log, TestItem } from '@shared/contract'
+import { strings } from '@renderer/services/localization'
 
 type TestResultItem = {
   testResult: TestItem
@@ -60,11 +61,17 @@ export default function TestScriptsPage() {
       <Space>
         <span>LogId: {item.log.id}</span>
         <Divider type="vertical" style={{ borderColor: 'var(--color-text-2)' }} />
-        <span>All: {all}</span>
+        <span>
+          {strings.testAll}: {all}
+        </span>
         <Divider type="vertical" style={{ borderColor: 'var(--color-text-2)' }} />
-        <span>Passed: {passed}</span>
+        <span>
+          {strings.testPassed}: {passed}
+        </span>
         <Divider type="vertical" style={{ borderColor: 'var(--color-text-2)' }} />
-        <span>Failed: {failed}</span>
+        <span>
+          {strings.testFailed}: {failed}
+        </span>
       </Space>
     )
   }
@@ -78,12 +85,12 @@ export default function TestScriptsPage() {
         items={[
           {
             key: 'test-results',
-            label: 'Test Results',
+            label: strings.testResults,
             children: <TestResults logId={item.log.id} />
           },
           {
             key: 'log',
-            label: 'Request Details',
+            label: strings.reqDetails,
             children: <LogDetail log={item.log} hideTestResult={true} />
           }
         ]}
@@ -112,7 +119,7 @@ export default function TestScriptsPage() {
         <>
           <div>
             <Button type="primary" onClick={goCreateTest} style={{ marginRight: 10 }}>
-              Add rule to create a test
+              {strings.addRuleToCreateTest}
             </Button>
             {/* <Popconfirm
               title="Are you sure to clear all test result?"
@@ -135,7 +142,7 @@ export default function TestScriptsPage() {
       {testResultList.length === 0 && (
         <Empty>
           <Button type="primary" onClick={goCreateTest}>
-            Add rule to create a test
+            {strings.addRuleToCreateTest}
           </Button>
         </Empty>
       )}

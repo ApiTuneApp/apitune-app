@@ -13,7 +13,16 @@ export const strings = new LocalizedStrings({
     ca: 'CA',
     proxyPort: 'Proxy Port',
     themes: 'Themes',
-    language: 'Language'
+    language: 'Language',
+    apiRules: 'API Rules',
+    network: 'Network',
+    test: 'Test',
+    addRuleToCreateTest: 'Add rule to create a test',
+    testAll: 'All',
+    testFailed: 'Failed',
+    testPassed: 'Passed',
+    testResults: 'Test Results',
+    reqDetails: 'Request Details'
   },
   zh: {
     backHome: '返回首页',
@@ -27,6 +36,15 @@ export const strings = new LocalizedStrings({
     ca: '证书',
     proxyPort: '代理端口',
     themes: '主题',
-    language: '语言'
+    language: '语言',
+    apiRules: 'API 规则',
+    network: '网络',
+    test: '测试',
+    addRuleToCreateTest: '添加规则以创建测试用例',
+    testAll: '全部用例',
+    testFailed: '失败用例',
+    testPassed: '通过用例',
+    testResults: '测试结果',
+    reqDetails: '请求详情'
   }
 })

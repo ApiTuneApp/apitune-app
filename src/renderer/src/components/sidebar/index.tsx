@@ -9,38 +9,40 @@ import {
   RadarChartOutlined,
   SettingOutlined
 } from '@ant-design/icons'
+import { strings } from '@renderer/services/localization'
+import { useSettingStore } from '@renderer/store/setting'
 
 import type { MenuProps } from 'antd'
 type MenuItem = Required<MenuProps>['items'][number]
 
-const items: MenuItem[] = [
-  {
-    key: 'rules/list',
-    icon: <AppstoreOutlined style={{ fontSize: '18px' }} />,
-    label: 'API Rules'
-  },
-  {
-    key: 'network',
-    icon: <RadarChartOutlined style={{ fontSize: '18px' }} />,
-    label: 'Network'
-  },
-  {
-    key: 'testScripts',
-    icon: <FundProjectionScreenOutlined style={{ fontSize: '18px' }} />,
-    label: 'Test'
-  },
-  {
-    key: 'settings',
-    icon: <SettingOutlined style={{ fontSize: '18px' }} />,
-    label: 'Settings'
-  }
-]
-
 function Sidebar(): JSX.Element {
   const navigate = useNavigate()
+  const { language } = useSettingStore((state) => state)
   const onClick = (e: any) => {
     navigate('/' + e.key)
   }
+  const items: MenuItem[] = [
+    {
+      key: 'rules/list',
+      icon: <AppstoreOutlined style={{ fontSize: '18px' }} />,
+      label: strings.apiRules
+    },
+    {
+      key: 'network',
+      icon: <RadarChartOutlined style={{ fontSize: '18px' }} />,
+      label: strings.network
+    },
+    {
+      key: 'testScripts',
+      icon: <FundProjectionScreenOutlined style={{ fontSize: '18px' }} />,
+      label: strings.test
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined style={{ fontSize: '18px' }} />,
+      label: strings.settings
+    }
+  ]
   return (
     <Menu
       className="sidebar-menu"
