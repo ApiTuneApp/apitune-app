@@ -9,7 +9,7 @@ function ErrorPage(): JSX.Element {
   return (
     <Result
       status="error"
-      title="Oops! Something went wrong with your operation."
+      title={strings.somethingWrong}
       extra={
         <NavLink to={'/'}>
           <Button type="primary">{strings.backHome}</Button>

@@ -17,6 +17,7 @@ type MenuItem = Required<MenuProps>['items'][number]
 
 function Sidebar(): JSX.Element {
   const navigate = useNavigate()
+  // Reset component language when setting language changes
   const { language } = useSettingStore((state) => state)
   const onClick = (e: any) => {
     navigate('/' + e.key)
