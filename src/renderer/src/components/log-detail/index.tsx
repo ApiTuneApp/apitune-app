@@ -5,6 +5,7 @@ import { Collapse, CollapseProps, Descriptions, Tabs, TabsProps } from 'antd'
 import ReactJson from '@microlink/react-json-view'
 import TestResults from '@renderer/components/test-results'
 import { useSettingStore } from '@renderer/store/setting'
+import { strings } from '@renderer/services/localization'
 import { Log } from '@shared/contract'
 
 import MonacoEditor, { supportLanguage } from '../monaco-editor'
@@ -121,7 +122,7 @@ function previewComponent(log: Log, height: number | undefined) {
   const data = log.responseBodyInfo?.bodyText
   const appTheme = useSettingStore((state) => state.appTheme)
   if (isImg(type)) {
-    return <img src={log.url} alt="preview" />
+    return <img src={log.url} alt={strings.preview} />
   }
   if (log.responseBodyInfo?.isJson) {
     return (
@@ -138,7 +139,7 @@ function previewComponent(log: Log, height: number | undefined) {
   if (codeInfo.isCode) {
     return <MonacoEditor defaultLanguage={codeInfo.language} height={height || 400} value={data} />
   }
-  return <h4>Can not preview this type, you can see the results in response body</h4>
+  return <h4>{strings.cannotPreview}</h4>
 }
 
 function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element {
@@ -148,7 +149,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   const requestColItems: CollapseProps['items'] = [
     {
       key: 'general',
-      label: 'General',
+      label: strings.general,
       children: (
         <Descriptions
           size="small"
@@ -156,17 +157,17 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
           items={[
             {
               key: 'Request URL',
-              label: 'Request URL',
+              label: strings.requestUrl,
               children: [log.url]
             },
             {
               key: 'Request Method',
-              label: 'Request Method',
+              label: strings.requestMethod,
               children: [log.method]
             },
             {
               key: 'Remote Address',
-              label: 'Remote Address',
+              label: strings.remoteAddress,
               children: [`${log.remoteIp}:${log.remotePort}`]
             }
           ]}
@@ -175,12 +176,12 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     },
     {
       key: 'requestHeader',
-      label: 'Request Header',
+      label: strings.requestHeaders,
       children: <LogObjBlock data={log.requestHeaders} />
     },
     {
       key: 'requestParams',
-      label: 'Request Parameters',
+      label: strings.requestParameters,
       children: requestParams.isJson ? (
         <ReactJson
           src={requestParams.data as Record<string, unknown>}
@@ -198,14 +199,14 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   const responseColItems: CollapseProps['items'] = [
     {
       key: 'general',
-      label: 'General',
+      label: strings.general,
       children: (
         <Descriptions
           column={1}
           items={[
             {
               key: 'Status Code',
-              label: 'Status Code',
+              label: strings.statusCode,
               children: [log.status]
             }
           ]}
@@ -214,12 +215,12 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     },
     {
       key: 'responseHeader',
-      label: 'Response Header',
+      label: strings.responseHeaders,
       children: <LogObjBlock data={log.responseHeaders} />
     },
     {
       key: 'responseBody',
-      label: 'Response Body',
+      label: strings.responseBody,
       children: (
         <MonacoEditor
           defaultLanguage="plaintext"
@@ -233,7 +234,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   let items: TabsProps['items'] = [
     {
       key: 'request',
-      label: 'Request',
+      label: strings.request,
       children: (
         <Collapse
           size="small"
@@ -244,7 +245,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     },
     {
       key: 'response',
-      label: 'Response',
+      label: strings.response,
       children: (
         <Collapse
           size="small"
@@ -255,12 +256,12 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     },
     {
       key: 'preview',
-      label: 'Preview',
+      label: strings.preview,
       children: previewComponent(log, height)
     },
     {
       key: 'testResults',
-      label: 'Test Results',
+      label: strings.testResults,
       children: <TestResults logId={log.id} />
     }
   ]

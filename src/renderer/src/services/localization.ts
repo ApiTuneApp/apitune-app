@@ -35,7 +35,21 @@ export const strings = new LocalizedStrings({
     path: 'Path',
     status: 'Status',
     matchedRules: 'MatchedRules',
-    method: 'Method'
+    method: 'Method',
+    cannotPreview: 'Can not preview this type, you can see the results in response body',
+    general: 'General',
+    requestUrl: 'Request URL',
+    requestMethod: 'Request Method',
+    remoteAddress: 'Remote Address',
+    requestHeaders: 'Request Headers',
+    requestParameters: 'Request Parameters',
+    requestBody: 'Request Body',
+    responseHeaders: 'Response Headers',
+    responseBody: 'Response Body',
+    request: 'Request',
+    response: 'Response',
+    preview: 'Preview',
+    statusCode: 'Status Code'
   },
   zh: {
     backHome: '返回首页',
@@ -71,6 +85,20 @@ export const strings = new LocalizedStrings({
     path: '路径',
     status: '状态',
     matchedRules: '匹配规则',
-    method: '方法'
+    method: '方法',
+    cannotPreview: '无法预览此类型，您可以在响应body中查看结果',
+    general: '概要',
+    requestUrl: '请求 URL',
+    requestMethod: '请求方法',
+    remoteAddress: '远程地址',
+    requestHeaders: '请求头',
+    requestParameters: '请求参数',
+    requestBody: '请求体',
+    responseHeaders: '响应头',
+    responseBody: '响应体',
+    request: '请求',
+    response: '响应',
+    preview: '预览',
+    statusCode: '状态码'
   }
 })
