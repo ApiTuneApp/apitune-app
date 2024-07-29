@@ -52,7 +52,20 @@ export const strings = new LocalizedStrings({
     statusCode: 'Status Code',
     noTestResults: 'No Test Results',
     createNewTest: 'Create new rule to test api result',
-    rule: 'Rule'
+    rule: 'Rule',
+    enableGroup: 'Enable Group',
+    disableGroup: 'Disable Group',
+    enableRule: 'Enable Rule',
+    disableRule: 'Disable Rule',
+    disableTooltip: 'The rule group is disabled. Please enable it first.',
+    addRule: 'Add Rule',
+    rename: 'Rename',
+    delete: 'Delete',
+    addGroup: 'Add Group',
+    goGroupList: 'Go Group List',
+    edit: 'Edit',
+    new: 'New',
+    ruleGroupName: 'Rule Group Name'
   },
   zh: {
     backHome: '返回首页',
@@ -105,6 +118,19 @@ export const strings = new LocalizedStrings({
     statusCode: '状态码',
     noTestResults: '没有测试结果',
     createNewTest: '创建新规则以测试 API 结果',
-    rule: '规则'
+    rule: '规则',
+    enableGroup: '启用分组',
+    disableGroup: '禁用分组',
+    enableRule: '启用规则',
+    disableRule: '禁用规则',
+    disableTooltip: '规则分组已禁用，请先启用',
+    addRule: '添加规则',
+    rename: '重命名',
+    delete: '删除',
+    addGroup: '添加分组',
+    goGroupList: '前往分组列表',
+    edit: '编辑',
+    new: '新建',
+    ruleGroupName: '规则组名称'
   }
 })

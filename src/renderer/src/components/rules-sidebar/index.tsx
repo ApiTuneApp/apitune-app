@@ -15,6 +15,7 @@ import {
 } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
+import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useUxStore } from '@renderer/store/ux'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
@@ -32,26 +33,6 @@ type RuleTreeItemProps = {
   onMenuClick: (key: string, rule: RuleGroup) => void
 }
 
-const RuleGroupDropdown: MenuProps['items'] = [
-  {
-    key: 'ruleGroupEnable',
-    label: 'Enable Group'
-  },
-  {
-    key: 'addRule',
-    label: 'Add Rule'
-  },
-  {
-    key: 'rename',
-    label: 'Rename'
-  },
-  {
-    key: 'delete',
-    label: 'Delete',
-    danger: true
-  }
-]
-
 const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   props: RuleTreeItemProps,
   ref: React.Ref<HTMLLIElement>
@@ -60,16 +41,39 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
   const [showMenu, setShowMenu] = React.useState(false)
   const apiRules = useRuleStore((state) => state.apiRules)
 
-  const ruleGroup = findParentGroup(apiRules, rule.id)
-  let ruleGroupEnable = true
-  if (ruleGroup) {
-    ruleGroupEnable = ruleGroup.enable
+  const RuleGroupDropdown: MenuProps['items'] = [
+    {
+      key: 'ruleGroupEnable',
+      label: strings.enableGroup
+    },
+    {
+      key: 'addRule',
+      label: strings.addRule
+    },
+    {
+      key: 'rename',
+      label: strings.rename
+    },
+    {
+      key: 'delete',
+      label: strings.delete,
+      danger: true
+    }
+  ]
+
+  if (rule.kind === 'group') {
     ;(
       RuleGroupDropdown[0] as {
         key: string
         label: string
       }
-    ).label = !ruleGroupEnable ? 'Enable Group' : 'Disable Group'
+    ).label = !rule.enable ? strings.enableGroup : strings.disableGroup
+  }
+
+  const parentGroup = findParentGroup(apiRules, rule.id)
+  let ruleGroupEnable = true
+  if (parentGroup) {
+    ruleGroupEnable = parentGroup.enable
   }
 
   const handleSwitchClick = (e: React.MouseEvent, checked: boolean, ruleId: string) => {
@@ -125,9 +129,9 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
           title={
             ruleGroupEnable
               ? rule.enable
-                ? 'Disable rule'
-                : 'Enable rule'
-              : 'The rule group is disabled. Please enable it first.'
+                ? strings.disableRule
+                : strings.enableRule
+              : strings.disableTooltip
           }
           arrow
         >
@@ -239,19 +243,19 @@ function RulesSidebar(): JSX.Element {
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
-        <Tooltip title="Add Group" arrow overlayClassName="j-autohide-tooltip">
+        <Tooltip title={strings.addGroup} arrow overlayClassName="j-autohide-tooltip">
           <Button
             type="text"
             icon={<FolderAddOutlined />}
             onClick={() => setAddGroupDialogOpen(true)}
           />
         </Tooltip>
-        <Tooltip title="Add Rule" arrow overlayClassName="j-autohide-tooltip">
+        <Tooltip title={strings.addRule} arrow overlayClassName="j-autohide-tooltip">
           <NavLink to="/rules/new">
             <Button type="text" icon={<PlusSquareOutlined />} />
           </NavLink>
         </Tooltip>
-        <Tooltip title="Go Group List" arrow overlayClassName="j-autohide-tooltip">
+        <Tooltip title={strings.goGroupList} arrow overlayClassName="j-autohide-tooltip">
           <NavLink to="/rules/list">
             <Button type="text" icon={<UnorderedListOutlined />} />
           </NavLink>

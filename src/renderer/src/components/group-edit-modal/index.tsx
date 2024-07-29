@@ -2,6 +2,7 @@ import { Input, Modal } from 'antd'
 import * as React from 'react'
 
 import * as Service from '@renderer/services'
+import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { EventResultStatus } from '@shared/contract'
 
@@ -58,7 +59,7 @@ export default function GroupEditModal(props: NameModalProps): JSX.Element {
     <Modal
       centered
       destroyOnClose
-      title={`${groupId ? 'Edit' : 'New'} Rule Group Name`}
+      title={`${groupId ? strings.edit : strings.new} ${strings.ruleGroupName}`}
       open={open}
       onOk={handelAddGroupSubmit}
       onCancel={() => onClose()}
