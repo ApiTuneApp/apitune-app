@@ -260,8 +260,8 @@ export async function sandbox(sandbox: any, script: string) {
       displayErrors: true
     })
     return sandbox
-  } catch (error) {
-    log.error('[Sandbox] error', error)
+  } catch (error: any) {
+    log.error('[Sandbox] error', error.message)
   }
 }
 
