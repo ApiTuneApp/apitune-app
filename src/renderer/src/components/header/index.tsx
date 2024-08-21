@@ -36,7 +36,7 @@ function Header(): JSX.Element {
         </Text>
       </div>
       <Button type="primary" onClick={handleSignIn}>
-        Sign In
+        {strings.signIn}
       </Button>
       {/* <div className="profile"></div> */}
     </div>

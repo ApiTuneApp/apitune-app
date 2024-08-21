@@ -1,4 +1,3 @@
-import { group } from 'console'
 import LocalizedStrings from 'react-localization'
 
 export const strings = new LocalizedStrings({
@@ -146,7 +145,9 @@ export const strings = new LocalizedStrings({
     inputRewriteUrl: 'Please input rewrite url',
     speedLimit: 'Speed Limit',
     speedLimitRequired: 'Speed limit is required',
-    inputSpeedLimit: 'Please input speed limit'
+    inputSpeedLimit: 'Please input speed limit',
+    signIn: 'Sign In',
+    signOut: 'Sign Out'
   },
   zh: {
     backHome: '返回首页',
@@ -289,6 +290,8 @@ export const strings = new LocalizedStrings({
     rewriteTo: '重写为',
     rewriteUrlRequired: '重写 URL 是必填项',
     invalidUrl: '无效的 URL',
-    inputRewriteUrl: '请输入重写 URL'
+    inputRewriteUrl: '请输入重写 URL',
+    signIn: '登录',
+    signOut: '登出'
   }
 })
