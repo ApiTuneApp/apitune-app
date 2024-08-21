@@ -1,6 +1,6 @@
 import './header.less'
 
-import { Badge, Typography } from 'antd'
+import { Badge, Button, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
 import { strings } from '@renderer/services/localization'
@@ -17,6 +17,10 @@ function Header(): JSX.Element {
     })
   }, [])
 
+  const handleSignIn = () => {
+    window.api.openSignInPage()
+  }
+
   return (
     <div className="app-header">
       <Text>{strings.myWorkspace}</Text>
@@ -31,7 +35,10 @@ function Header(): JSX.Element {
           {strings.proxyServerListeningOn}:{ip + ':' + port}
         </Text>
       </div>
-      <div className="profile"></div>
+      <Button type="primary" onClick={handleSignIn}>
+        Sign In
+      </Button>
+      {/* <div className="profile"></div> */}
     </div>
   )
 }

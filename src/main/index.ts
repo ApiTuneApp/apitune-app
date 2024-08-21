@@ -37,6 +37,9 @@ import {
   MemeoryLogStorage
 } from './storage'
 
+const isDev = !app.isPackaged
+const DoMain = isDev ? 'http://localhost:3000' : 'https://apitune.io'
+
 initSettingData()
 
 // TODO: handle default port is in use
@@ -638,6 +641,15 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.ClearTestResult, (event) => {
     return new Promise((resolve) => {
       LogTestResult.clearTestResult()
+      resolve({
+        status: EventResultStatus.Success
+      })
+    })
+  })
+
+  ipcMain.handle(RenderEvent.OpenSignInPage, (event) => {
+    return new Promise((resolve) => {
+      shell.openExternal(`${DoMain}/login?source=app`)
       resolve({
         status: EventResultStatus.Success
       })

@@ -37,6 +37,7 @@ declare global {
       getAllTestResults: () => Promise<LogTestResultMap>
       clearTestResult: () => Promise<IpcResult>
       changeLanguage: (language: SettingStorage['language']) => Promise<IpcResult>
+      openSignInPage: () => Promise<IpcResult>
     }
   }
 }

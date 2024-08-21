@@ -74,6 +74,9 @@ const api = {
   },
   clearTestResult: (): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.ClearTestResult)
+  },
+  openSignInPage: (): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.OpenSignInPage)
   }
 }
 

@@ -18,7 +18,8 @@ export enum RenderEvent {
   GetProxyLogs = 'getProxyLogs',
   ClearTestResult = 'clearTestResult',
   GetLanguage = 'getLanguage',
-  ChangeLanguage = 'changeLanguage'
+  ChangeLanguage = 'changeLanguage',
+  OpenSignInPage = 'openSignInPage'
 }
 
 export enum MainEvent {
