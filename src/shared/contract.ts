@@ -238,3 +238,10 @@ export type TestItem = {
 export type LogTestResultMap = {
   [logId: string]: TestItem
 }
+
+export type User = {
+  id: string
+  email: string
+  name: string
+  avatar: string
+}

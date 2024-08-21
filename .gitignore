@@ -6,3 +6,8 @@ out
 debug.ts
 debug.js
 debug
+
+# dotenv environment variables file
+.env
+.env.test
+.env.local

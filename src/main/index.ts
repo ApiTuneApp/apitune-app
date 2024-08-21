@@ -37,8 +37,7 @@ import {
   MemeoryLogStorage
 } from './storage'
 
-const isDev = !app.isPackaged
-const DoMain = isDev ? 'http://localhost:3000' : 'https://apitune.io'
+const DoMain = import.meta.env.VITE_SITE_URL
 
 initSettingData()
 

@@ -1,23 +1,36 @@
 import './header.less'
 
-import { Badge, Button, Typography } from 'antd'
+import { Avatar, Badge, Button, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
 import { strings } from '@renderer/services/localization'
 import { useSettingStore } from '@renderer/store/setting'
+import { getUser } from '@renderer/services/auth'
+import { User } from '@shared/contract'
 
 const { Text } = Typography
 
 function Header(): JSX.Element {
   const port = useSettingStore((state) => state.port)
+  const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [ip, setIp] = useState<string>('')
+  const [user, setUser] = useState<User>()
   useEffect(() => {
     window.api.getIp().then((ip) => {
       setIp(ip)
     })
   }, [])
 
-  const handleSignIn = () => {
+  useEffect(() => {
+    getUser().then((user) => {
+      setLoggedIn(user !== null)
+      if (user) {
+        setUser(user as unknown as User)
+      }
+    })
+  }, [])
+
+  const handleSignIn = async () => {
     window.api.openSignInPage()
   }
 
@@ -35,9 +48,16 @@ function Header(): JSX.Element {
           {strings.proxyServerListeningOn}:{ip + ':' + port}
         </Text>
       </div>
-      <Button type="primary" onClick={handleSignIn}>
-        {strings.signIn}
-      </Button>
+      {!loggedIn ? (
+        <Button type="primary" onClick={handleSignIn}>
+          {strings.signIn}
+        </Button>
+      ) : (
+        <div className="profile">
+          <Avatar src={user!.avatar} />
+          <Text>{user!.name}</Text>
+        </div>
+      )}
       {/* <div className="profile"></div> */}
     </div>
   )
