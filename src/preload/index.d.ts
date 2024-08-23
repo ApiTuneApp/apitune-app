@@ -14,11 +14,15 @@ import {
 
 type onProxyLogCallback = (log: Log) => void
 
+type onAuthCodeCallback = (access_token: string, refresh_token: string) => void
+
 declare global {
   interface Window {
     electron: ElectronAPI
     api: {
       onProxyLog: (callback: onProxyLogCallback) => void
+      onAuthCode: (callback: onAuthCodeCallback) => void
+      setAuth: (accessToken: string, refreshToken: string) => void
       getProxyLogs: () => Promise<Log[]>
       getApiRules: () => Promise<ApiRules>
       clearupEvent: (event: MainEvent | RenderEvent) => void
@@ -37,7 +41,7 @@ declare global {
       getAllTestResults: () => Promise<LogTestResultMap>
       clearTestResult: () => Promise<IpcResult>
       changeLanguage: (language: SettingStorage['language']) => Promise<IpcResult>
-      openSignInPage: () => Promise<IpcResult>
+      openSignInPage: () => void
     }
   }
 }

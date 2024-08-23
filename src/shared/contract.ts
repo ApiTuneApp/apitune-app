@@ -19,12 +19,14 @@ export enum RenderEvent {
   ClearTestResult = 'clearTestResult',
   GetLanguage = 'getLanguage',
   ChangeLanguage = 'changeLanguage',
-  OpenSignInPage = 'openSignInPage'
+  OpenSignInPage = 'openSignInPage',
+  SetAuth = 'setAuth'
 }
 
 export enum MainEvent {
   RendererLog = 'rendererLog',
-  ProxyLog = 'proxyLog'
+  ProxyLog = 'proxyLog',
+  GetAuthCode = 'getAuthCode'
 }
 
 export enum EventResultStatus {

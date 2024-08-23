@@ -18,6 +18,14 @@ const api = {
   onProxyLog: (callback): void => {
     ipcRenderer.on(MainEvent.ProxyLog, (_, log) => callback(log))
   },
+  onAuthCode: (callback): void => {
+    ipcRenderer.on(MainEvent.GetAuthCode, (_, accessToken, refreshToken) =>
+      callback(accessToken, refreshToken)
+    )
+  },
+  setAuth: (accessToken: string, refreshToken: string): void => {
+    ipcRenderer.send(RenderEvent.SetAuth, accessToken, refreshToken)
+  },
   getProxyLogs: (): Promise<Log[]> => {
     return ipcRenderer.invoke(RenderEvent.GetProxyLogs)
   },
@@ -75,8 +83,8 @@ const api = {
   clearTestResult: (): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.ClearTestResult)
   },
-  openSignInPage: (): Promise<IpcResult> => {
-    return ipcRenderer.invoke(RenderEvent.OpenSignInPage)
+  openSignInPage: (): void => {
+    ipcRenderer.send(RenderEvent.OpenSignInPage)
   }
 }
 

@@ -29,3 +29,8 @@ export function getApiRules(apiRules: ApiRules): void {
   if (!webContents) return
   webContents.send(RenderEvent.GetApiRules, apiRules)
 }
+
+export function getAuthCode(accessToken: string, refreshToken: string): void {
+  if (!webContents) return
+  webContents.send(MainEvent.GetAuthCode, accessToken, refreshToken)
+}

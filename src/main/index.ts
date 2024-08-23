@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, shell, safeStorage } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
 import log from 'electron-log/main'
@@ -22,7 +22,7 @@ import {
   Theme
 } from '../shared/contract'
 import { findGroupOrRule } from '../shared/utils'
-import { initCommunicator } from './communicator'
+import { getAuthCode, initCommunicator } from './communicator'
 import crtMgr from './server/cert-manager'
 import config from './server/config'
 import { changeServerPort, initServer } from './server/init'
@@ -80,6 +80,8 @@ function createWindow(): void {
   }
 }
 
+app.setAsDefaultProtocolClient('apitune')
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -93,6 +95,22 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+
+  app.on('open-url', (event, url) => {
+    event.preventDefault()
+    const parsedUrl = new URL(url)
+    const accessToken = parsedUrl.searchParams.get('access_token')
+    const refreshToken = parsedUrl.searchParams.get('refresh_token')
+    if (accessToken && refreshToken) {
+      getAuthCode(accessToken, refreshToken)
+    }
+  })
+
+  // ipcMain.handle(RenderEvent.SetAuth, (event, accessToken: string, refreshToken: string) => {
+  //   if(accessToken && refreshToken) {
+
+  //   }
+  // })
 
   ipcMain.handle(RenderEvent.AddRule, (event, rules: string, opts?: AddGroupOpts) => {
     return new Promise((resolve, reject) => {
@@ -646,13 +664,8 @@ app.whenReady().then(() => {
     })
   })
 
-  ipcMain.handle(RenderEvent.OpenSignInPage, (event) => {
-    return new Promise((resolve) => {
-      shell.openExternal(`${DoMain}/login?source=app`)
-      resolve({
-        status: EventResultStatus.Success
-      })
-    })
+  ipcMain.on(RenderEvent.OpenSignInPage, (_, codeChallenge) => {
+    shell.openExternal(`${DoMain}/login?source=app`)
   })
 
   const dataPath = Storage.getDataPath()
