@@ -6,8 +6,15 @@ import { strings } from './localization'
 
 export function getApiRules() {
   const initApiRules = useRuleStore.getState().initApiRules
-  window.api.getApiRules().then((apiRules) => {
-    initApiRules(apiRules)
+  const initSyncInfo = useRuleStore.getState().initSyncInfo
+  // window.api.getApiRules().then((apiRules) => {
+  //   initApiRules(apiRules)
+  // })
+  window.api.getRuleStorage().then((ruleStorage) => {
+    initApiRules(ruleStorage.apiRules || [])
+    if (ruleStorage.syncInfo) {
+      initSyncInfo(ruleStorage.syncInfo)
+    }
   })
   return () => {
     window.api.clearupEvent(RenderEvent.GetApiRules)

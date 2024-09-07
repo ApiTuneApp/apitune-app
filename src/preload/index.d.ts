@@ -1,6 +1,7 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 import {
   MainEvent,
+  RuleStorage,
   RuleStorageParams,
   IpcResult,
   RenderEvent,
@@ -9,7 +10,8 @@ import {
   SettingStorage,
   AppTheme,
   TestItem,
-  LogTestResultMap
+  LogTestResultMap,
+  SyncInfo
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -25,6 +27,8 @@ declare global {
       setAuth: (accessToken: string, refreshToken: string) => void
       getProxyLogs: () => Promise<Log[]>
       getApiRules: () => Promise<ApiRules>
+      getRuleStorage: () => Promise<RuleStorage>
+      setSyncInfo: (syncInfo: SyncInfo) => void
       clearupEvent: (event: MainEvent | RenderEvent) => void
       addRule: (ruleStr: string, opts?: AddGroupOpts) => Promise<IpcResult>
       updateRule: (id: string, ruleStr: string) => Promise<IpcResult>

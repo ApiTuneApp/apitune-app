@@ -423,6 +423,37 @@ app.whenReady().then(() => {
     })
   })
 
+  ipcMain.handle(RenderEvent.GetRuleStorage, (event) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+        if (data) {
+          resolve(data)
+        } else {
+          resolve([])
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
+  })
+
+  ipcMain.on(RenderEvent.SetSyncInfo, (_, syncInfo) => {
+    try {
+      const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+      if (data) {
+        data.syncInfo = syncInfo
+        Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+          if (error) {
+            log.error('[SetSyncInfo] Failed to storage rule', error)
+          }
+        })
+      }
+    } catch (error) {
+      log.error('[SetSyncInfo] Failed', error)
+    }
+  })
+
   ipcMain.handle(RenderEvent.GetSettings, (event) => {
     return new Promise((resolve, reject) => {
       const local = app.getLocale() // en-US

@@ -6,6 +6,7 @@ export enum RenderEvent {
   EnableRule = 'enableRule',
   UpdateRuleGroupName = 'updateRuleGroupName',
   GetApiRules = 'getApiRules',
+  GetRuleStorage = 'getRuleStorage',
   DeleteRule = 'deleteRule',
   GetSettings = 'getSettings',
   ChangePort = 'changePort',
@@ -20,7 +21,8 @@ export enum RenderEvent {
   GetLanguage = 'getLanguage',
   ChangeLanguage = 'changeLanguage',
   OpenSignInPage = 'openSignInPage',
-  SetAuth = 'setAuth'
+  SetAuth = 'setAuth',
+  SetSyncInfo = 'setSyncInfo'
 }
 
 export enum MainEvent {
@@ -197,9 +199,16 @@ export type ApiRuleItem = RuleGroup | RuleData
 
 export type ApiRules = Array<RuleGroup | RuleData>
 
+export type SyncInfo = {
+  userId: string
+  syncDate: number
+  syncStatus: 'synced' | 'syncing' | 'error'
+}
+
 export interface RuleStorage {
   version: string
   apiRules: ApiRules
+  syncInfo?: SyncInfo
 }
 
 export type RuleStorageParams = Partial<RuleStorage>

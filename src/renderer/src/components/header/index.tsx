@@ -8,12 +8,14 @@ import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useSettingStore } from '@renderer/store/setting'
-import { MainEvent, User } from '@shared/contract'
+import { MainEvent, SyncInfo, User } from '@shared/contract'
 
 const { Text } = Typography
 
 function Header(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
+  const initSyncInfo = useRuleStore.getState().initSyncInfo
+
   const port = useSettingStore((state) => state.port)
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [ip, setIp] = useState<string>('')
@@ -24,6 +26,26 @@ function Header(): JSX.Element {
     name: '',
     avatar: ''
   })
+
+  function _syncRule() {
+    dbService
+      .syncRuleData(apiRules)
+      .then((res) => {
+        console.log('Synced:', res)
+        setSyncingStatus(true)
+        const syncInfo = {
+          userId: user.id,
+          syncDate: Date.now(),
+          syncStatus: 'synced'
+        } as SyncInfo
+        window.api.setSyncInfo(syncInfo)
+        initSyncInfo(syncInfo)
+      })
+      .catch((err) => {
+        console.log('sync error', err)
+      })
+  }
+
   useEffect(() => {
     window.api.getIp().then((ip) => {
       setIp(ip)
@@ -41,18 +63,17 @@ function Header(): JSX.Element {
           name: user.user_metadata.name ?? '',
           avatar: user.user_metadata.avatar_url ?? ''
         })
-        dbService
-          .syncRuleData(apiRules)
-          .then((res) => {
-            console.log('Synced:', res)
-            setSyncingStatus(true)
-          })
-          .catch((err) => {
-            console.log('sync error', err)
-          })
+        console.log('apiRules', apiRules)
+        _syncRule()
       }
     })
   }, [])
+  useEffect(() => {
+    console.log('apiRules updated', apiRules)
+    if (apiRules && apiRules.length > 0 && loggedIn) {
+      _syncRule()
+    }
+  }, [apiRules, loggedIn])
 
   useEffect(() => {
     const handleAuth = async (accessToken: string, refreshToken: string) => {
@@ -68,15 +89,7 @@ function Header(): JSX.Element {
               name: user.user_metadata.name ?? '',
               avatar: user.user_metadata.avatar_url ?? ''
             })
-            dbService
-              .syncRuleData(apiRules)
-              .then((res) => {
-                console.log('Synced:', res)
-                setSyncingStatus(true)
-              })
-              .catch((err) => {
-                console.log('sync error', err)
-              })
+            _syncRule()
           }
         } catch (error) {
           console.log('Error auth:', error)
@@ -118,6 +131,7 @@ function Header(): JSX.Element {
 
   return (
     <div className="app-header">
+      <span style={{ display: 'none' }}>{apiRules.length}</span>
       <Text>{strings.myWorkspace}</Text>
       <div className="ip-item">
         <Badge status="success" style={{ marginRight: 4 }} />

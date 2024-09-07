@@ -10,7 +10,9 @@ import {
   TestItem,
   LogTestResultMap,
   Log,
-  SettingStorage
+  SettingStorage,
+  RuleStorage,
+  SyncInfo
 } from '../shared/contract'
 
 // Custom APIs for renderer
@@ -43,6 +45,12 @@ const api = {
   },
   getApiRules: (): Promise<ApiRules> => {
     return ipcRenderer.invoke(RenderEvent.GetApiRules)
+  },
+  getRuleStorage: (): Promise<RuleStorage> => {
+    return ipcRenderer.invoke(RenderEvent.GetRuleStorage)
+  },
+  setSyncInfo: (syncInfo: SyncInfo): void => {
+    ipcRenderer.send(RenderEvent.SetSyncInfo, syncInfo)
   },
   updateRuleGroupName: (id: string, ruleName: string): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.UpdateRuleGroupName, id, ruleName)
