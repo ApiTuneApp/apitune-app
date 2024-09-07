@@ -9,11 +9,13 @@ import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useSettingStore } from '@renderer/store/setting'
 import { MainEvent, SyncInfo, User } from '@shared/contract'
+import { CheckCircleTwoTone, LoadingOutlined } from '@ant-design/icons'
 
 const { Text } = Typography
 
 function Header(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
+  const ruleInited = useRuleStore((state) => state.ruleInited)
   const initSyncInfo = useRuleStore.getState().initSyncInfo
 
   const port = useSettingStore((state) => state.port)
@@ -28,22 +30,27 @@ function Header(): JSX.Element {
   })
 
   function _syncRule() {
-    dbService
-      .syncRuleData(apiRules)
-      .then((res) => {
-        console.log('Synced:', res)
-        setSyncingStatus(true)
-        const syncInfo = {
-          userId: user.id,
-          syncDate: Date.now(),
-          syncStatus: 'synced'
-        } as SyncInfo
-        window.api.setSyncInfo(syncInfo)
-        initSyncInfo(syncInfo)
-      })
-      .catch((err) => {
-        console.log('sync error', err)
-      })
+    setSyncingStatus(true)
+    window.api.getApiRules().then((rules) => {
+      console.log('syncing rules', rules)
+      dbService
+        .syncRuleData(rules)
+        .then((res) => {
+          console.log('Synced:', res)
+          const syncInfo = {
+            userId: user.id,
+            syncDate: Date.now(),
+            syncStatus: 'synced'
+          } as SyncInfo
+          window.api.setSyncInfo(syncInfo)
+          initSyncInfo(syncInfo)
+          setSyncingStatus(false)
+        })
+        .catch((err) => {
+          console.log('sync error', err)
+          setSyncingStatus(false)
+        })
+    })
   }
 
   useEffect(() => {
@@ -69,11 +76,11 @@ function Header(): JSX.Element {
     })
   }, [])
   useEffect(() => {
-    console.log('apiRules updated', apiRules)
-    if (apiRules && apiRules.length > 0 && loggedIn) {
+    if (ruleInited && loggedIn) {
+      console.log('apiRules ruleInited updated', apiRules)
       _syncRule()
     }
-  }, [apiRules, loggedIn])
+  }, [apiRules, loggedIn, ruleInited])
 
   useEffect(() => {
     const handleAuth = async (accessToken: string, refreshToken: string) => {
@@ -115,9 +122,9 @@ function Header(): JSX.Element {
       disabled: true
     },
     {
-      label: !syncingStatus ? strings.syncing : strings.synced,
-      key: 'sync',
-      disabled: true
+      label: syncingStatus ? strings.syncing : strings.synced,
+      icon: syncingStatus ? <LoadingOutlined /> : <CheckCircleTwoTone twoToneColor="#52c41a" />,
+      key: 'sync'
     },
     {
       label: 'Sign Out',

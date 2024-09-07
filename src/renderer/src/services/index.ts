@@ -7,6 +7,7 @@ import { strings } from './localization'
 export function getApiRules() {
   const initApiRules = useRuleStore.getState().initApiRules
   const initSyncInfo = useRuleStore.getState().initSyncInfo
+  const setRuleInited = useRuleStore.getState().setRuleInited
   // window.api.getApiRules().then((apiRules) => {
   //   initApiRules(apiRules)
   // })
@@ -15,6 +16,7 @@ export function getApiRules() {
     if (ruleStorage.syncInfo) {
       initSyncInfo(ruleStorage.syncInfo)
     }
+    setRuleInited(true)
   })
   return () => {
     window.api.clearupEvent(RenderEvent.GetApiRules)
