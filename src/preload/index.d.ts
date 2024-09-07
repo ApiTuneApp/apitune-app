@@ -47,6 +47,7 @@ declare global {
       changeLanguage: (language: SettingStorage['language']) => Promise<IpcResult>
       openSignInPage: () => void
       cleanRuleData: () => Promise<IpcResult>
+      initServerRules: (rules: ApiRules, syncInfo: SyncInfo) => Promise<IpcResult>
     }
   }
 }

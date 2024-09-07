@@ -1,13 +1,18 @@
 import { supabase } from './auth'
 import { ApiRules } from '@shared/contract'
 
-// export const getRules = async () => {
-//   const { data, error } = await supabase.from('rules').select('*')
-//   if (error) {
-//     throw error
-//   }
-//   return data
-// }
+export const getUserRules = async () => {
+  const user = await supabase.auth.getUser()
+  if (!user || !user.data.user?.id) {
+    throw new Error('User not authenticated')
+  }
+  const userId = user.data.user.id
+  const { data, error } = await supabase.from('rules').select('*').eq('user_id', userId).single()
+  if (error) {
+    throw error
+  }
+  return data
+}
 
 export const syncRuleData = async (rule_data: ApiRules) => {
   // Step 1: Get the authenticated user
@@ -38,7 +43,7 @@ export const syncRuleData = async (rule_data: ApiRules) => {
     // Step 3a: Update the existing row
     const { data, error } = await supabase
       .from('rules')
-      .update({ rule_data: rule_data as any })
+      .update({ rule_data: rule_data as any, updated_at: new Date().toISOString() })
       .eq('user_id', userId)
 
     if (error) {
@@ -50,7 +55,8 @@ export const syncRuleData = async (rule_data: ApiRules) => {
     const { data, error } = await supabase.from('rules').insert([
       {
         rule_data: rule_data as any,
-        user_id: userId
+        user_id: userId,
+        updated_at: new Date().toISOString()
       }
     ])
 

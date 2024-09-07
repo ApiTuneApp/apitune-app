@@ -13,7 +13,8 @@ import config from './server/config'
 
 export let DefaultRuleData: RuleStorage = {
   version: packageJson.version,
-  apiRules: []
+  apiRules: [],
+  updatedAt: 0
 }
 
 export function initRuntimeRules() {

@@ -23,7 +23,8 @@ export enum RenderEvent {
   OpenSignInPage = 'openSignInPage',
   SetAuth = 'setAuth',
   SetSyncInfo = 'setSyncInfo',
-  CleanRuleData = 'cleanRuleData'
+  CleanRuleData = 'cleanRuleData',
+  InitServerRules = 'initServerRules'
 }
 
 export enum MainEvent {
@@ -210,6 +211,7 @@ export interface RuleStorage {
   version: string
   apiRules: ApiRules
   syncInfo?: SyncInfo
+  updatedAt: number
 }
 
 export type RuleStorageParams = Partial<RuleStorage>

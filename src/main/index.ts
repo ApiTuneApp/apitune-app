@@ -13,12 +13,14 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import {
   AddGroupOpts,
+  ApiRules,
   CaEventType,
   EventResultStatus,
   RenderEvent,
   RuleData,
   RuleGroup,
   RuleStorage,
+  SyncInfo,
   Theme
 } from '../shared/contract'
 import { findGroupOrRule } from '../shared/utils'
@@ -180,6 +182,7 @@ app.whenReady().then(() => {
             const rule = findGroupOrRule(data.apiRules, id)
             if (rule) {
               Object.assign(rule, ruleObj)
+              data.updatedAt = new Date().getTime()
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   log.error('[UpdateRule] Failed to storage rule:', error)
@@ -232,6 +235,7 @@ app.whenReady().then(() => {
             if (rule) {
               rule.enable = enable
               rule.updateTime = new Date().getTime()
+              data.updatedAt = new Date().getTime()
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   log.error('[EnableRule] Failed to storage rule', error)
@@ -284,6 +288,7 @@ app.whenReady().then(() => {
             if (rule) {
               rule.name = ruleName
               rule.updateTime = new Date().getTime()
+              data.updatedAt = new Date().getTime()
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   log.error('[UpdateRuleGroupName] Failed to storage rule', error)
@@ -336,6 +341,7 @@ app.whenReady().then(() => {
             if (curRule?.kind === 'group') {
               const index = data.apiRules.findIndex((r) => r.id === id)
               data.apiRules.splice(index, 1)
+              data.updatedAt = new Date().getTime()
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   log.error('[DeleteRule][group] Failed to storage rule', error)
@@ -360,6 +366,7 @@ app.whenReady().then(() => {
               if (group) {
                 const index = group.ruleList.findIndex((r) => r.id === id)
                 group.ruleList.splice(index, 1)
+                data.updatedAt = new Date().getTime()
                 Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                   if (error) {
                     log.error('[DeleteRule][rule] Failed to storage rule', error)
@@ -706,9 +713,39 @@ app.whenReady().then(() => {
       if (data && data.syncInfo) {
         data.syncInfo = undefined
         data.apiRules = []
+        data.updatedAt = 0
         Storage.set(config.RuleDefaultStorageKey, data, (error) => {
           if (error) {
             log.error('[CleanRuleData] Failed to storage rule', error)
+            resolve({
+              status: EventResultStatus.Error,
+              error: error.message
+            })
+          } else {
+            resolve({
+              status: EventResultStatus.Success
+            })
+          }
+        })
+      } else {
+        resolve({
+          status: EventResultStatus.Error,
+          error: 'User data not found'
+        })
+      }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.InitServerRules, (event, rules: ApiRules, syncInfo: SyncInfo) => {
+    return new Promise((resolve) => {
+      const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+      if (data) {
+        data.apiRules = rules
+        data.updatedAt = syncInfo.syncDate
+        data.syncInfo = syncInfo
+        Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+          if (error) {
+            log.error('[InitServerRules] Failed to storage rule', error)
             resolve({
               status: EventResultStatus.Error,
               error: error.message

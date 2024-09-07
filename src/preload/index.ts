@@ -96,6 +96,9 @@ const api = {
   },
   cleanRuleData: (): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.CleanRuleData)
+  },
+  initServerRules: (rules: ApiRules, syncInfo: SyncInfo): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.InitServerRules, rules, syncInfo)
   }
 }
 

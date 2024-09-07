@@ -149,7 +149,11 @@ export const strings = new LocalizedStrings({
     signIn: 'Sign In',
     signOut: 'Sign Out',
     syncing: 'Start syncing rule data',
-    synced: 'Rule data synced'
+    synced: 'Rule data synced',
+    syncedDiffDetected: 'Synced rule data is different from local rule data, do you want to sync?',
+    syncedDiffDesc: 'Local rule data will be overwritten by synced rule data',
+    syncUseServer: 'Use server data',
+    syncUseLocal: 'Use local data'
   },
   zh: {
     backHome: '返回首页',
@@ -296,6 +300,10 @@ export const strings = new LocalizedStrings({
     signIn: '登录',
     signOut: '登出',
     syncing: '开始同步规则数据',
-    synced: '规则数据已同步'
+    synced: '规则数据已同步',
+    syncedDiffDetected: '同步的规则数据与本地规则数据不同，是否同步？',
+    syncedDiffDesc: '本地规则数据将被同步的规则数据覆盖',
+    syncUseServer: '使用服务器数据',
+    syncUseLocal: '使用本地数据'
   }
 })
