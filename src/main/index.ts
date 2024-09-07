@@ -699,6 +699,35 @@ app.whenReady().then(() => {
     shell.openExternal(`${DoMain}/login?source=app`)
   })
 
+  ipcMain.handle(RenderEvent.CleanRuleData, (event) => {
+    return new Promise((resolve) => {
+      const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+      // Only when there is sync info, we clean the rule data
+      if (data && data.syncInfo) {
+        data.syncInfo = undefined
+        data.apiRules = []
+        Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+          if (error) {
+            log.error('[CleanRuleData] Failed to storage rule', error)
+            resolve({
+              status: EventResultStatus.Error,
+              error: error.message
+            })
+          } else {
+            resolve({
+              status: EventResultStatus.Success
+            })
+          }
+        })
+      } else {
+        resolve({
+          status: EventResultStatus.Error,
+          error: 'User data not found'
+        })
+      }
+    })
+  })
+
   const dataPath = Storage.getDataPath()
   log.debug('datapath =>> ', dataPath)
 

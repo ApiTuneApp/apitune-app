@@ -93,6 +93,9 @@ const api = {
   },
   openSignInPage: (): void => {
     ipcRenderer.send(RenderEvent.OpenSignInPage)
+  },
+  cleanRuleData: (): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.CleanRuleData)
   }
 }
 

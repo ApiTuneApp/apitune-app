@@ -46,6 +46,7 @@ declare global {
       clearTestResult: () => Promise<IpcResult>
       changeLanguage: (language: SettingStorage['language']) => Promise<IpcResult>
       openSignInPage: () => void
+      cleanRuleData: () => Promise<IpcResult>
     }
   }
 }

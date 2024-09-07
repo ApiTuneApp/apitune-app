@@ -22,7 +22,8 @@ export enum RenderEvent {
   ChangeLanguage = 'changeLanguage',
   OpenSignInPage = 'openSignInPage',
   SetAuth = 'setAuth',
-  SetSyncInfo = 'setSyncInfo'
+  SetSyncInfo = 'setSyncInfo',
+  CleanRuleData = 'cleanRuleData'
 }
 
 export enum MainEvent {

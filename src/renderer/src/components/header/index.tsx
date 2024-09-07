@@ -8,8 +8,9 @@ import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useSettingStore } from '@renderer/store/setting'
-import { MainEvent, SyncInfo, User } from '@shared/contract'
+import { EventResultStatus, MainEvent, SyncInfo, User } from '@shared/contract'
 import { CheckCircleTwoTone, LoadingOutlined } from '@ant-design/icons'
+import { getApiRules } from '@renderer/services'
 
 const { Text } = Typography
 
@@ -50,6 +51,22 @@ function Header(): JSX.Element {
           console.log('sync error', err)
           setSyncingStatus(false)
         })
+    })
+  }
+
+  function _cleanApiRules() {
+    window.api.getRuleStorage().then((ruleStorage) => {
+      if (ruleStorage.syncInfo?.syncStatus === 'synced') {
+        // if there is sync info, it means the rule is synced by a auth user,
+        // so we need to clean the rule data after sign out
+        window.api.cleanRuleData().then((res) => {
+          if (res.status === EventResultStatus.Success) {
+            getApiRules()
+          } else {
+            console.log('clean rule data error', res.error)
+          }
+        })
+      }
     })
   }
 
@@ -132,6 +149,7 @@ function Header(): JSX.Element {
       onClick: () => {
         authService.signOut()
         setLoggedIn(false)
+        _cleanApiRules()
       }
     }
   ]
