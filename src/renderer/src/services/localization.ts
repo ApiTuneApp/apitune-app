@@ -147,7 +147,9 @@ export const strings = new LocalizedStrings({
     speedLimitRequired: 'Speed limit is required',
     inputSpeedLimit: 'Please input speed limit',
     signIn: 'Sign In',
-    signOut: 'Sign Out'
+    signOut: 'Sign Out',
+    syncing: 'Start syncing rule data',
+    synced: 'Rule data synced'
   },
   zh: {
     backHome: '返回首页',
@@ -292,6 +294,8 @@ export const strings = new LocalizedStrings({
     invalidUrl: '无效的 URL',
     inputRewriteUrl: '请输入重写 URL',
     signIn: '登录',
-    signOut: '登出'
+    signOut: '登出',
+    syncing: '开始同步规则数据',
+    synced: '规则数据已同步'
   }
 })

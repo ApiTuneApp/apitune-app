@@ -1,9 +1,10 @@
 import { AuthResponse, createClient } from '@supabase/supabase-js'
+import { Database } from '@shared/database'
 
 let HasStartedAutoRefresh = false
 
 // Create a single supabase client for interacting with your database
-export const supabase = createClient(
+export const supabase = createClient<Database>(
   import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_URL,
   import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY,
   {
@@ -29,6 +30,31 @@ export const startAutoRefreshSession = async () => {
   HasStartedAutoRefresh = true
 }
 
+export const refreshAuthToken = (refresh_token: string): Promise<AuthResponse['data']> => {
+  return new Promise((resolve, reject) => {
+    if (!refresh_token) {
+      return reject(new Error('No refresh token available'))
+    }
+
+    supabase.auth
+      .refreshSession({ refresh_token })
+      .then(({ data, error }) => {
+        if (!error) {
+          const { access_token, refresh_token } = data?.session || {}
+          if (access_token && refresh_token) {
+            window.api.setAuth(access_token, refresh_token)
+            localStorage.setItem('access_token', access_token)
+            localStorage.setItem('refresh_token', refresh_token)
+          }
+          resolve(data)
+        } else {
+          reject(error)
+        }
+      })
+      .catch(reject)
+  })
+}
+
 export const refreshAuth = () => {
   const access_token = localStorage.getItem('access_token')
   const refresh_token = localStorage.getItem('refresh_token')
@@ -48,6 +74,7 @@ export const refreshAuth = () => {
     })
     .catch((error) => {
       console.error('Error auth:', error)
+      refreshAuthToken(refresh_token)
       return null
     })
 }

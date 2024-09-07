@@ -3,17 +3,21 @@ import './header.less'
 import { Avatar, Badge, Button, Dropdown, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
-import { strings } from '@renderer/services/localization'
-import { useSettingStore } from '@renderer/store/setting'
 import * as authService from '@renderer/services/auth'
+import * as dbService from '@renderer/services/db'
+import { strings } from '@renderer/services/localization'
+import { useRuleStore } from '@renderer/store'
+import { useSettingStore } from '@renderer/store/setting'
 import { MainEvent, User } from '@shared/contract'
 
 const { Text } = Typography
 
 function Header(): JSX.Element {
+  const apiRules = useRuleStore((state) => state.apiRules)
   const port = useSettingStore((state) => state.port)
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [ip, setIp] = useState<string>('')
+  const [syncingStatus, setSyncingStatus] = useState<boolean>(false)
   const [user, setUser] = useState<User>({
     id: '',
     email: '',
@@ -37,6 +41,15 @@ function Header(): JSX.Element {
           name: user.user_metadata.name ?? '',
           avatar: user.user_metadata.avatar_url ?? ''
         })
+        dbService
+          .syncRuleData(apiRules)
+          .then((res) => {
+            console.log('Synced:', res)
+            setSyncingStatus(true)
+          })
+          .catch((err) => {
+            console.log('sync error', err)
+          })
       }
     })
   }, [])
@@ -55,6 +68,15 @@ function Header(): JSX.Element {
               name: user.user_metadata.name ?? '',
               avatar: user.user_metadata.avatar_url ?? ''
             })
+            dbService
+              .syncRuleData(apiRules)
+              .then((res) => {
+                console.log('Synced:', res)
+                setSyncingStatus(true)
+              })
+              .catch((err) => {
+                console.log('sync error', err)
+              })
           }
         } catch (error) {
           console.log('Error auth:', error)
@@ -77,6 +99,11 @@ function Header(): JSX.Element {
     {
       label: user?.name ?? '',
       key: 'profile',
+      disabled: true
+    },
+    {
+      label: !syncingStatus ? strings.syncing : strings.synced,
+      key: 'sync',
       disabled: true
     },
     {
