@@ -12,7 +12,8 @@ import {
   Log,
   SettingStorage,
   RuleStorage,
-  SyncInfo
+  SyncInfo,
+  PrintItem
 } from '../shared/contract'
 
 // Custom APIs for renderer
@@ -24,6 +25,15 @@ const api = {
     ipcRenderer.on(MainEvent.GetAuthCode, (_, accessToken, refreshToken) =>
       callback(accessToken, refreshToken)
     )
+  },
+  onPrintLog: (callback): void => {
+    ipcRenderer.on(MainEvent.PrintLog, (_, printItem) => callback(printItem))
+  },
+  getPrintLogs: (): Promise<PrintItem[]> => {
+    return ipcRenderer.invoke(RenderEvent.GetPrintLogs)
+  },
+  clearPrintLogs: (): void => {
+    ipcRenderer.send(RenderEvent.ClearPrintLogs)
   },
   setAuth: (accessToken: string, refreshToken: string): void => {
     ipcRenderer.send(RenderEvent.SetAuth, accessToken, refreshToken)

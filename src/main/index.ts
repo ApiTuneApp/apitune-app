@@ -36,7 +36,8 @@ import {
   LogTestResult,
   updateRuntimeRules,
   updateSettingData,
-  MemeoryLogStorage
+  MemeoryLogStorage,
+  PrintStorage
 } from './storage'
 
 const DoMain = import.meta.env.VITE_SITE_URL
@@ -763,6 +764,16 @@ app.whenReady().then(() => {
         })
       }
     })
+  })
+
+  ipcMain.handle(RenderEvent.GetPrintLogs, (event) => {
+    return new Promise((resolve) => {
+      resolve(PrintStorage.getAll())
+    })
+  })
+
+  ipcMain.on(RenderEvent.ClearPrintLogs, (event) => {
+    PrintStorage.clear()
   })
 
   const dataPath = Storage.getDataPath()

@@ -10,11 +10,20 @@ const testResult = []
 const titleRuleMap = {}
 let startTime = null
 
+let printList = []
+
 const at = {
   test: function (title, testFunc) {
     testCaseList.push({
       title,
       testFunc
+    })
+  },
+  print: function (printStr, options) {
+    log.debug('[TestWorker] print', printStr, options)
+    printList.push({
+      printStr,
+      options
     })
   }
 }
@@ -54,8 +63,32 @@ function testRunner(matchedRuleDetails) {
           }
           testResult.push(testResultItem)
         }
+
+        if (printList.length) {
+          parentPort.postMessage({
+            logId: workerData.logId,
+            ruleId: rule.id,
+            printList
+          })
+        }
       } catch (error) {
-        log.error('[TestWorker] Run scripts error', error)
+        log.error('[TestWorker] Run scripts error', error.message)
+        parentPort.postMessage({
+          logId: workerData.logId,
+          ruleId: rule.id,
+          printList: [
+            {
+              printStr: error.message,
+              options: {
+                title: '[TestWorker] Run scripts error',
+                styles: {
+                  color: 'red',
+                  fontWeight: 'bold'
+                }
+              }
+            }
+          ]
+        })
       }
     }
   }

@@ -4,7 +4,8 @@ import { Context, Next } from 'koa'
 import path from 'node:path'
 import { Worker } from 'node:worker_threads'
 
-import { Log, RuleData, TestItem } from '../../../shared/contract'
+import { Log, PrintItem, RuleData, TestItem } from '../../../shared/contract'
+import { printLog } from '../../communicator'
 import { LogTestResult } from '../../storage'
 import { getBase64 } from '../helper'
 
@@ -54,9 +55,13 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
       }
     })
 
-    worker.on('message', (data: TestItem) => {
+    worker.on('message', (data: TestItem | PrintItem) => {
       electronLog.info('[TestScript] Worker result:', data)
-      LogTestResult.updateTestResult(data.logId, data)
+      if ((data as TestItem).tests) {
+        LogTestResult.updateTestResult(data.logId, data as TestItem)
+      } else {
+        printLog(data as PrintItem)
+      }
     })
 
     worker.on('error', (error) => {

@@ -24,12 +24,15 @@ export enum RenderEvent {
   SetAuth = 'setAuth',
   SetSyncInfo = 'setSyncInfo',
   CleanRuleData = 'cleanRuleData',
-  InitServerRules = 'initServerRules'
+  InitServerRules = 'initServerRules',
+  GetPrintLogs = 'getPrintLogs',
+  ClearPrintLogs = 'clearPrintLogs'
 }
 
 export enum MainEvent {
   RendererLog = 'rendererLog',
   ProxyLog = 'proxyLog',
+  PrintLog = 'printLog',
   GetAuthCode = 'getAuthCode'
 }
 
@@ -258,4 +261,18 @@ export type User = {
   email: string
   name: string
   avatar: string
+}
+
+export type PrintScript = {
+  printStr: string
+  options: {
+    title: string
+    styles: React.CSSProperties
+  }
+}
+
+export type PrintItem = {
+  logId: string
+  ruleId: string
+  printList: Array<PrintScript>
 }

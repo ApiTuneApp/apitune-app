@@ -7,7 +7,8 @@ import {
   SettingStorage,
   LogTestResultMap,
   TestItem,
-  Log
+  Log,
+  PrintItem
 } from '../shared/contract'
 import config from './server/config'
 
@@ -106,5 +107,18 @@ export const MemeoryLogStorage = {
   },
   get(id: number) {
     return this.data.find((log) => log.id === id)
+  }
+}
+
+export const PrintStorage = {
+  data: [] as PrintItem[],
+  add(printItem: PrintItem) {
+    this.data.push(printItem)
+  },
+  clear() {
+    this.data = []
+  },
+  getAll() {
+    return this.data
   }
 }

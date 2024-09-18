@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   AppstoreOutlined,
   FundProjectionScreenOutlined,
+  PrinterOutlined,
   RadarChartOutlined,
   SettingOutlined
 } from '@ant-design/icons'
@@ -37,6 +38,11 @@ function Sidebar(): JSX.Element {
       key: 'testScripts',
       icon: <FundProjectionScreenOutlined style={{ fontSize: '18px' }} />,
       label: strings.test
+    },
+    {
+      key: 'prints',
+      icon: <PrinterOutlined style={{ fontSize: '18px' }} />,
+      label: strings.prints
     },
     {
       key: 'settings',
