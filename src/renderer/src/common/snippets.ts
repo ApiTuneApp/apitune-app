@@ -27,12 +27,12 @@ export function getSnippet(type: SnippetType) {
 })`
     case 'printResponseStatus':
       return `at.print(\`Response status: $\{response.status}\`, {
-        title: 'Response status',
-        styles: {
-            color: 'blue',
-            fontSize: '14px'
-        }
-    })`
+    title: 'Response status',
+    styles: {
+        color: 'blue',
+        fontSize: '14px'
+    }
+})`
     case 'printAllResponseHeaders':
       return `for(let header of Object.keys(response.headers)) {
     at.print(\`Patch response header: $\{header} => $\{response.headers[header]}\`, {
