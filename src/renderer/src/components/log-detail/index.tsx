@@ -1,6 +1,6 @@
 import './log-detail.less'
 
-import { Collapse, CollapseProps, Descriptions, Tabs, TabsProps } from 'antd'
+import { Button, Collapse, CollapseProps, Descriptions, Tabs, TabsProps } from 'antd'
 
 import ReactJson from '@microlink/react-json-view'
 import TestResults from '@renderer/components/test-results'
@@ -9,6 +9,7 @@ import { strings } from '@renderer/services/localization'
 import { Log } from '@shared/contract'
 
 import MonacoEditor, { supportLanguage } from '../monaco-editor'
+import { EditOutlined } from '@ant-design/icons'
 
 interface LogDetailProps {
   log: Log
@@ -271,7 +272,18 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   }
 
   return (
-    <Tabs defaultActiveKey="request" items={items} style={{ padding: '0 10px', height: '100%' }} />
+    <Tabs
+      defaultActiveKey="request"
+      items={items}
+      style={{ padding: '0 10px', height: '100%' }}
+      tabBarExtraContent={{
+        right: (
+          <Button size="small" style={{ marginRight: 40 }} icon={<EditOutlined />}>
+            {strings.edit}
+          </Button>
+        )
+      }}
+    />
   )
 }
 
