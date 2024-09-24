@@ -610,6 +610,12 @@ function NewRulePage(): JSX.Element {
                       <Button type="text" onClick={() => insertSnippet('asyncTest')}>
                         Should pass in async script
                       </Button>
+                      <Button type="text" onClick={() => insertSnippet('printResponseStatus')}>
+                        Print response status
+                      </Button>
+                      <Button type="text" onClick={() => insertSnippet('printAllResponseHeaders')}>
+                        Print all response headers
+                      </Button>
                     </Flex>
                   </div>
                 </Flex>

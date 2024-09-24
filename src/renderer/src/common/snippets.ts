@@ -1,6 +1,11 @@
-export type SnippetType = 'responseStatus200' | 'expectedHeaders' | 'asyncTest'
+export type SnippetType =
+  | 'responseStatus200'
+  | 'expectedHeaders'
+  | 'asyncTest'
+  | 'printResponseStatus'
+  | 'printAllResponseHeaders'
 
-export function getSnippet(type) {
+export function getSnippet(type: SnippetType) {
   switch (type) {
     case 'responseStatus200':
       return `at.test('Response status code is 200', function() {
@@ -20,6 +25,23 @@ export function getSnippet(type) {
     done();
   }, 1000);
 })`
+    case 'printResponseStatus':
+      return `at.print(\`Response status: $\{response.status}\`, {
+        title: 'Response status',
+        styles: {
+            color: 'blue',
+            fontSize: '14px'
+        }
+    })`
+    case 'printAllResponseHeaders':
+      return `for(let header of Object.keys(response.headers)) {
+    at.print(\`Patch response header: $\{header} => $\{response.headers[header]}\`, {
+        styles: {
+            color: 'blue',
+            fontSize: '14px'
+        }
+    })
+}`
     default:
       return ''
   }
