@@ -1,15 +1,18 @@
 import './log-detail.less'
 
-import { Button, Collapse, CollapseProps, Descriptions, Tabs, TabsProps } from 'antd'
+import { Button, Collapse, CollapseProps, Descriptions, Form, Space, Tabs, TabsProps } from 'antd'
+import { useEffect, useState } from 'react'
 
+import { EditOutlined, SaveOutlined } from '@ant-design/icons'
 import ReactJson from '@microlink/react-json-view'
+import Rewrite from '@renderer/components/add-rule-item/rewrite'
+import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import TestResults from '@renderer/components/test-results'
-import { useSettingStore } from '@renderer/store/setting'
 import { strings } from '@renderer/services/localization'
+import { useSettingStore } from '@renderer/store/setting'
 import { Log } from '@shared/contract'
 
 import MonacoEditor, { supportLanguage } from '../monaco-editor'
-import { EditOutlined } from '@ant-design/icons'
 
 interface LogDetailProps {
   log: Log
@@ -147,6 +150,27 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   const requestParams = getRequestParams(log)
   const appTheme = useSettingStore((state) => state.appTheme)
 
+  const [editLog, setEditLog] = useState(false)
+  const [form] = Form.useForm()
+
+  useEffect(() => {
+    if (editLog) {
+      form.setFieldsValue({
+        modifyList: [
+          { type: 'rewrite', value: log.url },
+          {
+            type: 'requestHeader',
+            value: Object.keys(log.requestHeaders).map((key) => ({
+              type: 'override',
+              name: key,
+              value: log.requestHeaders[key]
+            }))
+          }
+        ]
+      })
+    }
+  }, [editLog])
+
   const requestColItems: CollapseProps['items'] = [
     {
       key: 'general',
@@ -179,6 +203,62 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
       key: 'requestHeader',
       label: strings.requestHeaders,
       children: <LogObjBlock data={log.requestHeaders} />
+    },
+    {
+      key: 'requestParams',
+      label: strings.requestParameters,
+      children: requestParams.isJson ? (
+        <ReactJson
+          src={requestParams.data as Record<string, unknown>}
+          theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
+          displayDataTypes={false}
+          displayObjectSize={false}
+          name={false}
+        />
+      ) : (
+        <div className="raw-content">{requestParams.data as string}</div>
+      )
+    }
+  ]
+
+  const editRequestColItems: CollapseProps['items'] = [
+    {
+      key: 'general',
+      label: strings.general,
+      children: (
+        <Descriptions
+          size="small"
+          column={1}
+          items={[
+            {
+              children: (
+                <div style={{ width: '60%' }}>
+                  <Rewrite form={form} field={{ name: 0, key: 0 }} />
+                </div>
+              )
+            },
+            {
+              key: 'Request Method',
+              label: strings.requestMethod,
+              children: [log.method]
+            },
+            {
+              key: 'Remote Address',
+              label: strings.remoteAddress,
+              children: [`${log.remoteIp}:${log.remotePort}`]
+            }
+          ]}
+        />
+      )
+    },
+    {
+      key: 'requestHeader',
+      label: strings.requestHeaders,
+      children: (
+        <div style={{ width: '60%' }}>
+          <HeaderEditor form={form} field={{ name: 1, key: 1 }} type="request" allowRemoveFrist />
+        </div>
+      )
     },
     {
       key: 'requestParams',
@@ -239,7 +319,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
       children: (
         <Collapse
           size="small"
-          items={requestColItems}
+          items={editLog ? editRequestColItems : requestColItems}
           defaultActiveKey={requestColItems.map((item) => item.key as string)}
         />
       )
@@ -271,19 +351,51 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     items = items.filter((item) => item.key !== 'testResults')
   }
 
+  const handleSave = () => {
+    form.validateFields().then((values) => {
+      console.log(values)
+      setEditLog(false)
+    })
+  }
+
   return (
-    <Tabs
-      defaultActiveKey="request"
-      items={items}
-      style={{ padding: '0 10px', height: '100%' }}
-      tabBarExtraContent={{
-        right: (
-          <Button size="small" style={{ marginRight: 40 }} icon={<EditOutlined />}>
-            {strings.edit}
-          </Button>
-        )
-      }}
-    />
+    <Form form={form} size="small" onFinish={handleSave}>
+      <Form.List name="modifyList">
+        {(fields, { add, remove }) => (
+          <Tabs
+            defaultActiveKey="request"
+            items={items}
+            style={{ padding: '0 10px', height: '100%' }}
+            tabBarExtraContent={{
+              right: editLog ? (
+                <Space style={{ marginRight: 40 }}>
+                  <Button
+                    size="small"
+                    type="primary"
+                    icon={<SaveOutlined />}
+                    onClick={() => form.submit()}
+                  >
+                    {strings.save}
+                  </Button>
+                  <Button size="small" onClick={() => setEditLog(false)}>
+                    {strings.cancel}
+                  </Button>
+                </Space>
+              ) : (
+                <Button
+                  style={{ marginRight: 40 }}
+                  size="small"
+                  icon={<EditOutlined />}
+                  onClick={() => setEditLog(true)}
+                >
+                  {strings.edit}
+                </Button>
+              )
+            }}
+          />
+        )}
+      </Form.List>
+    </Form>
   )
 }
 

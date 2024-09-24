@@ -15,9 +15,14 @@ const ResHeaders = HTTP_RESPONSE_HEADER.map((item) => {
 
 type HeaderEditorProps = {
   type: 'request' | 'response'
+  allowRemoveFrist?: boolean
 }
 
-function HeaderEditor({ field, type }: AddRuleValueProps & HeaderEditorProps): JSX.Element {
+function HeaderEditor({
+  field,
+  type,
+  allowRemoveFrist
+}: AddRuleValueProps & HeaderEditorProps): JSX.Element {
   const [typeMap, setTypeMap] = useState({})
 
   function handleTypeChange(field: FormListFieldData, value: string) {
@@ -64,7 +69,7 @@ function HeaderEditor({ field, type }: AddRuleValueProps & HeaderEditorProps): J
                   <Input />
                 </Form.Item>
               )}
-              {index > 0 && (
+              {(index > 0 || allowRemoveFrist) && (
                 <Tooltip title={strings.remove} arrow>
                   <CloseOutlined onClick={() => remove(index)} />
                 </Tooltip>
