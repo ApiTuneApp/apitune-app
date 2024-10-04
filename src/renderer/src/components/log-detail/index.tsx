@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react'
 
 import { EditOutlined, SaveOutlined } from '@ant-design/icons'
 import ReactJson from '@microlink/react-json-view'
-import Rewrite from '@renderer/components/add-rule-item/rewrite'
+import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
+import Rewrite from '@renderer/components/add-rule-item/rewrite'
 import TestResults from '@renderer/components/test-results'
 import { strings } from '@renderer/services/localization'
 import { useSettingStore } from '@renderer/store/setting'
-import { Log } from '@shared/contract'
+import { Log, RuleType } from '@shared/contract'
 
 import MonacoEditor, { supportLanguage } from '../monaco-editor'
 
@@ -157,14 +158,18 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     if (editLog) {
       form.setFieldsValue({
         modifyList: [
-          { type: 'rewrite', value: log.url },
+          { type: RuleType.Rewrite, value: log.url },
           {
-            type: 'requestHeader',
+            type: RuleType.RequestHeader,
             value: Object.keys(log.requestHeaders).map((key) => ({
               type: 'override',
               name: key,
               value: log.requestHeaders[key]
             }))
+          },
+          {
+            type: RuleType.RequestBody,
+            value: JSON.stringify(requestParams.data)
           }
         ]
       })
@@ -263,17 +268,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     {
       key: 'requestParams',
       label: strings.requestParameters,
-      children: requestParams.isJson ? (
-        <ReactJson
-          src={requestParams.data as Record<string, unknown>}
-          theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
-          displayDataTypes={false}
-          displayObjectSize={false}
-          name={false}
-        />
-      ) : (
-        <div className="raw-content">{requestParams.data as string}</div>
-      )
+      children: <BodyEditor form={form} field={{ name: 2, key: 2 }} type="request" />
     }
   ]
 
@@ -359,7 +354,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   }
 
   return (
-    <Form form={form} size="small" onFinish={handleSave}>
+    <Form form={form} size="small" onFinish={handleSave} layout="vertical">
       <Form.List name="modifyList">
         {(fields, { add, remove }) => (
           <Tabs
