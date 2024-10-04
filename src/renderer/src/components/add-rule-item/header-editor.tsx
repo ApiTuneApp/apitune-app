@@ -21,9 +21,13 @@ type HeaderEditorProps = {
 function HeaderEditor({
   field,
   type,
-  allowRemoveFrist
+  allowRemoveFrist,
+  form
 }: AddRuleValueProps & HeaderEditorProps): JSX.Element {
-  const [typeMap, setTypeMap] = useState({})
+  const currentHeaderValues = form.getFieldValue(['modifyList', field.name, 'value'])
+  const [typeMap, setTypeMap] = useState(
+    Object.fromEntries(currentHeaderValues.map((item, index) => [index, item.type]))
+  )
 
   function handleTypeChange(field: FormListFieldData, value: string) {
     setTypeMap((prev) => {
@@ -41,28 +45,28 @@ function HeaderEditor({
               type === 'request' ? strings.request : strings.response
             ) + ':'}
           </div>
-          {fields.map((field, index) => (
-            <Flex gap={4} key={field.key} align="baseline">
-              <Form.Item name={[field.name, 'type']} style={{ width: '110px' }}>
+          {fields.map((fd, index) => (
+            <Flex gap={4} key={fd.key} align="baseline">
+              <Form.Item name={[fd.name, 'type']} style={{ width: '110px' }}>
                 <Select
                   options={[
                     { label: strings.add, value: 'add' },
                     { label: strings.override, value: 'override' },
                     { label: strings.remove, value: 'remove' }
                   ]}
-                  onChange={(value) => handleTypeChange(field, value)}
+                  onChange={(value) => handleTypeChange(fd, value)}
                 />
               </Form.Item>
               <Form.Item
-                name={[field.name, 'name']}
+                name={[fd.name, 'name']}
                 style={{ flex: 1 }}
                 rules={[{ required: true, message: strings.headerNameRequired }]}
               >
                 <AutoComplete options={type === 'request' ? ReqHeaders : ResHeaders} allowClear />
               </Form.Item>
-              {typeMap[field.name] !== 'remove' && (
+              {typeMap[fd.name] !== 'remove' && (
                 <Form.Item
-                  name={[field.name, 'value']}
+                  name={[fd.name, 'value']}
                   style={{ flex: 1 }}
                   rules={[{ required: true, message: strings.headerValueRquired }]}
                 >
