@@ -382,6 +382,8 @@ function NewRulePage(): JSX.Element {
         if (result.status === EventResultStatus.Success) {
           Service.getApiRules()
           navigate('/rules/list')
+        } else {
+          message.error(result.error)
         }
       }
     })

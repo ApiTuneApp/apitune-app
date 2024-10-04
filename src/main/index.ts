@@ -347,7 +347,7 @@ app.whenReady().then(() => {
               Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                 if (error) {
                   log.error('[DeleteRule][group] Failed to storage rule', error)
-                  reject({
+                  resolve({
                     status: EventResultStatus.Error,
                     error: error.message
                   })
@@ -372,7 +372,7 @@ app.whenReady().then(() => {
                 Storage.set(config.RuleDefaultStorageKey, data, (error) => {
                   if (error) {
                     log.error('[DeleteRule][rule] Failed to storage rule', error)
-                    reject({
+                    resolve({
                       status: EventResultStatus.Error,
                       error: error.message
                     })
@@ -384,32 +384,52 @@ app.whenReady().then(() => {
                   }
                 })
               } else {
-                reject({
-                  status: EventResultStatus.Error,
-                  error: 'Group not found'
-                })
+                const index = data.apiRules.findIndex((r) => r.id === id)
+                if (index !== -1) {
+                  data.apiRules.splice(index, 1)
+                  data.updatedAt = new Date().getTime()
+                  Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+                    if (error) {
+                      log.error('[DeleteRule][rule] Failed to storage rule', error)
+                      resolve({
+                        status: EventResultStatus.Error,
+                        error: error.message
+                      })
+                    } else {
+                      updateRuntimeRules(data.apiRules)
+                      resolve({
+                        status: EventResultStatus.Success
+                      })
+                    }
+                  })
+                } else {
+                  resolve({
+                    status: EventResultStatus.Error,
+                    error: 'Rule not found'
+                  })
+                }
               }
             } else {
-              reject({
+              resolve({
                 status: EventResultStatus.Error,
                 error: 'Rule not found'
               })
             }
           } else {
-            reject({
+            resolve({
               status: EventResultStatus.Error,
               error: 'Rules not found'
             })
           }
         } else {
-          reject({
+          resolve({
             status: EventResultStatus.Error,
             error: 'User data not found'
           })
         }
       } catch (error) {
         log.error('[DeleteRule] Failed', error)
-        reject({
+        resolve({
           status: EventResultStatus.Error,
           error: error
         })
