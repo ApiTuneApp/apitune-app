@@ -11,8 +11,8 @@ import {
   Tabs,
   TabsProps
 } from 'antd'
-import { useEffect, useState } from 'react'
 import * as _ from 'lodash'
+import { useEffect, useState } from 'react'
 
 import { EditOutlined, SaveOutlined } from '@ant-design/icons'
 import ReactJson from '@microlink/react-json-view'
@@ -21,10 +21,10 @@ import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import Rewrite from '@renderer/components/add-rule-item/rewrite'
 import TestResults from '@renderer/components/test-results'
-import { strings } from '@renderer/services/localization'
 import * as Service from '@renderer/services'
+import { strings } from '@renderer/services/localization'
 import { useSettingStore } from '@renderer/store/setting'
-import { EventResultStatus, Log, Modify, RuleType } from '@shared/contract'
+import { EventResultStatus, HeaderItem, Log, Modify, RuleType } from '@shared/contract'
 
 import MonacoEditor, { supportLanguage } from '../monaco-editor'
 import RuleLink from '../rule-link'
@@ -423,8 +423,39 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
         const modifyValue = values.modifyList[i]
         if (_.isEqual(initValue, modifyValue)) {
           continue
+        } else if (
+          modifyValue.type === RuleType.RequestHeader ||
+          modifyValue.type === RuleType.ResponseHeader
+        ) {
+          const modifyHeaders = modifyValue.value as HeaderItem[]
+          const initHeaders = initValue.value as HeaderItem[]
+          if (modifyHeaders.length === 0) {
+            continue
+          } else {
+            const realModifyHeader: HeaderItem[] = []
+            for (let j = 0; j < modifyHeaders.length; j++) {
+              const h = modifyHeaders[j]
+              if (h.type !== 'override') {
+                realModifyHeader.push(h)
+              } else {
+                // If the header is not in the init headers, then it is a real modify
+                if (
+                  !initHeaders.some((initH) => initH.name === h.name && initH.value === h.value)
+                ) {
+                  realModifyHeader.push(h)
+                }
+              }
+            }
+            if (realModifyHeader.length > 0) {
+              realModifyList.push({
+                type: modifyValue.type,
+                value: realModifyHeader
+              })
+            }
+          }
+        } else {
+          realModifyList.push(modifyValue)
         }
-        realModifyList.push(modifyValue)
       }
       console.log('realModifyList', realModifyList, values)
       if (realModifyList.length > 0) {
