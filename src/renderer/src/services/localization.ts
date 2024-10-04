@@ -157,7 +157,11 @@ export const strings = new LocalizedStrings({
     syncedDiffDesc: 'Local rule data will be overwritten by synced rule data',
     syncUseServer: 'Use server data',
     syncUseLocal: 'Use local data',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    ruleAdded: 'Rule added successfully',
+    ruleEdited: 'Rule edited successfully',
+    goRule: 'Go to rule: ',
+    saveFailed: 'Save failed'
   },
   zh: {
     backHome: '返回首页',
@@ -312,6 +316,10 @@ export const strings = new LocalizedStrings({
     syncedDiffDesc: '本地规则数据将被同步的规则数据覆盖',
     syncUseServer: '使用服务器数据',
     syncUseLocal: '使用本地数据',
-    cancel: '取消'
+    cancel: '取消',
+    ruleAdded: '规则添加成功',
+    ruleEdited: '规则编辑成功',
+    goRule: '前往规则: ',
+    saveFailed: '保存失败'
   }
 })

@@ -180,7 +180,7 @@ function NewRulePage(): JSX.Element {
 
   const showAddRuleResult = (result: IpcResult) => {
     if (result.status === EventResultStatus.Success) {
-      message.success(`Rule ${editRuleId ? 'edited' : 'added'} successfully`, () => {
+      message.success(editRuleId ? strings.ruleEdited : strings.ruleAdded, () => {
         Service.getApiRules()
         // navigate('/rules/list')
       })

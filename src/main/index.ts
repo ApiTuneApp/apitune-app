@@ -158,7 +158,8 @@ app.whenReady().then(() => {
           } else {
             updateRuntimeRules(data.apiRules)
             resolve({
-              status: EventResultStatus.Success
+              status: EventResultStatus.Success,
+              data: ruleObj
             })
           }
         })

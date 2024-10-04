@@ -1,19 +1,33 @@
 import './log-detail.less'
 
-import { Button, Collapse, CollapseProps, Descriptions, Form, Space, Tabs, TabsProps } from 'antd'
+import {
+  App,
+  Button,
+  Collapse,
+  CollapseProps,
+  Descriptions,
+  Form,
+  Space,
+  Tabs,
+  TabsProps
+} from 'antd'
 import { useEffect, useState } from 'react'
+import * as _ from 'lodash'
 
 import { EditOutlined, SaveOutlined } from '@ant-design/icons'
 import ReactJson from '@microlink/react-json-view'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
+import ResponseStatus from '@renderer/components/add-rule-item/response-status'
 import Rewrite from '@renderer/components/add-rule-item/rewrite'
 import TestResults from '@renderer/components/test-results'
 import { strings } from '@renderer/services/localization'
+import * as Service from '@renderer/services'
 import { useSettingStore } from '@renderer/store/setting'
-import { Log, RuleType } from '@shared/contract'
+import { EventResultStatus, Log, Modify, RuleType } from '@shared/contract'
 
 import MonacoEditor, { supportLanguage } from '../monaco-editor'
+import RuleLink from '../rule-link'
 
 interface LogDetailProps {
   log: Log
@@ -150,28 +164,47 @@ function previewComponent(log: Log, height: number | undefined) {
 function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element {
   const requestParams = getRequestParams(log)
   const appTheme = useSettingStore((state) => state.appTheme)
+  const { notification } = App.useApp()
 
   const [editLog, setEditLog] = useState(false)
   const [form] = Form.useForm()
 
+  const modifyInitValue = [
+    { type: RuleType.Rewrite, value: log.url },
+    {
+      type: RuleType.RequestHeader,
+      value: Object.keys(log.requestHeaders).map((key) => ({
+        type: 'override',
+        name: key,
+        value: log.requestHeaders[key]
+      }))
+    },
+    {
+      type: RuleType.RequestBody,
+      value: JSON.stringify(requestParams.data)
+    },
+    {
+      type: RuleType.ResponseStatus,
+      value: log.status
+    },
+    {
+      type: RuleType.ResponseHeader,
+      value: Object.keys(log.responseHeaders).map((key) => ({
+        type: 'override',
+        name: key,
+        value: log.responseHeaders[key]
+      }))
+    },
+    {
+      type: RuleType.ResponseBody,
+      value: log.responseBodyInfo?.bodyText
+    }
+  ]
+
   useEffect(() => {
     if (editLog) {
       form.setFieldsValue({
-        modifyList: [
-          { type: RuleType.Rewrite, value: log.url },
-          {
-            type: RuleType.RequestHeader,
-            value: Object.keys(log.requestHeaders).map((key) => ({
-              type: 'override',
-              name: key,
-              value: log.requestHeaders[key]
-            }))
-          },
-          {
-            type: RuleType.RequestBody,
-            value: JSON.stringify(requestParams.data)
-          }
-        ]
+        modifyList: modifyInitValue
       })
     }
   }, [editLog])
@@ -226,7 +259,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     }
   ]
 
-  const editRequestColItems: CollapseProps['items'] = [
+  const requestEditColItems: CollapseProps['items'] = [
     {
       key: 'general',
       label: strings.general,
@@ -307,6 +340,42 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     }
   ]
 
+  const responseEditColItems: CollapseProps['items'] = [
+    {
+      key: 'general',
+      label: strings.general,
+      children: (
+        <Descriptions
+          column={1}
+          items={[
+            {
+              key: 'Status Code',
+              children: (
+                <div style={{ width: '60%' }}>
+                  <ResponseStatus form={form} field={{ name: 3, key: 3 }} />
+                </div>
+              )
+            }
+          ]}
+        />
+      )
+    },
+    {
+      key: 'responseHeader',
+      label: strings.responseHeaders,
+      children: (
+        <div style={{ width: '60%' }}>
+          <HeaderEditor form={form} field={{ name: 4, key: 4 }} type="response" allowRemoveFrist />
+        </div>
+      )
+    },
+    {
+      key: 'responseBody',
+      label: strings.responseBody,
+      children: <BodyEditor form={form} field={{ name: 5, key: 5 }} type="response" />
+    }
+  ]
+
   let items: TabsProps['items'] = [
     {
       key: 'request',
@@ -314,7 +383,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
       children: (
         <Collapse
           size="small"
-          items={editLog ? editRequestColItems : requestColItems}
+          items={editLog ? requestEditColItems : requestColItems}
           defaultActiveKey={requestColItems.map((item) => item.key as string)}
         />
       )
@@ -325,7 +394,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
       children: (
         <Collapse
           size="small"
-          items={responseColItems}
+          items={editLog ? responseEditColItems : responseColItems}
           defaultActiveKey={responseColItems.map((item) => item.key as string)}
         />
       )
@@ -348,7 +417,54 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
 
   const handleSave = () => {
     form.validateFields().then((values) => {
-      console.log(values)
+      const realModifyList: Modify[] = []
+      for (let i = 0; i < values.modifyList.length; i++) {
+        const initValue = modifyInitValue[i]
+        const modifyValue = values.modifyList[i]
+        if (_.isEqual(initValue, modifyValue)) {
+          continue
+        }
+        realModifyList.push(modifyValue)
+      }
+      console.log('realModifyList', realModifyList, values)
+      if (realModifyList.length > 0) {
+        // create new rule
+        window.api
+          .addRule(
+            JSON.stringify({
+              kind: 'rule',
+              name: `Modify-${log.url}`,
+              describe: '',
+              enable: true,
+              matches: {
+                matchType: 'url',
+                matchMode: 'equals',
+                value: log.url,
+                methods: [log.method]
+              },
+              modifyList: realModifyList
+            })
+          )
+          .then((result) => {
+            if (result.status === EventResultStatus.Success) {
+              Service.getApiRules()
+              notification.success({
+                message: strings.ruleAdded,
+                description: (
+                  <>
+                    {strings.goRule}
+                    <RuleLink id={result.data.id} name={result.data.name} />
+                  </>
+                )
+              })
+            } else {
+              notification.error({
+                message: strings.saveFailed,
+                description: result.error
+              })
+            }
+          })
+      }
       setEditLog(false)
     })
   }
