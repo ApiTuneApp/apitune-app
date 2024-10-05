@@ -28,7 +28,7 @@ export function initServer(
   newHttpServer.on('connect', onConnect)
   newHttpServer.on('upgrade', onUpgrade)
   newHttpServer
-    .listen(port, '127.0.0.1', () => {
+    .listen(port, '0.0.0.0', () => {
       log.info(`Apitune proxy server is listening on port ${port}`)
       httpServer = newHttpServer
       success && success(newHttpServer)

@@ -233,13 +233,13 @@ function Header(): JSX.Element {
             <div>
               <Text
                 copyable={{
-                  text: ip + ':' + port + '/getssl',
+                  text: 'http://cert.apitune.io',
                   tooltips: [strings.copyCertDownloadUrl, strings.copied]
                 }}
               >
-                {ip + ':' + port + '/getssl'}
+                {'http://cert.apitune.io'}
               </Text>
-              <QRCode value={ip + ':' + port + '/getssl'} />
+              <QRCode value={'http://cert.apitune.io'} />
             </div>
           }
         >

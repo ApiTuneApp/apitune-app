@@ -10,7 +10,6 @@ import httpClient from './http-client'
 import { LogRequestMiddleware, LogResponseMiddleware } from './middleware/log'
 import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
-import { DefaultSettingData } from '../storage'
 
 export const app = new Koa<IAppState, IAppContext>()
 
@@ -41,11 +40,7 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
 })
 
 app.use(async (ctx, next) => {
-  if (
-    ctx.host === `${ipAddress}:${DefaultSettingData.port}` &&
-    ctx.method === 'GET' &&
-    ctx.path === '/getssl'
-  ) {
+  if (ctx.host === 'cert.apitune.io' && ctx.method === 'GET') {
     const caPath = crtMgr.genRootCaFilePath()
     ctx.set('Content-Disposition', 'attachment; filename="root-ca.crt"')
     ctx.set('Content-Type', 'application/x-x509-ca-cert')
