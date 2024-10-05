@@ -243,7 +243,7 @@ function Header(): JSX.Element {
             </div>
           }
         >
-          <QrcodeOutlined style={{ marginLeft: 8, cursor: 'pointer' }} color="primary" />
+          <QrcodeOutlined style={{ marginLeft: 8, cursor: 'pointer', color: '#1677ff' }} />
         </Popover>
       </div>
       {!loggedIn ? (

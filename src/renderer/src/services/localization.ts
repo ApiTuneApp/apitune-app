@@ -162,7 +162,7 @@ export const strings = new LocalizedStrings({
     ruleEdited: 'Rule edited successfully',
     goRule: 'Go to rule: ',
     saveFailed: 'Save failed',
-    scanQrCode: 'Scan QR Code to download the Certificate',
+    scanQrCode: 'Scan QR Code to download the certificate',
     copyServerAddress: 'Copy server address',
     copyCertDownloadUrl: 'Copy certificate download url',
     copied: 'Copied!'

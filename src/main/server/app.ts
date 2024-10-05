@@ -1,14 +1,20 @@
 import log from 'electron-log/main'
 import Koa, { Context, Next } from 'koa'
+import fs from 'node:fs'
+import ip from 'ip'
 
 import { IAppContext, IAppState } from '../contracts'
+import crtMgr from './cert-manager'
 import config from './config'
 import httpClient from './http-client'
 import { LogRequestMiddleware, LogResponseMiddleware } from './middleware/log'
 import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
+import { DefaultSettingData } from '../storage'
 
 export const app = new Koa<IAppState, IAppContext>()
+
+const ipAddress = ip.address()
 
 app.use(async function errorHandler(ctx: Context, next: Next) {
   if (ctx.header[config.proxyHeader]) {
@@ -31,6 +37,21 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
 
     ctx.set('content-type', 'text/plain;charset=utf-8')
     ctx.body = 'Proxy Error: ' + err.message
+  }
+})
+
+app.use(async (ctx, next) => {
+  if (
+    ctx.host === `${ipAddress}:${DefaultSettingData.port}` &&
+    ctx.method === 'GET' &&
+    ctx.path === '/getssl'
+  ) {
+    const caPath = crtMgr.genRootCaFilePath()
+    ctx.set('Content-Disposition', 'attachment; filename="root-ca.crt"')
+    ctx.set('Content-Type', 'application/x-x509-ca-cert')
+    ctx.body = fs.createReadStream(caPath)
+  } else {
+    await next()
   }
 })
 

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, shell, safeStorage } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
 import log from 'electron-log/main'
@@ -34,10 +34,10 @@ import {
   initRuntimeRules,
   initSettingData,
   LogTestResult,
-  updateRuntimeRules,
-  updateSettingData,
   MemeoryLogStorage,
-  PrintStorage
+  PrintStorage,
+  updateRuntimeRules,
+  updateSettingData
 } from './storage'
 
 const DoMain = import.meta.env.VITE_SITE_URL
