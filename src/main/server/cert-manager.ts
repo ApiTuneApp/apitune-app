@@ -76,8 +76,9 @@ class ExtendedCertManager {
     }
 
     try {
-      status = !!execScriptSync(command)
-      log.debug('Found CA already installed')
+      const result = execScriptSync(command)
+      status = result.error ? false : true
+      log.debug('Found CA status result:', result)
     } catch (err) {
       log.debug('CA not found')
     }

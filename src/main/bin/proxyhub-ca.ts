@@ -19,9 +19,11 @@ if (command === 'genRootCa') {
   const ifRootCATrusted = crtMgr.ifRootCATrusted()
   const rootDirPath = crtMgr.getRootDirPath()
   const rootCAPath = crtMgr.genRootCaFilePath()
+  const isCertificateInstalled = crtMgr.isCertificateInstalled()
 
   console.log('Root CA file exists:', isRootCAFileExists)
   console.log('Root CA is trusted:', ifRootCATrusted)
+  console.log('Root CA is installed:', isCertificateInstalled)
   console.log('Root directory path:', rootDirPath)
   console.log('Root CA file path:', rootCAPath)
 } else if (command === 'trust') {

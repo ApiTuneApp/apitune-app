@@ -1,7 +1,6 @@
 import log from 'electron-log/main'
 import Koa, { Context, Next } from 'koa'
 import fs from 'node:fs'
-import ip from 'ip'
 
 import { IAppContext, IAppState } from '../contracts'
 import crtMgr from './cert-manager'
@@ -12,8 +11,6 @@ import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
 
 export const app = new Koa<IAppState, IAppContext>()
-
-const ipAddress = ip.address()
 
 app.use(async function errorHandler(ctx: Context, next: Next) {
   if (ctx.header[config.proxyHeader]) {
@@ -42,7 +39,7 @@ app.use(async function errorHandler(ctx: Context, next: Next) {
 app.use(async (ctx, next) => {
   if (ctx.host === 'cert.apitune.io' && ctx.method === 'GET') {
     const caPath = crtMgr.genRootCaFilePath()
-    ctx.set('Content-Disposition', 'attachment; filename="root-ca.crt"')
+    ctx.set('Content-Disposition', 'attachment; filename="apitune_ca.crt"')
     ctx.set('Content-Type', 'application/x-x509-ca-cert')
     ctx.body = fs.createReadStream(caPath)
   } else {
