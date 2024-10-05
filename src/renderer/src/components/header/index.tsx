@@ -1,9 +1,14 @@
 import './header.less'
 
-import { Avatar, Badge, Button, Dropdown, Modal, Typography } from 'antd'
+import { Avatar, Badge, Button, Dropdown, Modal, Popover, QRCode, Typography } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
-import { CheckCircleTwoTone, ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons'
+import {
+  CheckCircleTwoTone,
+  ExclamationCircleFilled,
+  LoadingOutlined,
+  QrcodeOutlined
+} from '@ant-design/icons'
 import { getApiRules } from '@renderer/services'
 import * as authService from '@renderer/services/auth'
 import * as dbService from '@renderer/services/db'
@@ -216,11 +221,30 @@ function Header(): JSX.Element {
         <Text
           copyable={{
             text: ip + ':' + port,
-            tooltips: ['Copy server address', 'Copied!']
+            tooltips: [strings.copyServerAddress, strings.copied]
           }}
         >
           {strings.proxyServerListeningOn}:{ip + ':' + port}
         </Text>
+        <Popover
+          placement="bottom"
+          title={strings.scanQrCode}
+          content={
+            <div>
+              <Text
+                copyable={{
+                  text: ip + ':' + port + '/getssl',
+                  tooltips: [strings.copyCertDownloadUrl, strings.copied]
+                }}
+              >
+                {ip + ':' + port + '/getssl'}
+              </Text>
+              <QRCode value={ip + ':' + port + '/getssl'} />
+            </div>
+          }
+        >
+          <QrcodeOutlined style={{ marginLeft: 8, cursor: 'pointer' }} color="primary" />
+        </Popover>
       </div>
       {!loggedIn ? (
         <Button type="primary" onClick={handleSignIn}>

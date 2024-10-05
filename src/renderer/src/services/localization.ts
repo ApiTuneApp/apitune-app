@@ -161,7 +161,11 @@ export const strings = new LocalizedStrings({
     ruleAdded: 'Rule added successfully',
     ruleEdited: 'Rule edited successfully',
     goRule: 'Go to rule: ',
-    saveFailed: 'Save failed'
+    saveFailed: 'Save failed',
+    scanQrCode: 'Scan QR Code to download the Certificate',
+    copyServerAddress: 'Copy server address',
+    copyCertDownloadUrl: 'Copy certificate download url',
+    copied: 'Copied!'
   },
   zh: {
     backHome: '返回首页',
@@ -320,6 +324,10 @@ export const strings = new LocalizedStrings({
     ruleAdded: '规则添加成功',
     ruleEdited: '规则编辑成功',
     goRule: '前往规则: ',
-    saveFailed: '保存失败'
+    saveFailed: '保存失败',
+    scanQrCode: '扫描二维码下载证书',
+    copyServerAddress: '复制服务器地址',
+    copyCertDownloadUrl: '复制证书下载地址',
+    copied: '已复制!'
   }
 })
