@@ -1,3 +1,5 @@
+import React from 'react'
+
 export enum RenderEvent {
   ping = 'ping',
   startServer = 'startServer',

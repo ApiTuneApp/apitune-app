@@ -65,6 +65,7 @@ function App(): JSX.Element {
             ? [antdTheme.darkAlgorithm, antdTheme.compactAlgorithm]
             : [antdTheme.defaultAlgorithm, antdTheme.compactAlgorithm],
         token: {
+          colorPrimary: '#FF5733',
           colorBgContainer: 'var(--color-background-soft)'
         },
         components: {
