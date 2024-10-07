@@ -106,4 +106,6 @@ class ExtendedCertManager {
 
 const crtMgr = new ExtendedCertManager(options)
 
+log.info('[CA] Root Dir Path', crtMgr.getRootDirPath())
+
 export default crtMgr

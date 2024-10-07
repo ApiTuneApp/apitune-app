@@ -11,13 +11,15 @@ export default {
   httpsServerExpire: 500000,
 
   // 密钥目录
-  sslDir: path.resolve(__dirname, '../.ssl'),
+  sslDir:
+    process.env.NODE_ENV === 'production'
+      ? path.resolve(process.resourcesPath, '.ssl')
+      : path.resolve(__dirname, '../.ssl'),
   // jq 可执行文件路径
-  jqPath: path.resolve(__dirname, './bin/jq-osx-amd64'),
+  jqPath: path.resolve(process.resourcesPath, './bin/jq-osx-amd64'),
   // CA 目录
-  caDir: path.resolve(__dirname, '../src/ca'),
+  caDir: path.resolve(process.resourcesPath, '../src/ca'),
   // 可展示的body限制 目前10MB
-  // MaxBodyLogSize: 10e6
   MaxBodyLogSize: 10e60,
 
   RuleDefaultStorageKey: 'rules.default',

@@ -1,7 +1,12 @@
-appId: com.electron.app
-productName: apitune-app
+appId: com.apitune.app
+productName: ApiTune
 directories:
   buildResources: build
+extraResources:
+  - from: ./ssl/
+    to: .ssl/
+    filter:
+      - '**/*'
 files:
   - '!**/.vscode/*'
   - '!src/*'
@@ -12,7 +17,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: apitune-app
+  executableName: ApiTune
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

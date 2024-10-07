@@ -1,17 +1,12 @@
-import { app } from 'electron'
 import * as electronLog from 'electron-log/main'
 import { Context, Next } from 'koa'
-import path from 'node:path'
-import { Worker } from 'node:worker_threads'
 
 import { Log, PrintItem, RuleData, TestItem } from '../../../shared/contract'
 import { printLog } from '../../communicator'
 import { LogTestResult } from '../../storage'
 import { getBase64 } from '../helper'
 
-// TODO: check production path
-const mochaWoker = path.join(app.getAppPath(), 'src/main/workers/mocha-worker.js')
-electronLog.info('[TestScript] mochaWoker path', mochaWoker)
+import mochaWorker from '../../workers/mocha-worker.js?nodeWorker'
 
 export default async function testScriptMiddleware(ctx: Context, next: Next) {
   await next()
@@ -22,7 +17,7 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
     const log = ctx.state.log as Log
 
     const matchedRuleDetails: Array<RuleData> = ctx.state.matchedRuleDetails
-    const worker = new Worker(new URL(mochaWoker, import.meta.url), {
+    const worker = mochaWorker({
       workerData: {
         logId: ctx.state.log?.id,
         matchedRuleDetails,
