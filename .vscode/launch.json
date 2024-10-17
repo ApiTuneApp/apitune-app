@@ -30,7 +30,7 @@
   "compounds": [
     {
       "name": "Debug All",
-      "configurations": ["Debug Main Process", "Debug Renderer Process"],
+      "configurations": ["Debug Main Process"],
       "presentation": {
         "order": 1
       }

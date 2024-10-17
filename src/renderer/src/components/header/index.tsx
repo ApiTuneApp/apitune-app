@@ -1,29 +1,22 @@
 import './header.less'
 
-import { Avatar, Badge, Button, Dropdown, Modal, Popover, QRCode, Typography } from 'antd'
-import { useEffect, useRef, useState } from 'react'
+import { Avatar, Badge, Button, Dropdown, Popover, QRCode, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 
-import {
-  CheckCircleTwoTone,
-  ExclamationCircleFilled,
-  LoadingOutlined,
-  QrcodeOutlined
-} from '@ant-design/icons'
-import { getApiRules } from '@renderer/services'
+import { CheckCircleTwoTone, LoadingOutlined, QrcodeOutlined } from '@ant-design/icons'
 import * as authService from '@renderer/services/auth'
 import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useSettingStore } from '@renderer/store/setting'
-import { EventResultStatus, MainEvent, SyncInfo, User } from '@shared/contract'
+import { ApiRules, EventResultStatus, MainEvent, SyncInfo, User } from '@shared/contract'
 
 const { Text } = Typography
-const { confirm } = Modal
 
 function Header(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
-  const ruleInited = useRuleStore((state) => state.ruleInited)
   const initSyncInfo = useRuleStore.getState().initSyncInfo
+  const initApiRules = useRuleStore.getState().initApiRules
 
   const port = useSettingStore((state) => state.port)
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
@@ -35,7 +28,6 @@ function Header(): JSX.Element {
     name: '',
     avatar: ''
   })
-  const syncConfirmShowed = useRef(false)
 
   // only run in the first time when the user sign in
   async function _initSyncRule() {
@@ -44,26 +36,14 @@ function Header(): JSX.Element {
     const userRules = await dbService.getUserRules()
     const localData = await window.api.getRuleStorage()
     const userRuleUpdatedAt = new Date(userRules.updated_at as string)
-    if (userRuleUpdatedAt.getTime() >= localData.updatedAt) {
+    const localDataUpdatedAt = localData.syncInfo?.syncDate
+      ? new Date(localData.syncInfo.syncDate as string)
+      : new Date(0) // Fallback to epoch if invalid
+    if (userRuleUpdatedAt.getTime() >= localDataUpdatedAt.getTime()) {
       // if the local rule is older, we do sync immediately
       _syncServerRules()
     } else {
-      if (!syncConfirmShowed.current) {
-        confirm({
-          title: strings.syncedDiffDetected,
-          icon: <ExclamationCircleFilled />,
-          content: strings.syncedDiffDesc,
-          okText: strings.syncUseServer,
-          cancelText: strings.syncUseLocal,
-          onOk() {
-            _syncServerRules()
-          },
-          onCancel() {
-            _syncLocalRules()
-          }
-        })
-        syncConfirmShowed.current = true
-      }
+      _syncLocalRules()
     }
   }
 
@@ -73,13 +53,14 @@ function Header(): JSX.Element {
       console.log('syncing server rules', rules)
       const syncInfo = {
         userId: user.id,
-        syncDate: new Date(rules.updated_at as string).getTime(),
+        syncDate: rules.updated_at,
         syncStatus: 'synced'
       } as SyncInfo
       window.api.initServerRules(rules.rule_data, syncInfo).then((res) => {
         if (res.status === EventResultStatus.Success) {
           setSyncingStatus(false)
-          getApiRules()
+          initSyncInfo(syncInfo)
+          initApiRules(rules.rule_data as unknown as ApiRules)
         } else {
           console.log('init server rules error', res.error)
           setSyncingStatus(false)
@@ -98,7 +79,7 @@ function Header(): JSX.Element {
           console.log('Synced:', res)
           const syncInfo = {
             userId: user.id,
-            syncDate: Date.now(),
+            syncDate: res.updated_at,
             syncStatus: 'synced'
           } as SyncInfo
           window.api.setSyncInfo(syncInfo)
@@ -119,7 +100,7 @@ function Header(): JSX.Element {
         // so we need to clean the rule data after sign out
         window.api.cleanRuleData().then((res) => {
           if (res.status === EventResultStatus.Success) {
-            getApiRules()
+            initApiRules([])
           } else {
             console.log('clean rule data error', res.error)
           }
@@ -146,16 +127,18 @@ function Header(): JSX.Element {
           avatar: user.user_metadata.avatar_url ?? ''
         })
         console.log('apiRules', apiRules)
-        _syncLocalRules()
+        _initSyncRule()
       }
     })
   }, [])
+
   useEffect(() => {
-    if (ruleInited && loggedIn) {
-      console.log('apiRules ruleInited updated', apiRules)
+    // Used to sync local rule to server when local rule changes
+    if (apiRules && loggedIn) {
+      console.log('apiRules updated', apiRules)
       _syncLocalRules()
     }
-  }, [apiRules, loggedIn, ruleInited])
+  }, [apiRules, loggedIn])
 
   useEffect(() => {
     const handleAuth = async (accessToken: string, refreshToken: string) => {

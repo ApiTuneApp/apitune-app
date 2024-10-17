@@ -208,7 +208,7 @@ export type ApiRules = Array<RuleGroup | RuleData>
 
 export type SyncInfo = {
   userId: string
-  syncDate: number
+  syncDate: string
   syncStatus: 'synced' | 'syncing' | 'error'
 }
 

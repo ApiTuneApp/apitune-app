@@ -764,7 +764,7 @@ app.whenReady().then(() => {
       const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
       if (data) {
         data.apiRules = rules
-        data.updatedAt = syncInfo.syncDate
+        data.updatedAt = new Date(syncInfo.syncDate).getTime()
         data.syncInfo = syncInfo
         Storage.set(config.RuleDefaultStorageKey, data, (error) => {
           if (error) {

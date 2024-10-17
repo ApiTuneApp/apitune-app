@@ -39,11 +39,12 @@ export const syncRuleData = async (rule_data: ApiRules) => {
   }
 
   let result
+  const updated_at = new Date().toISOString()
   if (existingRules) {
     // Step 3a: Update the existing row
     const { data, error } = await supabase
       .from('rules')
-      .update({ rule_data: rule_data as any, updated_at: new Date().toISOString() })
+      .update({ rule_data: rule_data as any, updated_at: updated_at })
       .eq('user_id', userId)
 
     if (error) {
@@ -56,7 +57,7 @@ export const syncRuleData = async (rule_data: ApiRules) => {
       {
         rule_data: rule_data as any,
         user_id: userId,
-        updated_at: new Date().toISOString()
+        updated_at: updated_at
       }
     ])
 
@@ -66,5 +67,8 @@ export const syncRuleData = async (rule_data: ApiRules) => {
     result = data
   }
 
-  return result
+  return {
+    updated_at: updated_at,
+    data: result
+  }
 }
