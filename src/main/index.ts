@@ -1,7 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron'
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import Storage from 'electron-json-storage'
 import log from 'electron-log/main'
+import { autoUpdater, UpdateInfo } from 'electron-updater'
 import { nativeTheme } from 'electron/main'
 import fs from 'fs'
 import ip from 'ip'
@@ -40,7 +40,18 @@ import {
   updateSettingData
 } from './storage'
 
-const DoMain = import.meta.env.VITE_SITE_URL
+const APP_SITE_URL = import.meta.env.VITE_SITE_URL
+
+autoUpdater.logger = log
+log.transports.file.level = 'info'
+
+autoUpdater.on('update-available', (releaseInfo: UpdateInfo) => {
+  log.info('[autoUpdater] update-available', releaseInfo)
+})
+
+autoUpdater.on('error', (error: Error) => {
+  log.error('[autoUpdater] error', error)
+})
 
 initSettingData()
 
@@ -91,7 +102,9 @@ app.setAsDefaultProtocolClient('apitune')
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.apitune.app')
+
+  autoUpdater.checkForUpdatesAndNotify()
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -109,12 +122,6 @@ app.whenReady().then(() => {
       getAuthCode(accessToken, refreshToken)
     }
   })
-
-  // ipcMain.handle(RenderEvent.SetAuth, (event, accessToken: string, refreshToken: string) => {
-  //   if(accessToken && refreshToken) {
-
-  //   }
-  // })
 
   ipcMain.handle(RenderEvent.AddRule, (event, rules: string, opts?: AddGroupOpts) => {
     return new Promise((resolve, reject) => {
@@ -726,7 +733,7 @@ app.whenReady().then(() => {
   })
 
   ipcMain.on(RenderEvent.OpenSignInPage, (_, codeChallenge) => {
-    shell.openExternal(`${DoMain}/login?source=app`)
+    shell.openExternal(`${APP_SITE_URL}/login?source=app`)
   })
 
   ipcMain.handle(RenderEvent.CleanRuleData, (event) => {
@@ -798,8 +805,13 @@ app.whenReady().then(() => {
     PrintStorage.clear()
   })
 
-  const dataPath = Storage.getDataPath()
-  log.debug('datapath =>> ', dataPath)
+  ipcMain.on(RenderEvent.CheckForUpdate, () => {
+    log.info('[CheckForUpdate] start check for update')
+    autoUpdater.checkForUpdates()
+  })
+
+  // const dataPath = Storage.getDataPath()
+  // log.debug('datapath =>> ', dataPath)
 
   createWindow()
 
@@ -809,9 +821,9 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  installExtension(REACT_DEVELOPER_TOOLS).catch((err) => {
-    log.debug('Added Extension Error: ', err)
-  })
+  // installExtension(REACT_DEVELOPER_TOOLS).catch((err) => {
+  //   log.debug('Added Extension Error: ', err)
+  // })
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

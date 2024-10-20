@@ -28,7 +28,8 @@ export enum RenderEvent {
   CleanRuleData = 'cleanRuleData',
   InitServerRules = 'initServerRules',
   GetPrintLogs = 'getPrintLogs',
-  ClearPrintLogs = 'clearPrintLogs'
+  ClearPrintLogs = 'clearPrintLogs',
+  CheckForUpdate = 'checkForUpdate'
 }
 
 export enum MainEvent {
