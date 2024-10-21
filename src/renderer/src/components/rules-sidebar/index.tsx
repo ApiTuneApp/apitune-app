@@ -76,7 +76,11 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
     ruleGroupEnable = parentGroup.enable
   }
 
-  const handleSwitchClick = (e: React.MouseEvent, checked: boolean, ruleId: string) => {
+  const handleSwitchClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    checked: boolean,
+    ruleId: string
+  ) => {
     e.stopPropagation()
     window.api.enableRule(ruleId, checked).then((result) => {
       if (result.status === EventResultStatus.Success) {

@@ -297,7 +297,7 @@ function NewRulePage(): JSX.Element {
         }
         return menItem
       })
-      return newMenu
+      return newMenu as MenuProps['items']
     })
   }
 
