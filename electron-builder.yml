@@ -43,10 +43,5 @@ linux:
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
-publish:
-  provider: github
-  owner: JackZhang1988
-  repo: apitune-app
-  private: true
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
