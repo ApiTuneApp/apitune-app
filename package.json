@@ -21,8 +21,7 @@
     "build:linux": "electron-vite build && electron-builder --linux",
     "ca:status": "ts-node --project tsconfig.bin.json src/main/bin/proxyhub-ca.ts status",
     "ca:gen": "ts-node --project tsconfig.bin.json src/main/bin/proxyhub-ca.ts genRootCa",
-    "ca:trust": "ts-node --project tsconfig.bin.json src/main/bin/proxyhub-ca.ts trust",
-    "afterSign": "scripts/notarize.js"
+    "ca:trust": "ts-node --project tsconfig.bin.json src/main/bin/proxyhub-ca.ts trust"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.7",

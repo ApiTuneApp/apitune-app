@@ -1,3 +1,4 @@
+afterSign: scripts/notarize.js
 appId: com.apitune.app
 productName: ApiTune
 directories:

@@ -1,6 +1,4 @@
 import { CertErrors } from 'node-easy-cert'
-// const Ca = require('./ca/index.js');
-// import config from './config'
 import crtMgr from './cert-manager'
 
 interface Cert {
@@ -8,36 +6,10 @@ interface Cert {
   key: string | Buffer
 }
 
-// const caPromise = promisify(Ca.create, Ca)(config.sslDir, config.caDir)
 interface ServerCertMap {
   [x: string]: any
 }
 const serverCertMap: ServerCertMap = {}
-
-// export async function getCert(hostname: string): Promise<Cert> {
-//   let cert = serverCertMap[hostname]
-//   if (cert) {
-//     return cert
-//   }
-//   const ca = await caPromise
-
-//   try {
-//     // 获取之前生成的密钥
-//     const fileRes = await promisify(ca.readServerCertificateKeys, ca)('*.' + hostname)
-//     return fileRes
-//   } catch (e) {
-//     // 之前没有生成过
-//   }
-//   return new Promise((resolve) => {
-//     // 生成新的key
-//     ca.generateServerCertificateKeys(['*.' + hostname, hostname], (cert: string, key: string) => {
-//       resolve({
-//         cert,
-//         key,
-//       })
-//     })
-//   })
-// }
 
 export async function getCert(hostname: string): Promise<Cert> {
   return new Promise((resolve, reject) => {

@@ -1,25 +1,19 @@
 import path from 'path'
+import { is } from '@electron-toolkit/utils'
 
 export default {
   name: 'ApiTune',
   port: 8998,
   proxyHeader: 'x-forwarded-from-apitune',
-  // proxy请求对方服务器超时时间
+  // proxy request target server timeout
   serverRequestTimeout: 20000,
 
-  // https server 不活跃之后回收时长
+  // https server not active recycle time
   httpsServerExpire: 500000,
 
-  // 密钥目录
-  sslDir:
-    process.env.NODE_ENV === 'production'
-      ? path.resolve(process.resourcesPath, '.ssl')
-      : path.resolve(__dirname, '../.ssl'),
-  // jq 可执行文件路径
-  jqPath: path.resolve(process.resourcesPath, './bin/jq-osx-amd64'),
-  // CA 目录
-  caDir: path.resolve(process.resourcesPath, '../src/ca'),
-  // 可展示的body限制 目前10MB
+  sslDir: !is.dev ? path.join(process.resourcesPath, '.ssl') : path.resolve(__dirname, '../.ssl'),
+
+  // displayable body limit, currently 10MB
   MaxBodyLogSize: 10e60,
 
   RuleDefaultStorageKey: 'rules.default',
