@@ -143,7 +143,9 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
             size="small"
             disabled={!ruleGroupEnable}
             checked={rule.enable}
-            onClick={(checked, e) => handleSwitchClick(e, checked, rule.id)}
+            onClick={(checked, e) =>
+              handleSwitchClick(e as React.MouseEvent<HTMLButtonElement>, checked, rule.id)
+            }
           />
         </Tooltip>
       )}
