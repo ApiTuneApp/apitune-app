@@ -3,7 +3,7 @@ productName: ApiTune
 directories:
   buildResources: build
 extraResources:
-  - from: ./ssl/
+  - from: ./.ssl/
     to: .ssl/
     filter:
       - '**/*'
@@ -31,8 +31,12 @@ mac:
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
+  gatekeeperAssess: false
+  hardenedRuntime : true
+  entitlements: build/entitlements.mac.plist
 dmg:
   artifactName: ${name}-${version}.${ext}
+  sign: false
 linux:
   target:
     - AppImage
