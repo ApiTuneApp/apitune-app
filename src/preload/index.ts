@@ -109,6 +109,9 @@ const api = {
   },
   initServerRules: (rules: ApiRules, syncInfo: SyncInfo): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.InitServerRules, rules, syncInfo)
+  },
+  checkForUpdate: (): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.CheckForUpdate)
   }
 }
 

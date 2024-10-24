@@ -33,6 +33,8 @@ jobs:
         run: pnpm run build:linux
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          VITE_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_URL }}
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
@@ -44,12 +46,16 @@ jobs:
           APPLEID: ${{ secrets.APPLEID }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           APPLETEAMID: ${{ secrets.APPLETEAMID }}
+          VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          VITE_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_URL }}
 
       - name: build-win
         if: matrix.os == 'windows-latest'
         run: pnpm run build:win
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          VITE_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_URL }}
 
       - name: release
         uses: softprops/action-gh-release@v1

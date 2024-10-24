@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import Storage from 'electron-json-storage'
 import log from 'electron-log/main'
 import { autoUpdater, UpdateInfo } from 'electron-updater'
@@ -45,12 +45,38 @@ const APP_SITE_URL = import.meta.env.VITE_SITE_URL
 autoUpdater.logger = log
 log.transports.file.level = 'info'
 
+autoUpdater.forceDevUpdateConfig = true
+
 autoUpdater.on('update-available', (releaseInfo: UpdateInfo) => {
-  log.info('[autoUpdater] update-available', releaseInfo)
+  log.info('[AutoUpdater] update-available', releaseInfo)
 })
 
 autoUpdater.on('error', (error: Error) => {
-  log.error('[autoUpdater] error', error)
+  log.error('[AutoUpdater] error', error)
+})
+
+autoUpdater.on('update-downloaded', () => {
+  const local = app.getLocale() // en-US
+  let title = 'Application Update'
+  let message = 'A new version is available, update now?'
+  let buttons = ['Yes', 'No']
+  if (local && local.includes('zh')) {
+    title = '应用更新'
+    message = '发现新版本，是否更新？'
+    buttons = ['是', '否']
+  }
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title,
+      message,
+      buttons
+    })
+    .then((buttonIndex) => {
+      if (buttonIndex.response == 0) {
+        autoUpdater.quitAndInstall()
+      }
+    })
 })
 
 initSettingData()
@@ -805,9 +831,15 @@ app.whenReady().then(() => {
     PrintStorage.clear()
   })
 
-  ipcMain.on(RenderEvent.CheckForUpdate, () => {
-    log.info('[CheckForUpdate] start check for update')
-    autoUpdater.checkForUpdates()
+  ipcMain.handle(RenderEvent.CheckForUpdate, () => {
+    return new Promise((resolve) => {
+      autoUpdater.checkForUpdatesAndNotify().then((updateInfo) => {
+        resolve({
+          status: EventResultStatus.Success,
+          data: updateInfo
+        })
+      })
+    })
   })
 
   // const dataPath = Storage.getDataPath()

@@ -5,6 +5,7 @@ import { CloseCircleOutlined, DownloadOutlined, FileProtectOutlined } from '@ant
 import { useSettingStore } from '@renderer/store/setting'
 import { EventResultStatus, RenderEvent } from '@shared/contract'
 import { strings } from '@renderer/services/localization'
+import packageJson from '../../../../../package.json'
 
 const { Text } = Typography
 
@@ -16,6 +17,7 @@ function SettingsPage(): JSX.Element {
   )
   const [proxyPort, setProxyPort] = useState(port)
   const [caTrust, setCaTrust] = useState(false)
+  const [checkingUpdate, setCheckingUpdate] = useState(false)
 
   useEffect(() => {
     setProxyPort(port)
@@ -77,6 +79,18 @@ function SettingsPage(): JSX.Element {
       if (res.status === EventResultStatus.Success) {
         setLanguage(e.target.value)
         strings.setLanguage(e.target.value)
+      }
+    })
+  }
+
+  const checkForUpdate = () => {
+    setCheckingUpdate(true)
+    window.api.checkForUpdate().then((res) => {
+      setCheckingUpdate(false)
+      if (res.status === EventResultStatus.Success) {
+        if (res.data.versionInfo?.version === packageJson.version) {
+          message.info(strings.noNewVersion)
+        }
       }
     })
   }
@@ -150,6 +164,15 @@ function SettingsPage(): JSX.Element {
               <Radio value={'zh'}>中文</Radio>
             </Radio.Group>
           </Form.Item>
+
+          <Space direction="vertical">
+            <Button onClick={checkForUpdate} loading={checkingUpdate}>
+              {strings.checkUpdate}
+            </Button>
+            <Text>
+              {strings.curVersion} {packageJson.version}
+            </Text>
+          </Space>
         </Space>
       </Form>
     </div>

@@ -1,9 +1,9 @@
 {
   "name": "apitune-app",
-  "version": "0.0.11",
-  "description": "An Electron application with React and TypeScript",
+  "version": "0.0.12",
+  "description": "Effortlessly mock, hijack, and test API tool",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "Jack Zhang",
   "homepage": "https://apitune.io",
   "scripts": {
     "format": "prettier --write .",

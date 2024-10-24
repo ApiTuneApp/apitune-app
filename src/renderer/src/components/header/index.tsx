@@ -198,7 +198,8 @@ function Header(): JSX.Element {
   return (
     <div className="app-header">
       <span style={{ display: 'none' }}>{apiRules.length}</span>
-      <Text>{strings.myWorkspace}</Text>
+      {/* <Text>{strings.myWorkspace}</Text> */}
+      <div></div>
       <div className="ip-item">
         <Badge status="success" style={{ marginRight: 4 }} />
         <Text

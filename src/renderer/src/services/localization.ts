@@ -2,6 +2,9 @@ import LocalizedStrings from 'react-localization'
 
 export const strings = new LocalizedStrings({
   en: {
+    curVersion: 'Current Version',
+    checkUpdate: 'Check Update',
+    noNewVersion: 'No new version available',
     backHome: 'Back Homepage',
     settings: 'Settings',
     caInstalled: 'ApiTune CA Certificate Installed',
@@ -168,6 +171,9 @@ export const strings = new LocalizedStrings({
     copied: 'Copied!'
   },
   zh: {
+    curVersion: '当前版本',
+    checkUpdate: '检查更新',
+    noNewVersion: '没有新版本可用',
     backHome: '返回首页',
     settings: '设置',
     caInstalled: 'ApiTune CA 证书已安装',
