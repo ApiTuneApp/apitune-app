@@ -1,9 +1,7 @@
 name: Build/release Electron app
 
 on:
-  push:
-    tags:
-      - v*.*.*
+  workflow_dispatch: # Allows manual triggering without requiring inputs
 
 jobs:
   release:
@@ -72,10 +70,4 @@ jobs:
             dist/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: Run action
-        uses: andrewthetechie/gha-clone-releases@v1.7.0
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          src_repo: JackZhang1988/apitune-app
-          dst_repo: ApiTuneApp/apitune-desktop
-          copy_assets: true
+
