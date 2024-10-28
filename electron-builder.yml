@@ -48,8 +48,8 @@ appImage:
 npmRebuild: false
 publish:
   provider: github
-  owner: JackZhang1988
-  repo: apitune-app
+  owner: ApiTuneApp
+  repo: apitune-desktop
   private: true
   releaseType: release
 electronDownload:

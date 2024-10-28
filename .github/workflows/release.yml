@@ -63,14 +63,19 @@ jobs:
           draft: true
           files: |
             dist/*.exe
-            dist/*.zip
             dist/*.dmg
             dist/*.AppImage
             dist/*.snap
             dist/*.deb
             dist/*.rpm
-            dist/*.tar.gz
             dist/*.yml
             dist/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Run action
+        uses: andrewthetechie/gha-clone-releases@v1.7.0
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          src_repo: JackZhang1988/apitune-app
+          dst_repo: ApiTuneApp/apitune-desktop
+          copy_assets: true
