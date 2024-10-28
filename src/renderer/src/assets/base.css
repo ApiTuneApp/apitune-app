@@ -22,7 +22,8 @@
   --ev-button-alt-hover-text: var(--ev-c-text-1);
   --ev-button-alt-hover-bg: var(--ev-c-gray-2);
 
-  --ev-c-primary: #FF5733;
+  /* --ev-c-primary: #FF5733; */
+  --ev-c-primary: #118DFF;
 }
 
 @media (prefers-color-scheme: dark) {
