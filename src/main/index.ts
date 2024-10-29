@@ -23,7 +23,7 @@ import {
   SyncInfo,
   Theme
 } from '../shared/contract'
-import { findGroupOrRule } from '../shared/utils'
+import { findGroupOrRule, findParentGroup } from '../shared/utils'
 import { getAuthCode, initCommunicator } from './communicator'
 import crtMgr from './server/cert-manager'
 import config from './server/config'
@@ -256,6 +256,55 @@ app.whenReady().then(() => {
         reject({
           status: EventResultStatus.Error,
           error: error
+        })
+      }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.EditRuleGroup, (event, ruleId: string, groupId?: string) => {
+    return new Promise((resolve, reject) => {
+      const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+      if (data) {
+        const rule = findGroupOrRule(data.apiRules, ruleId) as RuleData
+        const parentGroup = findParentGroup(data.apiRules, ruleId)
+        if (!groupId) {
+          // if groupId is not provided, we will remove the rule from its current group
+          if (parentGroup) {
+            if (rule) {
+              parentGroup.ruleList = parentGroup.ruleList.filter((r) => r.id !== ruleId)
+              // put the rule to the root
+              data.apiRules.push(rule)
+            }
+          }
+        } else {
+          // if groupId is provided, we will move the rule to the new group
+          const group = findGroupOrRule(data.apiRules, groupId) as RuleGroup
+          if (parentGroup) {
+            // remove rule from old group
+            parentGroup.ruleList = parentGroup.ruleList.filter((r) => r.id !== ruleId)
+          } else {
+            // remove rule from root
+            data.apiRules = data.apiRules.filter((r) => r.id !== ruleId)
+          }
+          if (group) {
+            group.ruleList.push(rule)
+          }
+        }
+        data.updatedAt = new Date().getTime()
+        Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+          if (error) {
+            log.error('[EditRuleGroup] Failed to storage rule', error)
+          } else {
+            updateRuntimeRules(data.apiRules)
+            resolve({
+              status: EventResultStatus.Success
+            })
+          }
+        })
+      } else {
+        reject({
+          status: EventResultStatus.Error,
+          error: 'User data not found'
         })
       }
     })

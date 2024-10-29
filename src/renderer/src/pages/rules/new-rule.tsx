@@ -4,6 +4,7 @@ import './rules.less'
 import {
   App,
   Button,
+  Divider,
   Dropdown,
   Flex,
   Form,
@@ -42,7 +43,7 @@ import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
 import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@shared/contract'
-import { findGroupOrRule } from '@shared/utils'
+import { findGroupOrRule, findParentGroup } from '@shared/utils'
 import MonacoEditor from '@renderer/components/monaco-editor'
 
 import { SnippetType, getSnippet } from '@renderer/common/snippets'
@@ -72,6 +73,8 @@ function NewRulePage(): JSX.Element {
   const navigate = useNavigate()
   const { language } = useSettingStore((state) => state)
   const [searchParams] = useSearchParams()
+
+  // groupId has value when add new rule to a group
   const groupId = searchParams.get('groupId')
   const targetTab = searchParams.get('tab') || 'rule'
   const { message, modal } = App.useApp()
@@ -146,10 +149,34 @@ function NewRulePage(): JSX.Element {
 
   const apiRules = useRuleStore((state) => state.apiRules)
   const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
+  const allRuleGroups = apiRules.filter((rule) => rule.kind === 'group')
+
   const [addRulesMenu, setAddRulesMenu] = useState<MenuProps['items']>(DefaultAddRulesMenu)
 
   const { id: editRuleId } = useParams()
   const editRule = useRuleStore((state) => findGroupOrRule(state.apiRules, editRuleId)) as RuleData
+  const editRuleParentGroup = editRuleId ? findParentGroup(apiRules, editRuleId) : null
+  const allRuleGroupsMenu: MenuProps['items'] =
+    editRuleId && editRuleParentGroup
+      ? [
+          ...allRuleGroups.map((group) => ({
+            key: group.id,
+            label: group.name
+          })),
+          {
+            type: 'divider'
+          },
+          {
+            key: 'removeFromGroup',
+            label: strings.removeFromGroup,
+            danger: true
+          }
+        ]
+      : allRuleGroups.map((group) => ({
+          key: group.id,
+          label: group.name
+        }))
+
   const formInitValues = editRule || {
     name: '',
     description: '',
@@ -398,6 +425,16 @@ function NewRulePage(): JSX.Element {
     })
   }
 
+  const handleEditGroupClick = async (key: string) => {
+    if (editRuleId) {
+      const result = await window.api.editRuleGroup(
+        editRuleId,
+        key === 'removeFromGroup' ? undefined : key
+      )
+      showAddRuleResult(result)
+    }
+  }
+
   return (
     <div className="page-new">
       <Form
@@ -428,11 +465,30 @@ function NewRulePage(): JSX.Element {
           <Space>
             <Form.Item name="enable" noStyle>
               <Switch
-                style={{ marginRight: '10px' }}
                 checkedChildren={strings.enabled}
                 unCheckedChildren={strings.enabled}
               ></Switch>
             </Form.Item>
+            <Divider type="vertical" style={{ borderColor: 'var(--color-text-3)' }} />
+            {!groupId && (
+              // we don't need show this when add new rule to a group
+              <Dropdown
+                menu={{
+                  items: allRuleGroupsMenu,
+                  selectable: true,
+                  defaultSelectedKeys: [editRuleParentGroup?.id || ''],
+                  onClick: ({ key }) => handleEditGroupClick(key)
+                }}
+                trigger={['click']}
+              >
+                <Button>
+                  <Space>
+                    {strings.editGroup}
+                    <DownOutlined />
+                  </Space>
+                </Button>
+              </Dropdown>
+            )}
             <Button type="primary" onClick={() => form.submit()}>
               {strings.save}
             </Button>

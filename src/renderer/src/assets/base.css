@@ -7,6 +7,7 @@
   --ev-c-black-soft: #222222;
   --ev-c-black-mute: #282828;
 
+  --ev-c-gray-0: rgba(150, 150, 150, 0.7);
   --ev-c-gray-1: #515c67;
   --ev-c-gray-2: #414853;
   --ev-c-gray-3: #32363f;
@@ -41,6 +42,7 @@
 
     --color-text: var(--ev-c-text-1);
     --color-text-2: var(--ev-c-text-2);
+    --color-text-3: var(--ev-c-text-3);
   }
 }
 
@@ -59,6 +61,7 @@
 
     --color-text: var(--ev-c-black);
     --color-text-2: var(--ev-c-black-soft);
+    --color-text-3: var(--ev-c-gray-0);
   }
 }
 

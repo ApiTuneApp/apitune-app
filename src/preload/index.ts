@@ -50,6 +50,9 @@ const api = {
   updateRule: (id: string, rules: string): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.UpdateRule, id, rules)
   },
+  editRuleGroup: (ruleId: string, groupId?: string): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.EditRuleGroup, ruleId, groupId)
+  },
   enableRule: (id: string, enable: boolean): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.EnableRule, id, enable)
   },

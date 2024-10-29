@@ -168,7 +168,9 @@ export const strings = new LocalizedStrings({
     scanQrCode: 'Scan QR Code to download the certificate',
     copyServerAddress: 'Copy server address',
     copyCertDownloadUrl: 'Copy certificate download url',
-    copied: 'Copied!'
+    copied: 'Copied!',
+    editGroup: 'Edit Group',
+    removeFromGroup: 'Remove from Group'
   },
   zh: {
     curVersion: '当前版本',
@@ -334,6 +336,8 @@ export const strings = new LocalizedStrings({
     scanQrCode: '扫描二维码下载证书',
     copyServerAddress: '复制服务器地址',
     copyCertDownloadUrl: '复制证书下载地址',
-    copied: '已复制!'
+    copied: '已复制!',
+    editGroup: '编辑分组',
+    removeFromGroup: '从分组中移除'
   }
 })

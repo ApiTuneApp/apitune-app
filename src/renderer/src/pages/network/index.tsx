@@ -419,7 +419,7 @@ function NetworkPage(): JSX.Element {
             <Radio.Button value="font">font</Radio.Button>
             <Radio.Button value="img">Img</Radio.Button>
           </Radio.Group>
-          <Divider type="vertical" />
+          <Divider type="vertical" style={{ borderColor: 'var(--color-text-3)' }} />
           <Radio.Group defaultValue="all" onChange={handleLogStatusChange}>
             <Radio.Button value="all">{strings.all}</Radio.Button>
             <Radio.Button value="1xx">1xx</Radio.Button>

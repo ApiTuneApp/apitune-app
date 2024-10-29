@@ -5,6 +5,7 @@ export enum RenderEvent {
   startServer = 'startServer',
   AddRule = 'addRule',
   UpdateRule = 'updateRule',
+  EditRuleGroup = 'editRuleGroup',
   EnableRule = 'enableRule',
   UpdateRuleGroupName = 'updateRuleGroupName',
   GetApiRules = 'getApiRules',
