@@ -1,4 +1,4 @@
-name: Build/release Electron app
+name: Build Release App
 
 on:
   workflow_dispatch: # Allows manual triggering without requiring inputs
