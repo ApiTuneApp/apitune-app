@@ -39,7 +39,7 @@ dependencies:
     specifier: ^3.2.5
     version: 3.2.6
   axios:
-    specifier: ^1.6.8
+    specifier: ^1.7.7
     version: 1.7.7
   cacheable-lookup:
     specifier: ^6.1.0
