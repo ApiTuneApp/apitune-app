@@ -170,7 +170,9 @@ export const strings = new LocalizedStrings({
     copyCertDownloadUrl: 'Copy certificate download url',
     copied: 'Copied!',
     editGroup: 'Edit Group',
-    removeFromGroup: 'Remove from Group'
+    removeFromGroup: 'Remove from Group',
+    myRules: 'My Rules',
+    sharedRules: 'Shared Rules'
   },
   zh: {
     curVersion: '当前版本',
@@ -338,6 +340,8 @@ export const strings = new LocalizedStrings({
     copyCertDownloadUrl: '复制证书下载地址',
     copied: '已复制!',
     editGroup: '编辑分组',
-    removeFromGroup: '从分组中移除'
+    removeFromGroup: '从分组中移除',
+    myRules: '我的规则',
+    sharedRules: '共享规则'
   }
 })

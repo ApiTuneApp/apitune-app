@@ -1,6 +1,6 @@
 import './rules-sidebar.less'
 
-import { App, Button, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
+import { App, Button, Collapse, ConfigProvider, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
 import * as React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
@@ -249,6 +249,39 @@ function RulesSidebar(): JSX.Element {
     }
   }
 
+  const collapseItems = [
+    {
+      key: 'myRules',
+      label: strings.myRules,
+      children: (
+        <Tree
+          className="rules-tree"
+          style={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
+          treeData={treeData}
+          blockNode={true}
+          expandedKeys={ruleSidebarExpandedKeys}
+          titleRender={(nodeData) => {
+            return (
+              <RuleTreeItem
+                key={nodeData.key}
+                labelText={nodeData.title as string}
+                rule={nodeData.rule as RuleGroup | RuleData}
+                onMenuClick={handleGroupMenuItemClick}
+              />
+            )
+          }}
+          onSelect={handleTreeSelect}
+          onExpand={onExpand}
+        />
+      )
+    },
+    {
+      key: 'sharedRules',
+      label: strings.sharedRules,
+      children: <div>Shared Rules</div>
+    }
+  ]
+
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
@@ -275,25 +308,22 @@ function RulesSidebar(): JSX.Element {
         groupId={editGroupId}
         onClose={() => setAddGroupDialogOpen(false)}
       />
-      <Tree
-        className="rules-tree"
-        style={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
-        treeData={treeData}
-        blockNode={true}
-        expandedKeys={ruleSidebarExpandedKeys}
-        titleRender={(nodeData) => {
-          return (
-            <RuleTreeItem
-              key={nodeData.key}
-              labelText={nodeData.title as string}
-              rule={nodeData.rule as RuleGroup | RuleData}
-              onMenuClick={handleGroupMenuItemClick}
-            />
-          )
+      <ConfigProvider
+        theme={{
+          components: {
+            Collapse: {
+              contentPadding: '4px 4px !important'
+            }
+          }
         }}
-        onSelect={handleTreeSelect}
-        onExpand={onExpand}
-      />
+      >
+        <Collapse
+          size="small"
+          className="rules-sidebar-collapse"
+          items={collapseItems}
+          defaultActiveKey={['myRules', 'sharedRules']}
+        />
+      </ConfigProvider>
     </div>
   )
 }
