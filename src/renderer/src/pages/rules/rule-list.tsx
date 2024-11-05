@@ -4,7 +4,7 @@ import { App, Button, Space, Switch, Table, Tooltip } from 'antd'
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { ExclamationCircleFilled } from '@ant-design/icons'
+import { ExclamationCircleFilled, ShareAltOutlined } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
@@ -31,6 +31,10 @@ function RuleListPage(): JSX.Element {
   function handleGroupRename(groupId) {
     setEditGroupId(groupId)
     setGroupNameModalOpen(true)
+  }
+
+  function handleShare(ruleId) {
+    console.log('handleShare', ruleId)
   }
 
   const handleDelConfirmOpen = (id: string) => {
@@ -88,6 +92,7 @@ function RuleListPage(): JSX.Element {
       render: (text, record) => {
         return (
           <Space size="middle">
+            <Button icon={<ShareAltOutlined />} onClick={(e) => handleShare(record.id)}></Button>
             <Button onClick={(e) => handleGroupRename(record.id)}>{strings.rename}</Button>
             <Button danger onClick={(e) => handleDelConfirmOpen(record.id)}>
               {strings.delete}
@@ -148,6 +153,11 @@ function RuleListPage(): JSX.Element {
       render: (text, record) => {
         return (
           <Space size="middle">
+            <Button
+              type="text"
+              icon={<ShareAltOutlined />}
+              onClick={(e) => handleShare(record.id)}
+            ></Button>
             <Button type="text" danger onClick={(e) => handleDelConfirmOpen(record.id)}>
               {strings.delete}
             </Button>

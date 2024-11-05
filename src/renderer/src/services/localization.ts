@@ -172,7 +172,8 @@ export const strings = new LocalizedStrings({
     editGroup: 'Edit Group',
     removeFromGroup: 'Remove from Group',
     myRules: 'My Rules',
-    sharedRules: 'Shared Rules'
+    sharedRules: 'Shared Rules',
+    share: 'Share'
   },
   zh: {
     curVersion: '当前版本',
