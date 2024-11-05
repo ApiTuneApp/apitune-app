@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 
 import { ExclamationCircleFilled, ShareAltOutlined } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
+import ShareModal from '@renderer/components/share-modal'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
@@ -19,6 +20,8 @@ function RuleListPage(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
   const [groupNameModalOpen, setGroupNameModalOpen] = React.useState(false)
+  const [shareModalOpen, setShareModalOpen] = React.useState(false)
+  const [shareRuleOrGroupId, setShareRuleOrGroupId] = React.useState<string | null>(null)
 
   function triggerRuleEnable(rule, enabled) {
     window.api.enableRule(rule.id, enabled).then((result) => {
@@ -33,8 +36,9 @@ function RuleListPage(): JSX.Element {
     setGroupNameModalOpen(true)
   }
 
-  function handleShare(ruleId) {
-    console.log('handleShare', ruleId)
+  function handleShare(id) {
+    setShareRuleOrGroupId(id)
+    setShareModalOpen(true)
   }
 
   const handleDelConfirmOpen = (id: string) => {
@@ -192,6 +196,11 @@ function RuleListPage(): JSX.Element {
         open={groupNameModalOpen}
         groupId={editGroupId}
         onClose={() => setGroupNameModalOpen(false)}
+      />
+      <ShareModal
+        open={shareModalOpen}
+        ruleOrGroupId={shareRuleOrGroupId}
+        onCancel={() => setShareModalOpen(false)}
       />
     </div>
   )

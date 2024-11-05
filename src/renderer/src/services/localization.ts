@@ -2,6 +2,8 @@ import LocalizedStrings from 'react-localization'
 
 export const strings = new LocalizedStrings({
   en: {
+    close: 'Close',
+    shareRule: 'Share Rule',
     curVersion: 'Current Version',
     checkUpdate: 'Check Update',
     noNewVersion: 'No new version available',
@@ -173,9 +175,14 @@ export const strings = new LocalizedStrings({
     removeFromGroup: 'Remove from Group',
     myRules: 'My Rules',
     sharedRules: 'Shared Rules',
-    share: 'Share'
+    share: 'Share',
+    copyLink: 'Copy Link',
+    shareDesc:
+      'Copy the link and share it with others, only creator can edit the rule, others can manually update to latest version'
   },
   zh: {
+    close: '关闭',
+    shareRule: '分享规则',
     curVersion: '当前版本',
     checkUpdate: '检查更新',
     noNewVersion: '没有新版本可用',
@@ -343,6 +350,8 @@ export const strings = new LocalizedStrings({
     editGroup: '编辑分组',
     removeFromGroup: '从分组中移除',
     myRules: '我的规则',
-    sharedRules: '共享规则'
+    sharedRules: '共享规则',
+    copyLink: '复制链接',
+    shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他人可以手动更新到最新版本'
   }
 })
