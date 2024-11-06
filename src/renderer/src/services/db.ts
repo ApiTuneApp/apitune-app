@@ -1,5 +1,5 @@
 import { supabase } from './auth'
-import { ApiRules } from '@shared/contract'
+import { ApiRuleItem, ApiRules } from '@shared/contract'
 
 export const getUserRules = async () => {
   const user = await supabase.auth.getUser()
@@ -71,4 +71,25 @@ export const syncRuleData = async (rule_data: ApiRules) => {
     updated_at: updated_at,
     data: result
   }
+}
+
+export const generateShareLink = async (userId: string, ruleData: ApiRuleItem): Promise<string> => {
+  if (!userId) {
+    throw new Error('User not authenticated')
+  }
+  const { data, error } = await supabase
+    .from('shareRules')
+    .insert([
+      {
+        rule_data: ruleData as any,
+        user_id: userId,
+        updated_at: new Date().toISOString()
+      }
+    ])
+    .select('id')
+    .single()
+  if (error) {
+    throw error
+  }
+  return data?.id
 }

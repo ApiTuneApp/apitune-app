@@ -9,6 +9,7 @@ import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useSettingStore } from '@renderer/store/setting'
+import { useUserStore } from '@renderer/store/user'
 import { ApiRules, EventResultStatus, MainEvent, SyncInfo, User } from '@shared/contract'
 
 const { Text } = Typography
@@ -17,17 +18,12 @@ function Header(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
   const initSyncInfo = useRuleStore.getState().initSyncInfo
   const initApiRules = useRuleStore.getState().initApiRules
+  const { user, setUser } = useUserStore.getState()
 
   const port = useSettingStore((state) => state.port)
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [ip, setIp] = useState<string>('')
   const [syncingStatus, setSyncingStatus] = useState<boolean>(false)
-  const [user, setUser] = useState<User>({
-    id: '',
-    email: '',
-    name: '',
-    avatar: ''
-  })
 
   // only run in the first time when the user sign in
   async function _initSyncRule() {

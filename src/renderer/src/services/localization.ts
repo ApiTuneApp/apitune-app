@@ -178,7 +178,9 @@ export const strings = new LocalizedStrings({
     share: 'Share',
     copyLink: 'Copy Link',
     shareDesc:
-      'Copy the link and share it with others, only creator can edit the rule, others can manually update to latest version'
+      'Copy the link and share it with others, only creator can edit the rule, others can manually update to latest version',
+    generatingLink: 'Generating link...',
+    pleaseLoginFirst: 'Please sign in first'
   },
   zh: {
     close: '关闭',
@@ -352,6 +354,8 @@ export const strings = new LocalizedStrings({
     myRules: '我的规则',
     sharedRules: '共享规则',
     copyLink: '复制链接',
-    shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他人可以手动更新到最新版本'
+    shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他人可以手动更新到最新版本',
+    generatingLink: '生成链接中...',
+    pleaseLoginFirst: '请先登录'
   }
 })

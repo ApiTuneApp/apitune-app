@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, clipboard, dialog, ipcMain, shell } from 'electron'
 import Storage from 'electron-json-storage'
 import log from 'electron-log/main'
 import { autoUpdater, UpdateInfo } from 'electron-updater'
@@ -889,6 +889,10 @@ app.whenReady().then(() => {
         })
       })
     })
+  })
+
+  ipcMain.on(RenderEvent.CopyText, (event, text: string) => {
+    clipboard.writeText(text)
   })
 
   // const dataPath = Storage.getDataPath()

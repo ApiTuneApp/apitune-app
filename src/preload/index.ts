@@ -115,6 +115,9 @@ const api = {
   },
   checkForUpdate: (): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.CheckForUpdate)
+  },
+  copyText: (text: string): void => {
+    ipcRenderer.send(RenderEvent.CopyText, text)
   }
 }
 
