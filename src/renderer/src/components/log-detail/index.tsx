@@ -457,7 +457,6 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
           realModifyList.push(modifyValue)
         }
       }
-      console.log('realModifyList', realModifyList, values)
       if (realModifyList.length > 0) {
         // create new rule
         window.api
@@ -510,7 +509,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
             style={{ padding: '0 10px', height: '100%' }}
             tabBarExtraContent={{
               right: editLog ? (
-                <Space style={{ marginRight: 40 }}>
+                <Space style={{ marginRight: 30 }}>
                   <Button
                     size="small"
                     type="primary"
@@ -525,7 +524,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
                 </Space>
               ) : (
                 <Button
-                  style={{ marginRight: 40 }}
+                  style={{ marginRight: 30 }}
                   size="small"
                   icon={<EditOutlined />}
                   onClick={() => setEditLog(true)}

@@ -206,7 +206,7 @@ function NetworkPage(): JSX.Element {
 
   useEffect(() => {
     setColumns(columnBase)
-    setPauseBtnText(!recordPaused ? startRecordStr : stopRecordStr)
+    setPauseBtnText(recordPaused ? startRecordStr : stopRecordStr)
   }, [language])
 
   const [columns, setColumns] = useState<ColumnType<any>[]>(columnBase)

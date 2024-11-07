@@ -26,7 +26,9 @@ function HeaderEditor({
 }: AddRuleValueProps & HeaderEditorProps): JSX.Element {
   const currentHeaderValues = form.getFieldValue(['modifyList', field.name, 'value'])
   const [typeMap, setTypeMap] = useState(
-    Object.fromEntries(currentHeaderValues.map((item, index) => [index, item.type]))
+    currentHeaderValues
+      ? Object.fromEntries(currentHeaderValues.map((item, index) => [index, item.type]))
+      : {}
   )
 
   function handleTypeChange(field: FormListFieldData, value: string) {
