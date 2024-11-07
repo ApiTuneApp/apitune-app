@@ -9,7 +9,8 @@ import {
   Form,
   Space,
   Tabs,
-  TabsProps
+  TabsProps,
+  Tooltip
 } from 'antd'
 import * as _ from 'lodash'
 import { useEffect, useState } from 'react'
@@ -523,14 +524,21 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
                   </Button>
                 </Space>
               ) : (
-                <Button
-                  style={{ marginRight: 30 }}
-                  size="small"
-                  icon={<EditOutlined />}
-                  onClick={() => setEditLog(true)}
-                >
-                  {strings.edit}
-                </Button>
+                <Space style={{ marginRight: 30 }}>
+                  {log.matchedRules.length > 0 && (
+                    <div style={{ marginRight: 10 }}>
+                      <span>{strings.matchedRules}:</span>
+                      {log.matchedRules.map((rule) => (
+                        <RuleLink key={rule} id={rule} />
+                      ))}
+                    </div>
+                  )}
+                  <Tooltip title={strings.logEditTooltip}>
+                    <Button size="small" icon={<EditOutlined />} onClick={() => setEditLog(true)}>
+                      {strings.edit}
+                    </Button>
+                  </Tooltip>
+                </Space>
               )
             }}
           />
