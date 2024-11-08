@@ -1,5 +1,6 @@
+import { ApiRuleItem, ApiRules, ShareRule } from '@shared/contract'
+
 import { supabase } from './auth'
-import { ApiRuleItem, ApiRules } from '@shared/contract'
 
 export const getUserRules = async () => {
   const user = await supabase.auth.getUser()
@@ -92,4 +93,28 @@ export const generateShareLink = async (userId: string, ruleData: ApiRuleItem): 
     throw error
   }
   return data?.id
+}
+
+export const getShareRule = async (shareId: string): Promise<ShareRule | null> => {
+  if (!shareId) {
+    throw new Error('Share ID is required')
+  }
+  const { data, error } = await supabase
+    .from('shareRules')
+    .select(
+      `
+          *,
+          users:user_id (
+            id,
+            avatar_url,
+            full_name
+          )
+        `
+    )
+    .eq('id', shareId)
+    .single()
+  if (error) {
+    throw error
+  }
+  return data as unknown as ShareRule
 }

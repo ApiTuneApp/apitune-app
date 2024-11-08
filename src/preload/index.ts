@@ -26,6 +26,9 @@ const api = {
       callback(accessToken, refreshToken)
     )
   },
+  onOpenShare: (callback): void => {
+    ipcRenderer.on(MainEvent.OpenShare, (_, shareId) => callback(shareId))
+  },
   onPrintLog: (callback): void => {
     ipcRenderer.on(MainEvent.PrintLog, (_, printItem) => callback(printItem))
   },

@@ -19,6 +19,8 @@ type onProxyLogCallback = (log: Log) => void
 
 type onAuthCodeCallback = (access_token: string, refresh_token: string) => void
 
+type onOpenShareCallback = (shareId: string) => void
+
 type onPrintLogCallback = (printItem: PrintItem) => void
 
 declare global {
@@ -27,6 +29,7 @@ declare global {
     api: {
       onProxyLog: (callback: onProxyLogCallback) => void
       onAuthCode: (callback: onAuthCodeCallback) => void
+      onOpenShare: (callback: onOpenShareCallback) => void
       onPrintLog: (callback: onPrintLogCallback) => void
       getPrintLogs: () => Promise<PrintItem[]>
       clearPrintLogs: () => void

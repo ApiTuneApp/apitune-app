@@ -40,3 +40,8 @@ export function printLog(printItem: PrintItem): void {
   webContents.send(MainEvent.PrintLog, printItem)
   PrintStorage.add(printItem)
 }
+
+export function openShare(shareId: string): void {
+  if (!webContents) return
+  webContents.send(MainEvent.OpenShare, shareId)
+}

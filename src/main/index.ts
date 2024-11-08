@@ -24,7 +24,7 @@ import {
   Theme
 } from '../shared/contract'
 import { findGroupOrRule, findParentGroup } from '../shared/utils'
-import { getAuthCode, initCommunicator } from './communicator'
+import { getAuthCode, initCommunicator, openShare } from './communicator'
 import crtMgr from './server/cert-manager'
 import config from './server/config'
 import { changeServerPort, initServer } from './server/init'
@@ -142,10 +142,18 @@ app.whenReady().then(() => {
   app.on('open-url', (event, url) => {
     event.preventDefault()
     const parsedUrl = new URL(url)
-    const accessToken = parsedUrl.searchParams.get('access_token')
-    const refreshToken = parsedUrl.searchParams.get('refresh_token')
-    if (accessToken && refreshToken) {
-      getAuthCode(accessToken, refreshToken)
+    const host = parsedUrl.host
+    if (host === 'share') {
+      const shareId = parsedUrl.searchParams.get('id')
+      if (shareId) {
+        openShare(shareId)
+      }
+    } else if (host === 'login') {
+      const accessToken = parsedUrl.searchParams.get('access_token')
+      const refreshToken = parsedUrl.searchParams.get('refresh_token')
+      if (accessToken && refreshToken) {
+        getAuthCode(accessToken, refreshToken)
+      }
     }
   })
 

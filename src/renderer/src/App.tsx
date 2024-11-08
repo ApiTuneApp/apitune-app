@@ -1,6 +1,6 @@
 import { App as AntApp, ConfigProvider, Layout, theme as antdTheme } from 'antd'
 import KeepAlive from 'keepalive-for-react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
 
 import { useUxStore } from '@renderer/store/ux'
@@ -8,6 +8,7 @@ import { MainEvent } from '@shared/contract'
 
 import Header from './components/header'
 import Sidebar from './components/sidebar'
+import ShareModalView from './components/share-modal/view'
 import { getApiRules, getSettings } from './services'
 import { useSettingStore } from './store/setting'
 
@@ -18,6 +19,8 @@ function App(): JSX.Element {
   const location = useLocation()
   const addProxyLogs = useUxStore((state) => state.addProxyLogs)
   const appTheme = useSettingStore((state) => state.appTheme)
+  const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [shareId, setShareId] = useState('')
 
   useEffect(() => {
     const cancelRules = getApiRules()
@@ -33,10 +36,20 @@ function App(): JSX.Element {
       addProxyLogs(log)
     })
 
+    window.api.onOpenShare((shareId) => {
+      setShareId(shareId)
+      setShareModalOpen(true)
+    })
+
     return () => {
       window.api.clearupEvent(MainEvent.ProxyLog)
     }
   }, [])
+
+  const handleShareModalCancel = () => {
+    setShareModalOpen(false)
+    setShareId('')
+  }
 
   function autoHideTooltip() {
     const tooltipList = document.querySelectorAll('.j-autohide-tooltip')
@@ -108,6 +121,11 @@ function App(): JSX.Element {
               </LayoutContent>
             </Layout>
           </Layout>
+          <ShareModalView
+            open={shareModalOpen}
+            shareId={shareId}
+            onCancel={handleShareModalCancel}
+          />
         </Layout>
       </AntApp>
     </ConfigProvider>

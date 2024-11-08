@@ -38,7 +38,8 @@ export enum MainEvent {
   RendererLog = 'rendererLog',
   ProxyLog = 'proxyLog',
   PrintLog = 'printLog',
-  GetAuthCode = 'getAuthCode'
+  GetAuthCode = 'getAuthCode',
+  OpenShare = 'openShare'
 }
 
 export enum EventResultStatus {
@@ -280,4 +281,18 @@ export type PrintItem = {
   logId: string
   ruleId: string
   printList: Array<PrintScript>
+}
+
+export interface ShareUser {
+  id: string
+  avatar_url: string
+  full_name: string
+}
+
+export interface ShareRule {
+  id: string
+  created_at: string
+  private_emails: string[]
+  rule_data: RuleGroup | RuleData
+  users: ShareUser
 }
