@@ -725,18 +725,19 @@ app.whenReady().then(() => {
             error: 'Root CA is already trusted'
           })
         } else {
-          const result = crtMgr.installRootCA()
-          if (result.error) {
-            log.error('[CA] Failed to trust Root CA:', result.error)
-            resolve({
-              status: EventResultStatus.Error,
-              error: 'Failed to trust Root CA'
-            })
-          } else {
-            resolve({
-              status: EventResultStatus.Success
-            })
-          }
+          crtMgr.installRootCA().then((result) => {
+            if (result.error) {
+              log.error('[CA] Failed to trust Root CA:', result.error)
+              resolve({
+                status: EventResultStatus.Error,
+                error: 'Failed to trust Root CA'
+              })
+            } else {
+              resolve({
+                status: EventResultStatus.Success
+              })
+            }
+          })
         }
       })
     } else if (type === 'export') {

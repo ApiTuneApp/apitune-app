@@ -3,7 +3,7 @@ import CertManager from 'node-easy-cert'
 import os from 'node:os'
 
 import config from './config'
-import { execScriptSync } from './helper'
+import { execScriptSudo, execScriptSync } from './helper'
 
 const options = {
   rootDirPath: config.sslDir,
@@ -85,12 +85,13 @@ class ExtendedCertManager {
     return status
   }
 
-  installRootCA(): any {
+  async installRootCA() {
     const rootCAPath = this.mgr.getRootDirPath() + '/rootCA.crt'
     let result
     if (os.platform() === 'win32') {
       // Windows
-      result = execScriptSync(`certutil -addstore -f "Root" "${rootCAPath}"`)
+      // result = execScriptSync(`certutil -addstore -f "Root" "${rootCAPath}"`)
+      result = await execScriptSudo(`certutil -addstore -f "Root" "${rootCAPath}"`)
     } else {
       const command = `osascript -e \
       'do shell script \

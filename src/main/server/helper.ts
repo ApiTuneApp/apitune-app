@@ -3,6 +3,7 @@ import child_process from 'node:child_process'
 import { Socket } from 'node:net'
 import { finished, PassThrough, Readable, Stream } from 'node:stream'
 import pako from 'pako'
+import * as sudo from 'sudo-prompt'
 
 import { BodyInfo, Log } from '../../shared/contract'
 import config from './config'
@@ -136,6 +137,22 @@ export function execScriptSync(cmd: string) {
     status,
     error
   }
+}
+
+export function execScriptSudo(cmd: string) {
+  const result = {
+    stdout: '',
+    status: 0,
+    error: ''
+  }
+  return new Promise((resolve, reject) => {
+    sudo.exec(cmd, { name: 'ApiTune' }, (err, stdout, stderr) => {
+      result.error = err?.message || ''
+      result.stdout = stdout?.toString() || ''
+      result.status = err ? 1 : 0
+      resolve(result)
+    })
+  })
 }
 
 interface GetBase64Result {
