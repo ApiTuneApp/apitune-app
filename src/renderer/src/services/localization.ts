@@ -3,7 +3,6 @@ import LocalizedStrings from 'react-localization'
 export const strings = new LocalizedStrings({
   en: {
     close: 'Close',
-    shareRule: 'Share Rule',
     curVersion: 'Current Version',
     checkUpdate: 'Check Update',
     noNewVersion: 'No new version available',
@@ -174,18 +173,22 @@ export const strings = new LocalizedStrings({
     editGroup: 'Edit Group',
     removeFromGroup: 'Remove from Group',
     myRules: 'My Rules',
+    shareRule: 'Share Rule',
     sharedRules: 'Shared Rules',
     share: 'Share',
+    shareRuleWithYou: '{0} shared a {1} with you',
     copyLink: 'Copy Link',
     shareDesc:
       'Copy the link and share it with others, only creator can edit the rule, others can manually update to latest version',
     generatingLink: 'Generating link...',
     pleaseLoginFirst: 'Please sign in first',
-    logEditTooltip: 'Create new rule to edit request or response'
+    logEditTooltip: 'Create new rule to edit request or response',
+    viewDetails: 'View Details',
+    importToMyShare: 'Import to My Share List',
+    openMyShare: 'You opened your own share'
   },
   zh: {
     close: '关闭',
-    shareRule: '分享规则',
     curVersion: '当前版本',
     checkUpdate: '检查更新',
     noNewVersion: '没有新版本可用',
@@ -354,10 +357,15 @@ export const strings = new LocalizedStrings({
     removeFromGroup: '从分组中移除',
     myRules: '我的规则',
     sharedRules: '共享规则',
+    shareRule: '共享规则',
+    shareRuleWithYou: '{0} 共享了一个规则给你',
     copyLink: '复制链接',
     shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他人可以手动更新到最新版本',
     generatingLink: '生成链接中...',
     pleaseLoginFirst: '请先登录',
-    logEditTooltip: '创建新规则以编辑此请求或响应'
+    logEditTooltip: '创建新规则以编辑此请求或响应',
+    viewDetails: '查看详情',
+    importToMyShare: '保存到我的共享列表',
+    openMyShare: '您打开了您自己的共享'
   }
 })

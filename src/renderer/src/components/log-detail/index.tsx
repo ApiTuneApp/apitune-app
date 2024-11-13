@@ -465,7 +465,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
             JSON.stringify({
               kind: 'rule',
               name: `Modify-${log.url}`,
-              describe: '',
+              description: '',
               enable: true,
               matches: {
                 matchType: 'url',

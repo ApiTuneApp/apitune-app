@@ -370,7 +370,7 @@ function NewRulePage(): JSX.Element {
         JSON.stringify({
           kind: 'rule',
           name: values.name,
-          describe: values.description,
+          description: values.description,
           enable: values.enable,
           matches: values.matches,
           modifyList: values.modifyList,
@@ -383,7 +383,7 @@ function NewRulePage(): JSX.Element {
         JSON.stringify({
           kind: 'rule',
           name: values.name,
-          describe: values.description,
+          description: values.description,
           enable: values.enable,
           matches: values.matches,
           modifyList: values.modifyList,
