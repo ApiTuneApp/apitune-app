@@ -191,6 +191,21 @@ function Header(): JSX.Element {
     }
   ]
 
+  const getAvatarUrl = (user: any) => {
+    if (user?.avatar) {
+      return user.avatar
+    }
+    // Option 1: DiceBear (many different styles available)
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+      user?.email || user?.id
+    }&radius=50&backgroundColor=b6e3f4`
+
+    // Option 2: UI Avatars (text-based)
+    // return `https://ui-avatars.com/api/?name=${
+    //   user?.email?.charAt(0) || "U"
+    // }&background=random`;
+  }
+
   return (
     <div className="app-header">
       <span style={{ display: 'none' }}>{apiRules.length}</span>
@@ -232,7 +247,7 @@ function Header(): JSX.Element {
         </Button>
       ) : (
         <Dropdown menu={{ items: profileMenu }}>
-          <Avatar src={user.avatar} style={{ cursor: 'pointer' }} />
+          <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }} />
         </Dropdown>
       )}
     </div>
