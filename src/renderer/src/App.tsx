@@ -8,7 +8,7 @@ import { MainEvent } from '@shared/contract'
 
 import Header from './components/header'
 import Sidebar from './components/sidebar'
-import ShareRuleNoticer from './components/share-modal/view'
+import ShareRuleNoticer from './components/share-modal/noticer'
 import { getApiRules, getSettings } from './services'
 import { useSettingStore } from './store/setting'
 

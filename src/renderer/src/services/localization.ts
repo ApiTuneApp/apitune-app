@@ -185,7 +185,8 @@ export const strings = new LocalizedStrings({
     logEditTooltip: 'Create new rule to edit request or response',
     viewDetails: 'View Details',
     importToMyShare: 'Import to My Share List',
-    openMyShare: 'You opened your own share'
+    openMyShare: 'You opened your own share',
+    createBy: 'Created by'
   },
   zh: {
     close: '关闭',
@@ -366,6 +367,7 @@ export const strings = new LocalizedStrings({
     logEditTooltip: '创建新规则以编辑此请求或响应',
     viewDetails: '查看详情',
     importToMyShare: '保存到我的共享列表',
-    openMyShare: '您打开了您自己的共享'
+    openMyShare: '您打开了您自己的共享',
+    createBy: '创建者'
   }
 })

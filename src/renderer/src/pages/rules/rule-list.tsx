@@ -69,7 +69,7 @@ function RuleListPage(): JSX.Element {
       key: 'name'
     },
     {
-      title: strings.description,
+      title: strings.groupEnabled,
       dataIndex: 'enable',
       key: 'enable',
       render: (enable, rule) => {

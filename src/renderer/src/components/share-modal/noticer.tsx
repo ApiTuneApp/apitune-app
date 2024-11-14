@@ -1,11 +1,12 @@
 import { Button, notification, Typography } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { getShareRule } from '@renderer/services/db'
-import { MainEvent, RuleData, ShareRule } from '@shared/contract'
 import { SmileOutlined } from '@ant-design/icons'
+import { getShareRule } from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
 import { useUserStore } from '@renderer/store/user'
+import { MainEvent, RuleData, ShareRule } from '@shared/contract'
 
 const { Paragraph, Title } = Typography
 
@@ -16,6 +17,12 @@ interface ShareModalProps {
 export default function ShareRuleNoticer({ onCancel }: ShareModalProps) {
   const [api, contextHolder] = notification.useNotification()
   const { user } = useUserStore()
+  const navigate = useNavigate()
+
+  const goViewDetail = (shareData: ShareRule) => {
+    navigate(`/rules/share/${shareData.id}?type=view`, { state: { shareData } })
+    api.destroy(shareData.id)
+  }
 
   const openNotification = (shareData: ShareRule) => {
     const isGroup = shareData.rule_data?.kind === 'group'
@@ -29,12 +36,12 @@ export default function ShareRuleNoticer({ onCancel }: ShareModalProps) {
         )
     const btns = isOwner
       ? [
-          <Button type="link" key="view-details">
+          <Button type="link" key="view-details" onClick={() => goViewDetail(shareData)}>
             {strings.viewDetails}
           </Button>
         ]
       : [
-          <Button type="link" key="view-details">
+          <Button type="link" key="view-details" onClick={() => goViewDetail(shareData)}>
             {strings.viewDetails}
           </Button>,
           <Button type="primary" key="import-rule">
@@ -51,6 +58,7 @@ export default function ShareRuleNoticer({ onCancel }: ShareModalProps) {
           )}
         </>
       ),
+      key: shareData.id,
       btn: btns,
       icon: <SmileOutlined style={{ color: '#108ee9' }} />
     })
