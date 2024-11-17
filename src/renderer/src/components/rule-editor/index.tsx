@@ -73,9 +73,16 @@ interface RuleEditorProps {
   targetTab?: string
   disabled?: boolean
   editRuleId?: string
+  ruleData?: RuleData
 }
 
-function RuleEditor({ editRuleId, groupId, targetTab, disabled }: RuleEditorProps): JSX.Element {
+function RuleEditor({
+  editRuleId,
+  groupId,
+  targetTab,
+  disabled,
+  ruleData
+}: RuleEditorProps): JSX.Element {
   const navigate = useNavigate()
   const { language } = useSettingStore((state) => state)
 
@@ -86,7 +93,9 @@ function RuleEditor({ editRuleId, groupId, targetTab, disabled }: RuleEditorProp
   const apiRules = useRuleStore((state) => state.apiRules)
   const curRuleGroup = apiRules.find((rule) => rule.id === groupId)
   const allRuleGroups = apiRules.filter((rule) => rule.kind === 'group')
-  const editRule = useRuleStore((state) => findGroupOrRule(state.apiRules, editRuleId)) as RuleData
+  const editRule = ruleData
+    ? ruleData
+    : (useRuleStore((state) => findGroupOrRule(state.apiRules, editRuleId)) as RuleData)
   const editRuleParentGroup = editRuleId ? findParentGroup(apiRules, editRuleId) : null
 
   const DefaultAddRulesMenu: MenuProps['items'] = [
@@ -445,58 +454,64 @@ function RuleEditor({ editRuleId, groupId, targetTab, disabled }: RuleEditorProp
       layout="vertical"
       onFinish={handleAddRuleSubmit}
     >
-      <div className="page-new-header">
-        <Flex align="center">
-          <Tooltip title="Go back" overlayClassName="j-autohide-tooltip">
-            <Button className="normal-link" onClick={() => navigate(-1)} type="link">
-              <LeftOutlined />
-            </Button>
-          </Tooltip>
-          {editRuleId ? (
-            <Text>
-              {strings.editRule} / {editRule?.name}
-            </Text>
-          ) : (
-            <Text>
-              {groupId ? curRuleGroup?.name + ' / ' : ''}
-              {strings.createNewRule}
-            </Text>
-          )}
-        </Flex>
-        <Space>
-          <Form.Item name="enable" noStyle>
-            <Switch checkedChildren={strings.enabled} unCheckedChildren={strings.enabled}></Switch>
-          </Form.Item>
-          <Divider type="vertical" style={{ borderColor: 'var(--color-text-3)' }} />
-          {!groupId && (
-            // we don't need show this when add new rule to a group
-            <Dropdown
-              menu={{
-                items: allRuleGroupsMenu,
-                selectable: true,
-                defaultSelectedKeys: [editRuleParentGroup?.id || ''],
-                onClick: ({ key }) => handleEditGroupClick(key)
-              }}
-              trigger={['click']}
-            >
-              <Button>
-                <Space>
-                  {strings.editGroup}
-                  <DownOutlined />
-                </Space>
+      {!disabled && (
+        <div className="page-new-header">
+          <Flex align="center">
+            <Tooltip title="Go back" overlayClassName="j-autohide-tooltip">
+              <Button className="normal-link" onClick={() => navigate(-1)} type="link">
+                <LeftOutlined />
               </Button>
-            </Dropdown>
-          )}
-          <Button type="primary" onClick={() => form.submit()}>
-            {strings.save}
-          </Button>
-          {editRuleId && (
-            <Button danger onClick={() => handleDelConfirmOpen(editRuleId)}>
-              {strings.delete}
+            </Tooltip>
+            {editRuleId ? (
+              <Text>
+                {strings.editRule} / {editRule?.name}
+              </Text>
+            ) : (
+              <Text>
+                {groupId ? curRuleGroup?.name + ' / ' : ''}
+                {strings.createNewRule}
+              </Text>
+            )}
+          </Flex>
+          <Space>
+            <Form.Item name="enable" noStyle>
+              <Switch
+                checkedChildren={strings.enabled}
+                unCheckedChildren={strings.enabled}
+              ></Switch>
+            </Form.Item>
+            <Divider type="vertical" style={{ borderColor: 'var(--color-text-3)' }} />
+            {!groupId && (
+              // we don't need show this when add new rule to a group
+              <Dropdown
+                menu={{
+                  items: allRuleGroupsMenu,
+                  selectable: true,
+                  defaultSelectedKeys: [editRuleParentGroup?.id || ''],
+                  onClick: ({ key }) => handleEditGroupClick(key)
+                }}
+                trigger={['click']}
+              >
+                <Button>
+                  <Space>
+                    {strings.editGroup}
+                    <DownOutlined />
+                  </Space>
+                </Button>
+              </Dropdown>
+            )}
+            <Button type="primary" onClick={() => form.submit()}>
+              {strings.save}
             </Button>
-          )}
-        </Space>
-      </div>
+            {editRuleId && (
+              <Button danger onClick={() => handleDelConfirmOpen(editRuleId)}>
+                {strings.delete}
+              </Button>
+            )}
+          </Space>
+        </div>
+      )}
+
       <div className="paper-block e2">
         <div className="paper-title">{strings.ruleInfo}: </div>
         <Form.Item

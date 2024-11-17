@@ -1,19 +1,19 @@
-import { Button, Space, Switch, Table, TableProps, Tooltip, Typography } from 'antd'
-import { NavLink, useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { Button, Space, Switch, Table, TableProps, Tooltip } from 'antd'
+import { NavLink, useLocation, useSearchParams } from 'react-router-dom'
 
-import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
-import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup, ShareRule } from '@shared/contract'
+import { ApiRuleItem, RuleData, RuleGroup, ShareRule } from '@shared/contract'
 import { findParentGroup } from '@shared/utils'
-
-const { Paragraph, Title } = Typography
+import { useState } from 'react'
+import RuleViewModal from '@renderer/components/rule-view-modal'
 
 export default function ShareViewPage() {
   const location = useLocation()
-  const { id: shareId } = useParams()
   const [searchParams] = useSearchParams()
   const type = searchParams.get('type')
-  const shareData = location.state.shareData as ShareRule
+  const shareData = location?.state?.shareData as ShareRule
+  const [ruleViewModalOpen, setRuleViewModalOpen] = useState(false)
+  const [ruleViewModalRuleData, setRuleViewModalRuleData] = useState<RuleData>()
 
   function triggerRuleEnable(rule, enabled) {
     // window.api.enableRule(rule.id, enabled).then((result) => {
@@ -21,6 +21,11 @@ export default function ShareViewPage() {
     //     Service.getApiRules()
     //   }
     // })
+  }
+
+  function handleOpenRuleViewModal(ruleData: RuleData) {
+    setRuleViewModalRuleData(ruleData)
+    setRuleViewModalOpen(true)
   }
 
   const groupColumns: TableProps<ApiRuleItem>['columns'] =
@@ -44,7 +49,7 @@ export default function ShareViewPage() {
             dataIndex: 'createBy',
             key: 'createBy',
             render: () => {
-              return shareData.users?.full_name
+              return shareData?.users?.full_name
             }
           }
         ]
@@ -87,7 +92,11 @@ export default function ShareViewPage() {
             key: 'name',
             width: '40%',
             render: (_, r) => {
-              return <NavLink to={`/rules/edit/${r.id}`}>{r.name}</NavLink>
+              return (
+                <Button type="link" onClick={() => handleOpenRuleViewModal(r)}>
+                  {r.name}
+                </Button>
+              )
             }
           },
           {
@@ -115,7 +124,7 @@ export default function ShareViewPage() {
             dataIndex: 'enable',
             key: 'enable',
             render: (enable, rule) => {
-              const ruleGroup = findParentGroup([shareData.rule_data], rule.id)
+              const ruleGroup = findParentGroup([shareData?.rule_data], rule.id)
               if (ruleGroup && !ruleGroup.enable) {
                 return (
                   <Tooltip title="The rule group is disabled. Please enable it first." arrow>
@@ -141,26 +150,35 @@ export default function ShareViewPage() {
           <Button type="primary">{strings.importToMyShare}</Button>
         </Space>
       )}
-      <Table
-        rowKey="id"
-        style={{ marginTop: 10 }}
-        dataSource={[shareData.rule_data]}
-        columns={groupColumns}
-        pagination={false}
-        expandable={{
-          expandedRowRender: (record) => {
-            return (
-              <Table
-                rowKey="id"
-                dataSource={(record as RuleGroup).ruleList}
-                columns={ruleColumns}
-                pagination={false}
-              ></Table>
-            )
-          },
-          rowExpandable: (record) => record.kind === 'group' && record.ruleList.length > 0
-        }}
-      ></Table>
+      {shareData && (
+        <>
+          <Table
+            rowKey="id"
+            style={{ marginTop: 10 }}
+            dataSource={[shareData?.rule_data]}
+            columns={groupColumns}
+            pagination={false}
+            expandable={{
+              expandedRowRender: (record) => {
+                return (
+                  <Table
+                    rowKey="id"
+                    dataSource={(record as RuleGroup).ruleList}
+                    columns={ruleColumns}
+                    pagination={false}
+                  ></Table>
+                )
+              },
+              rowExpandable: (record) => record.kind === 'group' && record.ruleList.length > 0
+            }}
+          ></Table>
+          <RuleViewModal
+            ruleData={ruleViewModalRuleData as RuleData}
+            open={ruleViewModalOpen}
+            onClose={() => setRuleViewModalOpen(false)}
+          />
+        </>
+      )}
     </div>
   )
 }
