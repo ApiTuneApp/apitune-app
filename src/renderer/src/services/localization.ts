@@ -186,7 +186,10 @@ export const strings = new LocalizedStrings({
     viewDetails: 'View Details',
     importToMyShare: 'Import to My Share List',
     openMyShare: 'You opened your own share',
-    createBy: 'Created by'
+    createBy: 'Created by',
+    duplicateToMyRules: 'Duplicate to My Rules',
+    myShared: 'My Shared',
+    sharedByThers: 'Shared by Others'
   },
   zh: {
     close: '关闭',
@@ -368,6 +371,9 @@ export const strings = new LocalizedStrings({
     viewDetails: '查看详情',
     importToMyShare: '保存到我的共享列表',
     openMyShare: '您打开了您自己的共享',
-    createBy: '创建者'
+    createBy: '创建者',
+    duplicateToMyRules: '复制到我的规则',
+    myShared: '我的共享',
+    sharedByThers: '他人的共享'
   }
 })

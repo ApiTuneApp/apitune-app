@@ -11,7 +11,9 @@ import {
   FolderOutlined,
   MoreOutlined,
   PlusSquareOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  ShareAltOutlined,
+  UsergroupAddOutlined
 } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
@@ -161,6 +163,16 @@ function RulesSidebar(): JSX.Element {
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
   const ruleSidebarExpandedKeys = useUxStore((state) => state.ruleSidebarExpandedKeys)
   const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
+  const [mySharedRulesData, setMySharedRulesData] = React.useState<RuleTreeDataNode[]>([])
+  const [sharedByOthersData, setSharedByOthersData] = React.useState<RuleTreeDataNode[]>([])
+
+  React.useEffect(() => {
+    const fetchSharedRules = async () => {
+      setMySharedRulesData([])
+      setSharedByOthersData([])
+    }
+    fetchSharedRules()
+  }, [])
 
   const treeData = React.useMemo<RuleTreeDataNode[]>(() => {
     return apiRules.map((rule) => {
@@ -252,7 +264,12 @@ function RulesSidebar(): JSX.Element {
   const collapseItems = [
     {
       key: 'myRules',
-      label: strings.myRules,
+      label: (
+        <Flex align="center" gap="small">
+          <UnorderedListOutlined />
+          <span>{strings.myRules}</span>
+        </Flex>
+      ),
       children: (
         <Tree
           className="rules-tree"
@@ -277,8 +294,63 @@ function RulesSidebar(): JSX.Element {
     },
     {
       key: 'sharedRules',
-      label: strings.sharedRules,
-      children: <div>Shared Rules</div>
+      label: (
+        <Flex align="center" gap="small">
+          <UsergroupAddOutlined />
+          <span>{strings.sharedRules}</span>
+        </Flex>
+      ),
+      children: (
+        <Collapse
+          ghost
+          size="small"
+          defaultActiveKey={['myShared', 'sharedByOthers']}
+          items={[
+            {
+              key: 'myShared',
+              label: strings.myShared,
+              children: (
+                <Tree
+                  className="rules-tree"
+                  style={{ width: '100%', paddingLeft: 24 }}
+                  treeData={mySharedRulesData}
+                  blockNode={true}
+                  titleRender={(nodeData) => (
+                    <RuleTreeItem
+                      key={nodeData.key}
+                      labelText={nodeData.title as string}
+                      rule={nodeData.rule as RuleGroup | RuleData}
+                      onMenuClick={handleGroupMenuItemClick}
+                    />
+                  )}
+                  onSelect={handleTreeSelect}
+                />
+              )
+            },
+            {
+              key: 'sharedByOthers',
+              label: strings.sharedByThers,
+              children: (
+                <Tree
+                  className="rules-tree"
+                  style={{ width: '100%' }}
+                  treeData={sharedByOthersData}
+                  blockNode={true}
+                  titleRender={(nodeData) => (
+                    <RuleTreeItem
+                      key={nodeData.key}
+                      labelText={nodeData.title as string}
+                      rule={nodeData.rule as RuleGroup | RuleData}
+                      onMenuClick={handleGroupMenuItemClick}
+                    />
+                  )}
+                  onSelect={handleTreeSelect}
+                />
+              )
+            }
+          ]}
+        />
+      )
     }
   ]
 

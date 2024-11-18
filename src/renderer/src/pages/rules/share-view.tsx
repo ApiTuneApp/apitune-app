@@ -16,11 +16,7 @@ export default function ShareViewPage() {
   const [ruleViewModalRuleData, setRuleViewModalRuleData] = useState<RuleData>()
 
   function triggerRuleEnable(rule, enabled) {
-    // window.api.enableRule(rule.id, enabled).then((result) => {
-    //   if (result.status === EventResultStatus.Success) {
-    //     Service.getApiRules()
-    //   }
-    // })
+    console.log(rule, enabled)
   }
 
   function handleOpenRuleViewModal(ruleData: RuleData) {
@@ -28,13 +24,35 @@ export default function ShareViewPage() {
     setRuleViewModalOpen(true)
   }
 
+  function handleDuplicateToMyRules() {
+    console.log('duplicate to my rules')
+  }
+
+  function handleImportToMyShare() {
+    console.log('import to my share')
+  }
+
   const groupColumns: TableProps<ApiRuleItem>['columns'] =
     type === 'view'
       ? [
           {
-            title: strings.ruleGroupName,
+            title: shareData?.rule_data.kind === 'group' ? strings.ruleGroupName : strings.ruleName,
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            render: (_, r) => {
+              if (r.kind === 'group') {
+                return r.name
+              }
+              return (
+                <Button
+                  type="link"
+                  style={{ padding: 0 }}
+                  onClick={() => handleOpenRuleViewModal(r)}
+                >
+                  {r.name}
+                </Button>
+              )
+            }
           },
           {
             title: strings.updatedOn,
@@ -147,7 +165,10 @@ export default function ShareViewPage() {
     <div className="page-rule-list">
       {type === 'view' && (
         <Space style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="primary">{strings.importToMyShare}</Button>
+          <Button onClick={handleDuplicateToMyRules}>{strings.duplicateToMyRules}</Button>
+          <Button type="primary" onClick={handleImportToMyShare}>
+            {strings.importToMyShare}
+          </Button>
         </Space>
       )}
       {shareData && (
