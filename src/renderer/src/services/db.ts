@@ -118,3 +118,11 @@ export const getShareRule = async (shareId: string): Promise<ShareRule | null> =
   }
   return data as unknown as ShareRule
 }
+
+export const getShareRules = async (userId: string): Promise<ShareRule[]> => {
+  const { data, error } = await supabase.from('shareRules').select('*').eq('user_id', userId)
+  if (error) {
+    throw error
+  }
+  return data as unknown as ShareRule[]
+}

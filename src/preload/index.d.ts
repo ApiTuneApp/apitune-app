@@ -60,6 +60,7 @@ declare global {
       initServerRules: (rules: ApiRules, syncInfo: SyncInfo) => Promise<IpcResult>
       checkForUpdate: () => Promise<IpcResult>
       copyText: (text: string) => void
+      duplicateRules: (rule: string) => Promise<IpcResult>
     }
   }
 }

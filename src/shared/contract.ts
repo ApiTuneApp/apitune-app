@@ -31,7 +31,8 @@ export enum RenderEvent {
   GetPrintLogs = 'getPrintLogs',
   ClearPrintLogs = 'clearPrintLogs',
   CheckForUpdate = 'checkForUpdate',
-  CopyText = 'copyText'
+  CopyText = 'copyText',
+  DuplicateRules = 'duplicateRules'
 }
 
 export enum MainEvent {
@@ -185,6 +186,7 @@ export interface RuleData {
   modifyList: Array<Modify>
   updateTime: number
   testScript?: string
+  shareFrom?: string
 }
 
 export interface RuleGroup {
@@ -194,6 +196,7 @@ export interface RuleGroup {
   kind: 'group'
   ruleList: RuleData[]
   updateTime: number
+  shareFrom?: string
 }
 
 export type Theme = 'light' | 'dark' | 'system'

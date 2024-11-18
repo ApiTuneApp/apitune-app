@@ -20,6 +20,7 @@ import {
   RuleData,
   RuleGroup,
   RuleStorage,
+  ShareRule,
   SyncInfo,
   Theme
 } from '../shared/contract'
@@ -363,6 +364,52 @@ app.whenReady().then(() => {
         }
       } catch (error) {
         log.error('[EnableRule] Failed', error)
+        reject({
+          status: EventResultStatus.Error,
+          error: error
+        })
+      }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.DuplicateRules, (event, rule: string) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const ruleObj = JSON.parse(rule) as ShareRule
+        const ruleData = ruleObj.rule_data
+        ruleData.updateTime = new Date().getTime()
+        ruleData.shareFrom = ruleObj.id
+        ruleData.id = uuidv4()
+        ruleData.enable = false
+        if (ruleData.kind === 'group') {
+          // Regenerate all rule ids in the group
+          ruleData.ruleList.forEach((r) => {
+            r.id = uuidv4()
+            r.enable = false
+          })
+        }
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+        if (data) {
+          data.apiRules.push(ruleData)
+          Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+            if (error) {
+              log.error('[DuplicateRules] Failed to storage rule', error)
+            } else {
+              updateRuntimeRules(data.apiRules)
+              resolve({
+                status: EventResultStatus.Success,
+                data: ruleData
+              })
+            }
+          })
+        } else {
+          reject({
+            status: EventResultStatus.Error,
+            error: 'User data not found'
+          })
+        }
+      } catch (error) {
+        log.error('[DuplicateRules] Failed', error)
         reject({
           status: EventResultStatus.Error,
           error: error

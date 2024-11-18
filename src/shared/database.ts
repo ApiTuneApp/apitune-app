@@ -1,31 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       profiles: {
@@ -60,6 +35,7 @@ export type Database = {
           created_at: string
           id: number
           rule_data: Json | null
+          share_rules: Json | null
           updated_at: string | null
           user_id: string
         }
@@ -67,6 +43,7 @@ export type Database = {
           created_at?: string
           id?: number
           rule_data?: Json | null
+          share_rules?: Json | null
           updated_at?: string | null
           user_id: string
         }
@@ -74,6 +51,7 @@ export type Database = {
           created_at?: string
           id?: number
           rule_data?: Json | null
+          share_rules?: Json | null
           updated_at?: string | null
           user_id?: string
         }

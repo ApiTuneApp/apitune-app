@@ -121,6 +121,9 @@ const api = {
   },
   copyText: (text: string): void => {
     ipcRenderer.send(RenderEvent.CopyText, text)
+  },
+  duplicateRules: (rule: string): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.DuplicateRules, rule)
   }
 }
 

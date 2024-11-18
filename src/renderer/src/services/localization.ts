@@ -189,7 +189,8 @@ export const strings = new LocalizedStrings({
     createBy: 'Created by',
     duplicateToMyRules: 'Duplicate to My Rules',
     myShared: 'My Shared',
-    sharedByThers: 'Shared by Others'
+    sharedByThers: 'Shared by Others',
+    duplicateSuccess: 'Duplicate success'
   },
   zh: {
     close: '关闭',
@@ -374,6 +375,7 @@ export const strings = new LocalizedStrings({
     createBy: '创建者',
     duplicateToMyRules: '复制到我的规则',
     myShared: '我的共享',
-    sharedByThers: '他人的共享'
+    sharedByThers: '他人的共享',
+    duplicateSuccess: '复制成功'
   }
 })

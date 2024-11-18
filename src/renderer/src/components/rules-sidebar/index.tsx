@@ -1,6 +1,6 @@
 import './rules-sidebar.less'
 
-import { App, Button, Collapse, ConfigProvider, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
+import { App, Button, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
 import * as React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
@@ -11,9 +11,7 @@ import {
   FolderOutlined,
   MoreOutlined,
   PlusSquareOutlined,
-  UnorderedListOutlined,
-  ShareAltOutlined,
-  UsergroupAddOutlined
+  UnorderedListOutlined
 } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
@@ -163,16 +161,6 @@ function RulesSidebar(): JSX.Element {
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
   const ruleSidebarExpandedKeys = useUxStore((state) => state.ruleSidebarExpandedKeys)
   const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
-  const [mySharedRulesData, setMySharedRulesData] = React.useState<RuleTreeDataNode[]>([])
-  const [sharedByOthersData, setSharedByOthersData] = React.useState<RuleTreeDataNode[]>([])
-
-  React.useEffect(() => {
-    const fetchSharedRules = async () => {
-      setMySharedRulesData([])
-      setSharedByOthersData([])
-    }
-    fetchSharedRules()
-  }, [])
 
   const treeData = React.useMemo<RuleTreeDataNode[]>(() => {
     return apiRules.map((rule) => {
@@ -261,99 +249,6 @@ function RulesSidebar(): JSX.Element {
     }
   }
 
-  const collapseItems = [
-    {
-      key: 'myRules',
-      label: (
-        <Flex align="center" gap="small">
-          <UnorderedListOutlined />
-          <span>{strings.myRules}</span>
-        </Flex>
-      ),
-      children: (
-        <Tree
-          className="rules-tree"
-          style={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
-          treeData={treeData}
-          blockNode={true}
-          expandedKeys={ruleSidebarExpandedKeys}
-          titleRender={(nodeData) => {
-            return (
-              <RuleTreeItem
-                key={nodeData.key}
-                labelText={nodeData.title as string}
-                rule={nodeData.rule as RuleGroup | RuleData}
-                onMenuClick={handleGroupMenuItemClick}
-              />
-            )
-          }}
-          onSelect={handleTreeSelect}
-          onExpand={onExpand}
-        />
-      )
-    },
-    {
-      key: 'sharedRules',
-      label: (
-        <Flex align="center" gap="small">
-          <UsergroupAddOutlined />
-          <span>{strings.sharedRules}</span>
-        </Flex>
-      ),
-      children: (
-        <Collapse
-          ghost
-          size="small"
-          defaultActiveKey={['myShared', 'sharedByOthers']}
-          items={[
-            {
-              key: 'myShared',
-              label: strings.myShared,
-              children: (
-                <Tree
-                  className="rules-tree"
-                  style={{ width: '100%', paddingLeft: 24 }}
-                  treeData={mySharedRulesData}
-                  blockNode={true}
-                  titleRender={(nodeData) => (
-                    <RuleTreeItem
-                      key={nodeData.key}
-                      labelText={nodeData.title as string}
-                      rule={nodeData.rule as RuleGroup | RuleData}
-                      onMenuClick={handleGroupMenuItemClick}
-                    />
-                  )}
-                  onSelect={handleTreeSelect}
-                />
-              )
-            },
-            {
-              key: 'sharedByOthers',
-              label: strings.sharedByThers,
-              children: (
-                <Tree
-                  className="rules-tree"
-                  style={{ width: '100%' }}
-                  treeData={sharedByOthersData}
-                  blockNode={true}
-                  titleRender={(nodeData) => (
-                    <RuleTreeItem
-                      key={nodeData.key}
-                      labelText={nodeData.title as string}
-                      rule={nodeData.rule as RuleGroup | RuleData}
-                      onMenuClick={handleGroupMenuItemClick}
-                    />
-                  )}
-                  onSelect={handleTreeSelect}
-                />
-              )
-            }
-          ]}
-        />
-      )
-    }
-  ]
-
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
@@ -380,22 +275,25 @@ function RulesSidebar(): JSX.Element {
         groupId={editGroupId}
         onClose={() => setAddGroupDialogOpen(false)}
       />
-      <ConfigProvider
-        theme={{
-          components: {
-            Collapse: {
-              contentPadding: '4px 4px !important'
-            }
-          }
+      <Tree
+        className="rules-tree"
+        style={{ width: '100%', minWidth: '200px', overflowY: 'auto' }}
+        treeData={treeData}
+        blockNode={true}
+        expandedKeys={ruleSidebarExpandedKeys}
+        titleRender={(nodeData) => {
+          return (
+            <RuleTreeItem
+              key={nodeData.key}
+              labelText={nodeData.title as string}
+              rule={nodeData.rule as RuleGroup | RuleData}
+              onMenuClick={handleGroupMenuItemClick}
+            />
+          )
         }}
-      >
-        <Collapse
-          size="small"
-          className="rules-sidebar-collapse"
-          items={collapseItems}
-          defaultActiveKey={['myRules', 'sharedRules']}
-        />
-      </ConfigProvider>
+        onSelect={handleTreeSelect}
+        onExpand={onExpand}
+      />
     </div>
   )
 }
