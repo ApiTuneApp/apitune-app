@@ -47,6 +47,11 @@ jobs:
           VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           VITE_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_URL }}
 
+      - name: Decode and Save Certificate File
+        if: runner.os == 'Windows'
+        run: |
+          echo ${{ secrets.WIN_CERTIFICATE_FILE }} | base64 -d > build/apitune_win_der_cert.pfx
+
       - name: build-win
         if: matrix.os == 'windows-latest'
         run: pnpm run build:win
