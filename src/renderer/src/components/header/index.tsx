@@ -9,6 +9,7 @@ import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useSettingStore } from '@renderer/store/setting'
+import { useUserStore } from '@renderer/store/user'
 import { ApiRules, EventResultStatus, MainEvent, SyncInfo, User } from '@shared/contract'
 
 const { Text } = Typography
@@ -17,24 +18,24 @@ function Header(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
   const initSyncInfo = useRuleStore.getState().initSyncInfo
   const initApiRules = useRuleStore.getState().initApiRules
+  const { user, setUser } = useUserStore.getState()
 
   const port = useSettingStore((state) => state.port)
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [ip, setIp] = useState<string>('')
   const [syncingStatus, setSyncingStatus] = useState<boolean>(false)
-  const [user, setUser] = useState<User>({
-    id: '',
-    email: '',
-    name: '',
-    avatar: ''
-  })
 
   // only run in the first time when the user sign in
-  async function _initSyncRule() {
+  async function _initSyncRule(user: User) {
     // in init sync rule, we compare the updatedAt of the rule in the local storage and the rule in the server
     // if the local rule is newer, we popup a dialog to ask the user if they want to sync the rule to the server
-    const userRules = await dbService.getUserRules()
     const localData = await window.api.getRuleStorage()
+    if (user && user.id !== localData.syncInfo?.userId) {
+      // if signed in with a different user, we need to sync the rule from the server
+      _syncServerRules()
+      return
+    }
+    const userRules = await dbService.getUserRules()
     const userRuleUpdatedAt = new Date(userRules.updated_at as string)
     const localDataUpdatedAt = localData.syncInfo?.syncDate
       ? new Date(localData.syncInfo.syncDate as string)
@@ -120,14 +121,14 @@ function Header(): JSX.Element {
       setLoggedIn(!!user)
       if (user) {
         console.log('User:', user)
-        setUser({
+        const userInfo = {
           id: user.id,
           email: user.email ?? '',
           name: user.user_metadata.name ?? '',
           avatar: user.user_metadata.avatar_url ?? ''
-        })
-        console.log('apiRules', apiRules)
-        _initSyncRule()
+        } as User
+        setUser(userInfo)
+        _initSyncRule(userInfo)
       }
     })
   }, [])
@@ -148,13 +149,14 @@ function Header(): JSX.Element {
           console.log('User:', user)
           setLoggedIn(!!user)
           if (user) {
-            setUser({
+            const userInfo = {
               id: user.id,
               email: user.email ?? '',
               name: user.user_metadata.name ?? '',
               avatar: user.user_metadata.avatar_url ?? ''
-            })
-            _initSyncRule()
+            } as User
+            setUser(userInfo)
+            _initSyncRule(userInfo)
           }
         } catch (error) {
           console.log('Error auth:', error)
@@ -194,6 +196,21 @@ function Header(): JSX.Element {
       }
     }
   ]
+
+  const getAvatarUrl = (user: any) => {
+    if (user?.avatar) {
+      return user.avatar
+    }
+    // Option 1: DiceBear (many different styles available)
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+      user?.email || user?.id
+    }&radius=50&backgroundColor=b6e3f4`
+
+    // Option 2: UI Avatars (text-based)
+    // return `https://ui-avatars.com/api/?name=${
+    //   user?.email?.charAt(0) || "U"
+    // }&background=random`;
+  }
 
   return (
     <div className="app-header">
@@ -236,7 +253,7 @@ function Header(): JSX.Element {
         </Button>
       ) : (
         <Dropdown menu={{ items: profileMenu }}>
-          <Avatar src={user.avatar} style={{ cursor: 'pointer' }} />
+          <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }} />
         </Dropdown>
       )}
     </div>

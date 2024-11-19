@@ -26,6 +26,9 @@ const api = {
       callback(accessToken, refreshToken)
     )
   },
+  onOpenShare: (callback): void => {
+    ipcRenderer.on(MainEvent.OpenShare, (_, shareId) => callback(shareId))
+  },
   onPrintLog: (callback): void => {
     ipcRenderer.on(MainEvent.PrintLog, (_, printItem) => callback(printItem))
   },
@@ -115,6 +118,12 @@ const api = {
   },
   checkForUpdate: (): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.CheckForUpdate)
+  },
+  copyText: (text: string): void => {
+    ipcRenderer.send(RenderEvent.CopyText, text)
+  },
+  duplicateRules: (rule: string): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.DuplicateRules, rule)
   }
 }
 

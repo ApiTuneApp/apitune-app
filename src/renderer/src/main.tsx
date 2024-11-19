@@ -13,6 +13,7 @@ import RuleListPage from './pages/rules/rule-list'
 import SettingsPage from './pages/settings'
 import TestScriptsPage from './pages/test-scripts'
 import PrintsPage from './pages/prints'
+import ShareViewPage from './pages/rules/share-view'
 
 const router = createHashRouter([
   {
@@ -42,6 +43,10 @@ const router = createHashRouter([
           {
             path: 'edit/:id',
             element: <NewRulePage />
+          },
+          {
+            path: 'share/:id',
+            element: <ShareViewPage />
           }
         ]
       },

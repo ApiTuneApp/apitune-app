@@ -4,8 +4,9 @@ import { App, Button, Space, Switch, Table, Tooltip } from 'antd'
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { ExclamationCircleFilled } from '@ant-design/icons'
+import { ExclamationCircleFilled, ShareAltOutlined } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
+import ShareModal from '@renderer/components/share-modal'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
@@ -19,6 +20,8 @@ function RuleListPage(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
   const [groupNameModalOpen, setGroupNameModalOpen] = React.useState(false)
+  const [shareModalOpen, setShareModalOpen] = React.useState(false)
+  const [shareRuleOrGroupId, setShareRuleOrGroupId] = React.useState<string | null>(null)
 
   function triggerRuleEnable(rule, enabled) {
     window.api.enableRule(rule.id, enabled).then((result) => {
@@ -31,6 +34,11 @@ function RuleListPage(): JSX.Element {
   function handleGroupRename(groupId) {
     setEditGroupId(groupId)
     setGroupNameModalOpen(true)
+  }
+
+  function handleShare(id) {
+    setShareRuleOrGroupId(id)
+    setShareModalOpen(true)
   }
 
   const handleDelConfirmOpen = (id: string) => {
@@ -61,7 +69,7 @@ function RuleListPage(): JSX.Element {
       key: 'name'
     },
     {
-      title: strings.description,
+      title: strings.groupEnabled,
       dataIndex: 'enable',
       key: 'enable',
       render: (enable, rule) => {
@@ -88,6 +96,7 @@ function RuleListPage(): JSX.Element {
       render: (text, record) => {
         return (
           <Space size="middle">
+            <Button icon={<ShareAltOutlined />} onClick={(e) => handleShare(record.id)}></Button>
             <Button onClick={(e) => handleGroupRename(record.id)}>{strings.rename}</Button>
             <Button danger onClick={(e) => handleDelConfirmOpen(record.id)}>
               {strings.delete}
@@ -148,6 +157,11 @@ function RuleListPage(): JSX.Element {
       render: (text, record) => {
         return (
           <Space size="middle">
+            <Button
+              type="text"
+              icon={<ShareAltOutlined />}
+              onClick={(e) => handleShare(record.id)}
+            ></Button>
             <Button type="text" danger onClick={(e) => handleDelConfirmOpen(record.id)}>
               {strings.delete}
             </Button>
@@ -182,6 +196,11 @@ function RuleListPage(): JSX.Element {
         open={groupNameModalOpen}
         groupId={editGroupId}
         onClose={() => setGroupNameModalOpen(false)}
+      />
+      <ShareModal
+        open={shareModalOpen}
+        ruleOrGroupId={shareRuleOrGroupId}
+        onCancel={() => setShareModalOpen(false)}
       />
     </div>
   )

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, clipboard, dialog, ipcMain, shell } from 'electron'
 import Storage from 'electron-json-storage'
 import log from 'electron-log/main'
 import { autoUpdater, UpdateInfo } from 'electron-updater'
@@ -20,11 +20,12 @@ import {
   RuleData,
   RuleGroup,
   RuleStorage,
+  ShareRule,
   SyncInfo,
   Theme
 } from '../shared/contract'
 import { findGroupOrRule, findParentGroup } from '../shared/utils'
-import { getAuthCode, initCommunicator } from './communicator'
+import { getAuthCode, initCommunicator, openShare } from './communicator'
 import crtMgr from './server/cert-manager'
 import config from './server/config'
 import { changeServerPort, initServer } from './server/init'
@@ -142,10 +143,18 @@ app.whenReady().then(() => {
   app.on('open-url', (event, url) => {
     event.preventDefault()
     const parsedUrl = new URL(url)
-    const accessToken = parsedUrl.searchParams.get('access_token')
-    const refreshToken = parsedUrl.searchParams.get('refresh_token')
-    if (accessToken && refreshToken) {
-      getAuthCode(accessToken, refreshToken)
+    const host = parsedUrl.host
+    if (host === 'share') {
+      const shareId = parsedUrl.searchParams.get('id')
+      if (shareId) {
+        openShare(shareId)
+      }
+    } else if (host === 'login') {
+      const accessToken = parsedUrl.searchParams.get('access_token')
+      const refreshToken = parsedUrl.searchParams.get('refresh_token')
+      if (accessToken && refreshToken) {
+        getAuthCode(accessToken, refreshToken)
+      }
     }
   })
 
@@ -355,6 +364,52 @@ app.whenReady().then(() => {
         }
       } catch (error) {
         log.error('[EnableRule] Failed', error)
+        reject({
+          status: EventResultStatus.Error,
+          error: error
+        })
+      }
+    })
+  })
+
+  ipcMain.handle(RenderEvent.DuplicateRules, (event, rule: string) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const ruleObj = JSON.parse(rule) as ShareRule
+        const ruleData = ruleObj.rule_data
+        ruleData.updateTime = new Date().getTime()
+        ruleData.shareFrom = ruleObj.id
+        ruleData.id = uuidv4()
+        ruleData.enable = false
+        if (ruleData.kind === 'group') {
+          // Regenerate all rule ids in the group
+          ruleData.ruleList.forEach((r) => {
+            r.id = uuidv4()
+            r.enable = false
+          })
+        }
+        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+        if (data) {
+          data.apiRules.push(ruleData)
+          Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+            if (error) {
+              log.error('[DuplicateRules] Failed to storage rule', error)
+            } else {
+              updateRuntimeRules(data.apiRules)
+              resolve({
+                status: EventResultStatus.Success,
+                data: ruleData
+              })
+            }
+          })
+        } else {
+          reject({
+            status: EventResultStatus.Error,
+            error: 'User data not found'
+          })
+        }
+      } catch (error) {
+        log.error('[DuplicateRules] Failed', error)
         reject({
           status: EventResultStatus.Error,
           error: error
@@ -890,6 +945,10 @@ app.whenReady().then(() => {
         })
       })
     })
+  })
+
+  ipcMain.on(RenderEvent.CopyText, (event, text: string) => {
+    clipboard.writeText(text)
   })
 
   // const dataPath = Storage.getDataPath()

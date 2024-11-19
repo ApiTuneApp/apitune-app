@@ -30,14 +30,17 @@ export enum RenderEvent {
   InitServerRules = 'initServerRules',
   GetPrintLogs = 'getPrintLogs',
   ClearPrintLogs = 'clearPrintLogs',
-  CheckForUpdate = 'checkForUpdate'
+  CheckForUpdate = 'checkForUpdate',
+  CopyText = 'copyText',
+  DuplicateRules = 'duplicateRules'
 }
 
 export enum MainEvent {
   RendererLog = 'rendererLog',
   ProxyLog = 'proxyLog',
   PrintLog = 'printLog',
-  GetAuthCode = 'getAuthCode'
+  GetAuthCode = 'getAuthCode',
+  OpenShare = 'openShare'
 }
 
 export enum EventResultStatus {
@@ -183,6 +186,7 @@ export interface RuleData {
   modifyList: Array<Modify>
   updateTime: number
   testScript?: string
+  shareFrom?: string
 }
 
 export interface RuleGroup {
@@ -192,6 +196,7 @@ export interface RuleGroup {
   kind: 'group'
   ruleList: RuleData[]
   updateTime: number
+  shareFrom?: string
 }
 
 export type Theme = 'light' | 'dark' | 'system'
@@ -279,4 +284,18 @@ export type PrintItem = {
   logId: string
   ruleId: string
   printList: Array<PrintScript>
+}
+
+export interface ShareUser {
+  id: string
+  avatar_url: string
+  full_name: string
+}
+
+export interface ShareRule {
+  id: string
+  created_at: string
+  private_emails: string[]
+  rule_data: RuleGroup | RuleData
+  users: ShareUser
 }

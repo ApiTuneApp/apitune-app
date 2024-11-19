@@ -28,21 +28,14 @@ export type Database = {
           updated_at?: string | null
           username?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: 'profiles_id_fkey'
-            columns: ['id']
-            isOneToOne: true
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
+        Relationships: []
       }
       rules: {
         Row: {
           created_at: string
           id: number
           rule_data: Json | null
+          share_rules: Json | null
           updated_at: string | null
           user_id: string
         }
@@ -50,6 +43,7 @@ export type Database = {
           created_at?: string
           id?: number
           rule_data?: Json | null
+          share_rules?: Json | null
           updated_at?: string | null
           user_id: string
         }
@@ -57,12 +51,48 @@ export type Database = {
           created_at?: string
           id?: number
           rule_data?: Json | null
+          share_rules?: Json | null
           updated_at?: string | null
           user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: 'rules_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      shareRules: {
+        Row: {
+          created_at: string
+          id: string
+          private_emails: string[] | null
+          rule_data: Json
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          private_emails?: string[] | null
+          rule_data: Json
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          private_emails?: string[] | null
+          rule_data?: Json
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'shareRules_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'profiles'
@@ -158,4 +188,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
     ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema['CompositeTypes']
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes']
+    ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never

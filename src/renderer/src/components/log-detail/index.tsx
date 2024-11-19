@@ -9,7 +9,8 @@ import {
   Form,
   Space,
   Tabs,
-  TabsProps
+  TabsProps,
+  Tooltip
 } from 'antd'
 import * as _ from 'lodash'
 import { useEffect, useState } from 'react'
@@ -457,7 +458,6 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
           realModifyList.push(modifyValue)
         }
       }
-      console.log('realModifyList', realModifyList, values)
       if (realModifyList.length > 0) {
         // create new rule
         window.api
@@ -465,7 +465,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
             JSON.stringify({
               kind: 'rule',
               name: `Modify-${log.url}`,
-              describe: '',
+              description: '',
               enable: true,
               matches: {
                 matchType: 'url',
@@ -510,7 +510,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
             style={{ padding: '0 10px', height: '100%' }}
             tabBarExtraContent={{
               right: editLog ? (
-                <Space style={{ marginRight: 40 }}>
+                <Space style={{ marginRight: 30 }}>
                   <Button
                     size="small"
                     type="primary"
@@ -524,14 +524,21 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
                   </Button>
                 </Space>
               ) : (
-                <Button
-                  style={{ marginRight: 40 }}
-                  size="small"
-                  icon={<EditOutlined />}
-                  onClick={() => setEditLog(true)}
-                >
-                  {strings.edit}
-                </Button>
+                <Space style={{ marginRight: 30 }}>
+                  {log.matchedRules.length > 0 && (
+                    <div style={{ marginRight: 10 }}>
+                      <span>{strings.matchedRules}:</span>
+                      {log.matchedRules.map((rule) => (
+                        <RuleLink key={rule} id={rule} />
+                      ))}
+                    </div>
+                  )}
+                  <Tooltip title={strings.logEditTooltip}>
+                    <Button size="small" icon={<EditOutlined />} onClick={() => setEditLog(true)}>
+                      {strings.edit}
+                    </Button>
+                  </Tooltip>
+                </Space>
               )
             }}
           />
