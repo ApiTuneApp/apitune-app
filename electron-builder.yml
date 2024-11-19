@@ -52,5 +52,7 @@ publish:
   repo: apitune-desktop
   private: true
   releaseType: release
+  releaseInfo:
+    releaseNotesFile: release-notes.md
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
