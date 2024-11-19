@@ -3,7 +3,7 @@ import CertManager from 'node-easy-cert'
 import os from 'node:os'
 
 import config from './config'
-import { execScriptSudo, execScriptSync } from './helper'
+import { execScriptSync } from './helper'
 
 const options = {
   rootDirPath: config.sslDir,
@@ -90,8 +90,8 @@ class ExtendedCertManager {
     let result
     if (os.platform() === 'win32') {
       // Windows
-      // result = execScriptSync(`certutil -addstore -f "Root" "${rootCAPath}"`)
-      result = await execScriptSudo(`certutil -addstore -f "Root" "${rootCAPath}"`)
+      result = execScriptSync(`certutil -user -addstore Root "${rootCAPath}"`)
+      // result = await execScriptSudo(`certutil -addstore -f "Root" "${rootCAPath}"`)
     } else {
       const command = `osascript -e \
       'do shell script \
