@@ -1,0 +1,44 @@
+name: Build Test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-unpack:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build and Unpack
+        run: pnpm run build:unpack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          APPLEID: ${{ secrets.APPLEID }}
+          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+          APPLETEAMID: ${{ secrets.APPLETEAMID }}
+          VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          VITE_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_URL }}
+
+
+
