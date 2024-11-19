@@ -50,7 +50,10 @@ jobs:
       - name: Decode and Save Certificate File
         if: runner.os == 'Windows'
         run: |
-          echo ${{ secrets.WIN_CERTIFICATE_FILE }} | base64 -d > build/apitune_win_der_cert.pfx
+          $certContent = "${{ secrets.WIN_CERTIFICATE_FILE }}"
+          $certBytes = [System.Convert]::FromBase64String($certContent)
+          [System.IO.File]::WriteAllBytes("build/apitune_win_der_cert.pfx", $certBytes)
+        shell: pwsh
 
       - name: build-win
         if: matrix.os == 'windows-latest'
