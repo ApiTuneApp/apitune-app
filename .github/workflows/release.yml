@@ -47,13 +47,13 @@ jobs:
           VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           VITE_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_NEXT_PUBLIC_SUPABASE_URL }}
 
-      - name: Decode and Save Certificate File
-        if: runner.os == 'Windows'
-        run: |
-          $certContent = "${{ secrets.WIN_CERTIFICATE_FILE }}"
-          $certBytes = [System.Convert]::FromBase64String($certContent)
-          [System.IO.File]::WriteAllBytes("build/apitune_win_der_cert.pfx", $certBytes)
-        shell: pwsh
+      # - name: Decode and Save Certificate File
+      #   if: runner.os == 'Windows'
+      #   run: |
+      #     $certContent = "${{ secrets.WIN_CERTIFICATE_FILE }}"
+      #     $certBytes = [System.Convert]::FromBase64String($certContent)
+      #     [System.IO.File]::WriteAllBytes("build/apitune_win_der_cert.pfx", $certBytes)
+      #   shell: pwsh
 
       - name: build-win
         if: matrix.os == 'windows-latest'
