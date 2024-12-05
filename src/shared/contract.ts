@@ -299,3 +299,11 @@ export interface ShareRule {
   rule_data: RuleGroup | RuleData
   users: ShareUser
 }
+
+export interface Subscription {
+  email: string
+  end_at: string
+  customer_id: string
+  subscription_id: string
+  id: string
+}

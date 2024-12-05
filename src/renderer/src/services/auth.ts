@@ -108,3 +108,22 @@ export const signOut = () => {
   localStorage.removeItem('refresh_token')
   return supabase.auth.signOut()
 }
+
+export const getSubscription = async (user) => {
+  if (!user || !user.email) {
+    return null
+  }
+
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('email', user.email!)
+    .single()
+
+  if (error) {
+    console.error('Error fetching subscription:', error)
+    return null
+  }
+
+  return data
+}

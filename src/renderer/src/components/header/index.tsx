@@ -4,13 +4,21 @@ import { Avatar, Badge, Button, Dropdown, Popover, QRCode, Typography } from 'an
 import { useEffect, useState } from 'react'
 
 import { CheckCircleTwoTone, LoadingOutlined, QrcodeOutlined } from '@ant-design/icons'
+import { getAvatarUrl } from '@renderer/common/utils'
 import * as authService from '@renderer/services/auth'
 import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { useSettingStore } from '@renderer/store/setting'
 import { useUserStore } from '@renderer/store/user'
-import { ApiRules, EventResultStatus, MainEvent, SyncInfo, User } from '@shared/contract'
+import {
+  ApiRules,
+  EventResultStatus,
+  MainEvent,
+  Subscription,
+  SyncInfo,
+  User
+} from '@shared/contract'
 
 const { Text } = Typography
 
@@ -18,7 +26,7 @@ function Header(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
   const initSyncInfo = useRuleStore.getState().initSyncInfo
   const initApiRules = useRuleStore.getState().initApiRules
-  const { user, setUser } = useUserStore.getState()
+  const { user, setUser, setSubscription } = useUserStore.getState()
 
   const port = useSettingStore((state) => state.port)
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
@@ -129,6 +137,10 @@ function Header(): JSX.Element {
         } as User
         setUser(userInfo)
         _initSyncRule(userInfo)
+        authService.getSubscription(userInfo).then((subscription) => {
+          console.log('subscription', subscription)
+          setSubscription(subscription as Subscription)
+        })
       }
     })
   }, [])
@@ -197,21 +209,6 @@ function Header(): JSX.Element {
     }
   ]
 
-  const getAvatarUrl = (user: any) => {
-    if (user?.avatar) {
-      return user.avatar
-    }
-    // Option 1: DiceBear (many different styles available)
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${
-      user?.email || user?.id
-    }&radius=50&backgroundColor=b6e3f4`
-
-    // Option 2: UI Avatars (text-based)
-    // return `https://ui-avatars.com/api/?name=${
-    //   user?.email?.charAt(0) || "U"
-    // }&background=random`;
-  }
-
   return (
     <div className="app-header">
       <span style={{ display: 'none' }}>{apiRules.length}</span>
@@ -253,7 +250,9 @@ function Header(): JSX.Element {
         </Button>
       ) : (
         <Dropdown menu={{ items: profileMenu }}>
-          <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }} />
+          <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }}>
+            {user.name?.[0]?.toUpperCase()}
+          </Avatar>
         </Dropdown>
       )}
     </div>

@@ -1,10 +1,26 @@
-import { App, Button, Form, InputNumber, Radio, Select, Space, Tag, Typography } from 'antd'
+import {
+  App,
+  Avatar,
+  Button,
+  Card,
+  Form,
+  InputNumber,
+  Radio,
+  Select,
+  Space,
+  Tag,
+  Typography
+} from 'antd'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 import { CloseCircleOutlined, DownloadOutlined, FileProtectOutlined } from '@ant-design/icons'
-import { useSettingStore } from '@renderer/store/setting'
-import { EventResultStatus, RenderEvent } from '@shared/contract'
+import { getAvatarUrl } from '@renderer/common/utils'
 import { strings } from '@renderer/services/localization'
+import { useSettingStore } from '@renderer/store/setting'
+import { useUserStore } from '@renderer/store/user'
+import { EventResultStatus, RenderEvent } from '@shared/contract'
+
 import packageJson from '../../../../../package.json'
 
 const { Text } = Typography
@@ -18,6 +34,8 @@ function SettingsPage(): JSX.Element {
   const [proxyPort, setProxyPort] = useState(port)
   const [caTrust, setCaTrust] = useState(false)
   const [checkingUpdate, setCheckingUpdate] = useState(false)
+
+  const { user, subscription } = useUserStore((state) => state)
 
   useEffect(() => {
     setProxyPort(port)
@@ -95,6 +113,39 @@ function SettingsPage(): JSX.Element {
     })
   }
 
+  const renderUserProfile = () => {
+    if (!user) return null
+
+    return (
+      <Form.Item label={strings.profile}>
+        <Card size="small">
+          <Space align="start" style={{ width: '100%', justifyContent: 'space-between' }}>
+            {/* Left column - User info */}
+            <Space align="start">
+              <Avatar size={48} src={getAvatarUrl(user)} style={{ backgroundColor: '#1677ff' }}>
+                {user.name?.[0]?.toUpperCase()}
+              </Avatar>
+              <Space direction="vertical" size="small" style={{ marginLeft: 10 }}>
+                <Text strong>{user.name}</Text>
+                <Text type="secondary">{user.email}</Text>
+              </Space>
+            </Space>
+
+            {/* Right column - Subscription info */}
+            <Space direction="vertical" size="small" style={{ textAlign: 'right' }}>
+              <Tag color={subscription ? 'gold' : 'default'}>{subscription ? 'Pro' : 'Free'}</Tag>
+              {subscription && (
+                <Text type="secondary">
+                  {strings.expires}: {dayjs(subscription.end_at).format('YYYY-MM-DD')}
+                </Text>
+              )}
+            </Space>
+          </Space>
+        </Card>
+      </Form.Item>
+    )
+  }
+
   return (
     <div className="app-page page-settings">
       <Typography.Title level={4} style={{ marginBottom: 20 }}>
@@ -102,6 +153,7 @@ function SettingsPage(): JSX.Element {
       </Typography.Title>
       <Form layout="vertical">
         <Space direction="vertical" size="middle" style={{ width: '60%' }}>
+          {renderUserProfile()}
           <Form.Item label={strings.ca}>
             <Space direction="vertical" size="small">
               {caTrust ? (
@@ -161,7 +213,7 @@ function SettingsPage(): JSX.Element {
           <Form.Item label={strings.language}>
             <Radio.Group onChange={handleLanguageChange} value={language}>
               <Radio value={'en'}>English</Radio>
-              <Radio value={'zh'}>中文</Radio>
+              <Radio value={'zh'}>文</Radio>
             </Radio.Group>
           </Form.Item>
 
