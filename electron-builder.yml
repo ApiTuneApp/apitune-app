@@ -19,12 +19,12 @@ asarUnpack:
   - resources/**
 win:
   executableName: ApiTune
-  verifyUpdateCodeSignature: false
-  signDlls: false
-  certificateFile: 'build/apitune_win_der_cert.pfx'
-  certificateSubjectName: ''
-  signingHashAlgorithms: ['sha256']
-  rfc3161TimeStampServer: 'http://timestamp.sectigo.com'
+  # verifyUpdateCodeSignature: false
+  # signDlls: false
+  # certificateFile: 'build/apitune_win_der_cert.pfx'
+  # certificateSubjectName: ''
+  # signingHashAlgorithms: ['sha256']
+  # rfc3161TimeStampServer: 'http://timestamp.sectigo.com'
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
