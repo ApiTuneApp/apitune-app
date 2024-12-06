@@ -13,7 +13,8 @@ import {
   SettingStorage,
   RuleStorage,
   SyncInfo,
-  PrintItem
+  PrintItem,
+  Subscription
 } from '../shared/contract'
 
 // Custom APIs for renderer
@@ -127,6 +128,9 @@ const api = {
   },
   openExternal: (url: string): void => {
     ipcRenderer.send(RenderEvent.OpenExternal, url)
+  },
+  setSubscription: (subscription: Subscription | null): void => {
+    ipcRenderer.send(RenderEvent.SetSubscription, subscription)
   }
 }
 

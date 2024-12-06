@@ -33,7 +33,8 @@ export enum RenderEvent {
   CheckForUpdate = 'checkForUpdate',
   CopyText = 'copyText',
   DuplicateRules = 'duplicateRules',
-  OpenExternal = 'openExternal'
+  OpenExternal = 'openExternal',
+  SetSubscription = 'setSubscription'
 }
 
 export enum MainEvent {

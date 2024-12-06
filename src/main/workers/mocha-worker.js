@@ -52,6 +52,9 @@ function testRunner(matchedRuleDetails) {
               failed: []
             }
           }
+          if (!workerData.subscriptionActive) {
+            testCaseList = testCaseList.slice(0, workerData.maxFreeRules || 3)
+          }
           for (const testItem of testCaseList) {
             if (testItem && testItem.title && testItem.testFunc) {
               shouldRun = true
@@ -70,6 +73,7 @@ function testRunner(matchedRuleDetails) {
             ruleId: rule.id,
             printList
           })
+          printList = []
         }
       } catch (error) {
         log.error('[TestWorker] Run scripts error', error.message)

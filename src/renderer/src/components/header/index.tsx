@@ -140,6 +140,7 @@ function Header(): JSX.Element {
         dbService.getSubscription(userInfo).then((subscription) => {
           console.log('subscription', subscription)
           setSubscription(subscription as Subscription)
+          window.api.setSubscription(subscription as Subscription)
         })
       }
     })
@@ -172,6 +173,7 @@ function Header(): JSX.Element {
             dbService.getSubscription(userInfo).then((subscription) => {
               console.log('subscription', subscription)
               setSubscription(subscription as Subscription)
+              window.api.setSubscription(subscription as Subscription)
             })
           }
         } catch (error) {

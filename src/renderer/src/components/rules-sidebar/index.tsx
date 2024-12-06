@@ -172,8 +172,8 @@ function RulesSidebar(): JSX.Element {
   function checkSubscription() {
     if (
       !subscription &&
-      checkSubscriptionActive(subscription) &&
-      findRuleCount(apiRules) > MAX_FREE_RULES
+      !checkSubscriptionActive(subscription) &&
+      findRuleCount(apiRules) >= MAX_FREE_RULES
     ) {
       modal.confirm({
         title: strings.subscriptionRequired,

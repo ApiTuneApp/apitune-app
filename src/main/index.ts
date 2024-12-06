@@ -21,6 +21,7 @@ import {
   RuleGroup,
   RuleStorage,
   ShareRule,
+  Subscription,
   SyncInfo,
   Theme
 } from '../shared/contract'
@@ -37,6 +38,7 @@ import {
   LogTestResult,
   MemeoryLogStorage,
   PrintStorage,
+  SubscriptionStorage,
   updateRuntimeRules,
   updateSettingData
 } from './storage'
@@ -953,6 +955,14 @@ app.whenReady().then(() => {
 
   ipcMain.on(RenderEvent.CopyText, (event, text: string) => {
     clipboard.writeText(text)
+  })
+
+  ipcMain.on(RenderEvent.SetSubscription, (event, subscription: Subscription | null) => {
+    try {
+      SubscriptionStorage.set(subscription)
+    } catch (error) {
+      log.error('[SetSubscription] Failed to set subscription', error)
+    }
   })
 
   // const dataPath = Storage.getDataPath()

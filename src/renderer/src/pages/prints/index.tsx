@@ -15,23 +15,58 @@ export default function PrintsPage() {
   const navigate = useNavigate()
   const { subscription } = useUserStore()
   const [printItems, setPrintItems] = useState<PrintItem[]>([])
-  useEffect(() => {
-    window.api.onPrintLog((printItem) => {
-      setPrintItems((prev) => [...prev, printItem])
-    })
-    return () => {
-      window.api.clearupEvent(MainEvent.PrintLog)
-    }
-  }, [])
 
   useEffect(() => {
-    window.api.getPrintLogs().then((printItems) => {
-      setPrintItems(printItems)
+    window.api.onPrintLog((printItem) => {
+      if (!checkSubscriptionActive(subscription)) {
+        const totalPrintCount = printItems.reduce((acc, item) => acc + item.printList.length, 0)
+        if (totalPrintCount + printItem.printList.length >= MAX_FREE_LOGS) {
+          if (totalPrintCount < MAX_FREE_LOGS) {
+            setPrintItems((prev) => {
+              return [
+                ...prev,
+                {
+                  ...printItem,
+                  printList: printItem.printList.slice(0, MAX_FREE_LOGS - totalPrintCount)
+                }
+              ]
+            })
+          }
+        } else {
+          setPrintItems((prev) => [...prev, printItem])
+        }
+      } else {
+        setPrintItems((prev) => [...prev, printItem])
+      }
     })
     return () => {
       window.api.clearupEvent(MainEvent.PrintLog)
     }
-  }, [])
+  }, [printItems, subscription])
+
+  useEffect(() => {
+    window.api.getPrintLogs().then((pItems) => {
+      const newItems = [] as PrintItem[]
+      if (!checkSubscriptionActive(subscription)) {
+        let printCount = 0
+        pItems.forEach((item) => {
+          if (printCount < MAX_FREE_LOGS) {
+            if (item.printList.length >= MAX_FREE_LOGS) {
+              printCount = MAX_FREE_LOGS
+              newItems.push({ ...item, printList: item.printList.slice(0, MAX_FREE_LOGS) })
+            } else {
+              printCount += item.printList.length
+              newItems.push(item)
+            }
+          }
+        })
+      }
+      setPrintItems(newItems)
+    })
+    return () => {
+      window.api.clearupEvent(MainEvent.PrintLog)
+    }
+  }, [subscription])
 
   const goCreatePrint = () => {
     navigate('/rules/new?tab=tests')

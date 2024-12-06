@@ -3,10 +3,11 @@ import { Context, Next } from 'koa'
 
 import { Log, PrintItem, RuleData, TestItem } from '../../../shared/contract'
 import { printLog } from '../../communicator'
-import { LogTestResult } from '../../storage'
+import { LogTestResult, SubscriptionStorage } from '../../storage'
 import { getBase64 } from '../helper'
 
 import mochaWorker from '../../workers/mocha-worker.js?nodeWorker'
+import { MAX_FREE_RULES } from '../../../shared/constants'
 
 export default async function testScriptMiddleware(ctx: Context, next: Next) {
   await next()
@@ -25,6 +26,8 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
         workerData: {
           logId: ctx.state.log?.id,
           matchedRuleDetails,
+          subscriptionActive: SubscriptionStorage.checkActive(),
+          maxFreeRules: MAX_FREE_RULES,
           contexts: {
             ...log,
             request: {

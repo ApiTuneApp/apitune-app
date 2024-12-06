@@ -12,7 +12,8 @@ import {
   TestItem,
   LogTestResultMap,
   PrintItem,
-  SyncInfo
+  SyncInfo,
+  Subscription
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -62,6 +63,7 @@ declare global {
       copyText: (text: string) => void
       duplicateRules: (rule: string) => Promise<IpcResult>
       openExternal: (url: string) => void
+      setSubscription: (subscription: Subscription | null) => void
     }
   }
 }

@@ -1,11 +1,12 @@
-import { Next } from 'koa'
 import log from 'electron-log/main'
+import { Next } from 'koa'
 
+import { MAX_FREE_RULES } from '../../../shared/constants'
 import { RuleData, RuleType } from '../../../shared/contract'
-import { isRuleMatch } from '../../helper'
-import { DefaultRuleData } from '../../storage'
-import * as ruleHandlers from '../rule-handler'
 import { IAppContext } from '../../contracts'
+import { isRuleMatch } from '../../helper'
+import { DefaultRuleData, SubscriptionStorage } from '../../storage'
+import * as ruleHandlers from '../rule-handler'
 
 const requestHandlerMap = {
   [RuleType.Rewrite]: {
@@ -60,7 +61,11 @@ export default async function RulesMiddleware(ctx: IAppContext, next: Next) {
     }
   }
 
-  const matchedRules = enableRuleDataList.filter((rule) => isRuleMatch(ctx, rule))
+  let matchedRules = enableRuleDataList.filter((rule) => isRuleMatch(ctx, rule))
+
+  if (!SubscriptionStorage.checkActive()) {
+    matchedRules = matchedRules.slice(0, MAX_FREE_RULES)
+  }
 
   ctx.state.matchedRules = matchedRules.map((rule) => rule.id)
   ctx.state.matchedRuleDetails = matchedRules

@@ -8,9 +8,11 @@ import {
   LogTestResultMap,
   TestItem,
   Log,
-  PrintItem
+  PrintItem,
+  Subscription
 } from '../shared/contract'
 import config from './server/config'
+import { checkSubscriptionActive } from '../shared/utils'
 
 export let DefaultRuleData: RuleStorage = {
   version: packageJson.version,
@@ -120,5 +122,15 @@ export const PrintStorage = {
   },
   getAll() {
     return this.data
+  }
+}
+
+export const SubscriptionStorage = {
+  data: {} as Subscription | null,
+  checkActive() {
+    return checkSubscriptionActive(this.data)
+  },
+  set(subscription: Subscription | null) {
+    this.data = subscription
   }
 }

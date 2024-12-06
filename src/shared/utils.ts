@@ -77,8 +77,13 @@ export const checkSubscriptionActive = (subscription: Subscription | null) => {
   if (!subscription) {
     return false
   }
-  // Compare subscription end date with current date
+
   const endDate = new Date(subscription.end_at)
   const currentDate = new Date()
-  return endDate > currentDate
+
+  // Set both dates to start of day for accurate comparison
+  endDate.setHours(23, 59, 59, 999) // End of the day
+  currentDate.setHours(0, 0, 0, 0) // Start of the day
+
+  return endDate.getTime() >= currentDate.getTime()
 }
