@@ -185,11 +185,11 @@ function RulesSidebar(): JSX.Element {
     })
   }, [apiRules])
 
-  const handleDelConfirmOpen = () => {
+  const handleDelConfirmOpen = (groupId: string) => {
     modal.confirm({
       title: strings.formatString(
         strings.deleteTitle,
-        apiRules.find((r) => r.id === editGroupId)!.name
+        apiRules.find((r) => r.id === groupId)!.name
       ),
       icon: <ExclamationCircleFilled />,
       content: strings.formatString(strings.deleteDesc, strings.group),
@@ -216,7 +216,7 @@ function RulesSidebar(): JSX.Element {
     } else if (menuItem === 'rename') {
       setAddGroupDialogOpen(true)
     } else if (menuItem === 'delete') {
-      handleDelConfirmOpen()
+      handleDelConfirmOpen(rule.id)
     } else if (menuItem === 'ruleGroupEnable') {
       window.api.enableRule(rule.id, !rule.enable).then((result) => {
         if (result.status === EventResultStatus.Success) {
@@ -249,15 +249,16 @@ function RulesSidebar(): JSX.Element {
     }
   }
 
+  const handleAddGroup = () => {
+    setEditGroupId(null)
+    setAddGroupDialogOpen(true)
+  }
+
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
         <Tooltip title={strings.addGroup} arrow overlayClassName="j-autohide-tooltip">
-          <Button
-            type="text"
-            icon={<FolderAddOutlined />}
-            onClick={() => setAddGroupDialogOpen(true)}
-          />
+          <Button type="text" icon={<FolderAddOutlined />} onClick={() => handleAddGroup()} />
         </Tooltip>
         <Tooltip title={strings.addRule} arrow overlayClassName="j-autohide-tooltip">
           <NavLink to="/rules/new">
