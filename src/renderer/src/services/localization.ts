@@ -192,7 +192,8 @@ export const strings = new LocalizedStrings({
     sharedByThers: 'Shared by Others',
     duplicateSuccess: 'Duplicate success',
     profile: 'Profile',
-    expires: 'Expires'
+    expires: 'Expires',
+    upgradeToPro: 'Upgrade to Pro'
   },
   zh: {
     close: '关闭',
@@ -277,7 +278,7 @@ export const strings = new LocalizedStrings({
     actions: '操作',
     ruleName: '规则名称',
     description: '描述',
-    ruleEnabled: '规���是否启用',
+    ruleEnabled: '规则是否启用',
     myWorkspace: '我的工作区',
     proxyServerListeningOn: '代理服务器监听地址',
     requestModify: '修改请求',
@@ -380,6 +381,7 @@ export const strings = new LocalizedStrings({
     sharedByThers: '他人的共享',
     duplicateSuccess: '复制成功',
     profile: '个人资料',
-    expires: '到期时间'
+    expires: '到期时间',
+    upgradeToPro: '升级到专业版'
   }
 })

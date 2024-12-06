@@ -114,7 +114,11 @@ function SettingsPage(): JSX.Element {
   }
 
   const renderUserProfile = () => {
-    if (!user) return null
+    if (!user || !user.email) return null
+
+    const openPricingPage = () => {
+      window.api.openExternal('https://apitune.io/#Pricing')
+    }
 
     return (
       <Form.Item label={strings.profile}>
@@ -134,10 +138,14 @@ function SettingsPage(): JSX.Element {
             {/* Right column - Subscription info */}
             <Space direction="vertical" size="small" style={{ textAlign: 'right' }}>
               <Tag color={subscription ? 'gold' : 'default'}>{subscription ? 'Pro' : 'Free'}</Tag>
-              {subscription && (
+              {subscription ? (
                 <Text type="secondary">
                   {strings.expires}: {dayjs(subscription.end_at).format('YYYY-MM-DD')}
                 </Text>
+              ) : (
+                <Button type="link" size="small" onClick={openPricingPage}>
+                  {strings.upgradeToPro}
+                </Button>
               )}
             </Space>
           </Space>

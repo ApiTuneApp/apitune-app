@@ -32,7 +32,8 @@ export enum RenderEvent {
   ClearPrintLogs = 'clearPrintLogs',
   CheckForUpdate = 'checkForUpdate',
   CopyText = 'copyText',
-  DuplicateRules = 'duplicateRules'
+  DuplicateRules = 'duplicateRules',
+  OpenExternal = 'openExternal'
 }
 
 export enum MainEvent {

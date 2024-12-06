@@ -867,6 +867,10 @@ app.whenReady().then(() => {
     shell.openExternal(`${APP_SITE_URL}/login?source=app`)
   })
 
+  ipcMain.on(RenderEvent.OpenExternal, (_, url: string) => {
+    shell.openExternal(url)
+  })
+
   ipcMain.handle(RenderEvent.CleanRuleData, (event) => {
     return new Promise((resolve) => {
       const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage

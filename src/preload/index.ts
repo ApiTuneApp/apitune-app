@@ -124,6 +124,9 @@ const api = {
   },
   duplicateRules: (rule: string): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.DuplicateRules, rule)
+  },
+  openExternal: (url: string): void => {
+    ipcRenderer.send(RenderEvent.OpenExternal, url)
   }
 }
 

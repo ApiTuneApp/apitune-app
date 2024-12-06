@@ -61,6 +61,7 @@ declare global {
       checkForUpdate: () => Promise<IpcResult>
       copyText: (text: string) => void
       duplicateRules: (rule: string) => Promise<IpcResult>
+      openExternal: (url: string) => void
     }
   }
 }
