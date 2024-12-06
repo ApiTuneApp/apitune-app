@@ -196,11 +196,12 @@ export const strings = new LocalizedStrings({
     expires: 'Expires',
     upgradeToPro: 'Upgrade to Pro',
     subscriptionRequired: 'Subscription Required',
-    subscriptionRequiredDesc: 'Free users can only create up to {0} rules',
+    subscriptionRequiredDesc:
+      'Free users can only create up to {0} rules, please upgrade to Pro to create more rules',
     subscriptionRequiredDescLog:
-      'Free users can only create up to {0} logs, please upgrade to Pro to create more rules',
+      'Free users can only create up to {0} logs, please upgrade to Pro to create more logs',
     subscriptionRequiredDescTest:
-      'Free users can only create up to {0} rules, please upgrade to Pro to create more rules'
+      'Free users can only create up to {0} test cases, please upgrade to Pro to create more test cases'
   },
   zh: {
     close: '关闭',
@@ -392,6 +393,8 @@ export const strings = new LocalizedStrings({
     expires: '到期时间',
     upgradeToPro: '升级到专业版',
     subscriptionRequired: '需要订阅',
-    subscriptionRequiredDesc: '此功能需要专业版订阅'
+    subscriptionRequiredDesc: '免费用户只能创建{0}个规则，请升级到专业版以创建更多规则',
+    subscriptionRequiredDescTest: '免费用户只能创建{0}个测试用例，请升级到专业版以创建更多测试用例',
+    subscriptionRequiredDescLog: '免费用户只能创建{0}个日志，请升级到专业版以创建更多日志'
   }
 })

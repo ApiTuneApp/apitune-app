@@ -1,12 +1,25 @@
-import { Button, Collapse, Divider, Empty, Flex, Popconfirm, Space, Tabs } from 'antd'
+import {
+  Alert,
+  Button,
+  Collapse,
+  ConfigProvider,
+  Divider,
+  Empty,
+  Flex,
+  Popconfirm,
+  Space,
+  Tabs
+} from 'antd'
 import { useEffectOnActive } from 'keepalive-for-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import LogDetail from '@renderer/components/log-detail'
 import TestResults from '@renderer/components/test-results'
-import { Log, TestItem } from '@shared/contract'
 import { strings } from '@renderer/services/localization'
+import { useUserStore } from '@renderer/store/user'
+import { MAX_FREE_TESTS } from '@shared/constants'
+import { Log, TestItem } from '@shared/contract'
 
 type TestResultItem = {
   testResult: TestItem
@@ -16,6 +29,7 @@ type TestResultItem = {
 export default function TestScriptsPage() {
   const [testResultList, setTestResultList] = useState<TestResultItem[]>([])
   const [activeKey, setActiveKey] = useState<string | string[]>()
+  const { subscription } = useUserStore()
   const navigate = useNavigate()
 
   useEffectOnActive(
@@ -115,6 +129,36 @@ export default function TestScriptsPage() {
 
   return (
     <Flex className="app-page" vertical>
+      {!subscription && (
+        <ConfigProvider
+          theme={{
+            components: {
+              Alert: {
+                defaultPadding: '4px 8px',
+                withDescriptionIconSize: 16,
+                withDescriptionPadding: '10px 12px'
+              }
+            }
+          }}
+        >
+          <Alert
+            closable
+            banner
+            message={strings.subscriptionRequired}
+            description={strings.formatString(strings.subscriptionRequiredDescTest, MAX_FREE_TESTS)}
+            action={
+              <Button
+                type="primary"
+                onClick={() => navigate('/subscription')}
+                style={{ marginRight: 10 }}
+              >
+                {strings.upgradeToPro}
+              </Button>
+            }
+            style={{ marginBottom: 16 }}
+          />
+        </ConfigProvider>
+      )}
       {testResultList.length > 0 && (
         <>
           <div>

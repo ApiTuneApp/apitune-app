@@ -307,3 +307,5 @@ export const ResponseRuleKeys: RuleType[] = [
 ]
 
 export const MAX_FREE_RULES = 3
+export const MAX_FREE_LOGS = 3
+export const MAX_FREE_TESTS = 3

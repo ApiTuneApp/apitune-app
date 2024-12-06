@@ -1,16 +1,18 @@
-import { Button, Card, Empty, Flex, Space } from 'antd'
+import './print.less'
+
+import { Alert, Button, Card, ConfigProvider, Empty, Flex, Space } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import RuleLink from '@renderer/components/rule-link'
 import { strings } from '@renderer/services/localization'
+import { useUserStore } from '@renderer/store/user'
 import { MainEvent, PrintItem } from '@shared/contract'
-
-import './print.less'
+import { MAX_FREE_LOGS } from '@shared/constants'
 
 export default function PrintsPage() {
   const navigate = useNavigate()
-
+  const { subscription } = useUserStore()
   const [printItems, setPrintItems] = useState<PrintItem[]>([])
   useEffect(() => {
     window.api.onPrintLog((printItem) => {
@@ -39,6 +41,36 @@ export default function PrintsPage() {
   }
   return (
     <Flex className="app-page" vertical gap={14}>
+      {!subscription && (
+        <ConfigProvider
+          theme={{
+            components: {
+              Alert: {
+                defaultPadding: '4px 8px',
+                withDescriptionIconSize: 16,
+                withDescriptionPadding: '10px 12px'
+              }
+            }
+          }}
+        >
+          <Alert
+            closable
+            banner
+            message={strings.subscriptionRequired}
+            description={strings.formatString(strings.subscriptionRequiredDescLog, MAX_FREE_LOGS)}
+            action={
+              <Button
+                type="primary"
+                onClick={() => navigate('/subscription')}
+                style={{ marginRight: 10 }}
+              >
+                {strings.upgradeToPro}
+              </Button>
+            }
+            style={{ marginBottom: 16 }}
+          />
+        </ConfigProvider>
+      )}
       {printItems.length > 0 && (
         <Space>
           <Button type="primary" onClick={goCreatePrint}>
@@ -50,7 +82,7 @@ export default function PrintsPage() {
         </Space>
       )}
       {printItems.map((printItem) => (
-        <>
+        <div key={printItem.logId}>
           {printItem.printList.map((printScript, index) => (
             <Card
               size="small"
@@ -66,7 +98,7 @@ export default function PrintsPage() {
               </div>
             </Card>
           ))}
-        </>
+        </div>
       ))}
       {printItems.length === 0 && (
         <Empty>
