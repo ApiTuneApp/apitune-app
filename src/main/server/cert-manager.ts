@@ -91,7 +91,6 @@ class ExtendedCertManager {
     if (os.platform() === 'win32') {
       // Windows
       result = execScriptSync(`certutil -user -addstore Root "${rootCAPath}"`)
-      // result = await execScriptSudo(`certutil -addstore -f "Root" "${rootCAPath}"`)
     } else {
       const command = `osascript -e \
       'do shell script \
