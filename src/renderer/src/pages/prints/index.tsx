@@ -9,6 +9,7 @@ import { strings } from '@renderer/services/localization'
 import { useUserStore } from '@renderer/store/user'
 import { MainEvent, PrintItem } from '@shared/contract'
 import { MAX_FREE_LOGS } from '@shared/constants'
+import { checkSubscriptionActive } from '@shared/utils'
 
 export default function PrintsPage() {
   const navigate = useNavigate()
@@ -41,7 +42,7 @@ export default function PrintsPage() {
   }
   return (
     <Flex className="app-page" vertical gap={14}>
-      {!subscription && (
+      {!checkSubscriptionActive(subscription) && (
         <ConfigProvider
           theme={{
             components: {

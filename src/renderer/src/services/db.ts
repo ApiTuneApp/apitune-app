@@ -126,3 +126,22 @@ export const getShareRules = async (userId: string): Promise<ShareRule[]> => {
   }
   return data as unknown as ShareRule[]
 }
+
+export const getSubscription = async (user) => {
+  if (!user || !user.email) {
+    return null
+  }
+
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('email', user.email!)
+    .single()
+
+  if (error) {
+    console.error('Error fetching subscription:', error)
+    return null
+  }
+
+  return data
+}

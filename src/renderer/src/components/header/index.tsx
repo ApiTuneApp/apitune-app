@@ -137,7 +137,7 @@ function Header(): JSX.Element {
         } as User
         setUser(userInfo)
         _initSyncRule(userInfo)
-        authService.getSubscription(userInfo).then((subscription) => {
+        dbService.getSubscription(userInfo).then((subscription) => {
           console.log('subscription', subscription)
           setSubscription(subscription as Subscription)
         })
@@ -169,6 +169,10 @@ function Header(): JSX.Element {
             } as User
             setUser(userInfo)
             _initSyncRule(userInfo)
+            dbService.getSubscription(userInfo).then((subscription) => {
+              console.log('subscription', subscription)
+              setSubscription(subscription as Subscription)
+            })
           }
         } catch (error) {
           console.log('Error auth:', error)

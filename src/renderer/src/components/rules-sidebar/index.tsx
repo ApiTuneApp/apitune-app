@@ -21,7 +21,12 @@ import { useUserStore } from '@renderer/store/user'
 import { useUxStore } from '@renderer/store/ux'
 import { MAX_FREE_RULES } from '@shared/constants'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
-import { findGroupOrRule, findParentGroup, findRuleCount } from '@shared/utils'
+import {
+  checkSubscriptionActive,
+  findGroupOrRule,
+  findParentGroup,
+  findRuleCount
+} from '@shared/utils'
 
 import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
 type RuleTreeDataNode = TreeDataNode & {
@@ -165,7 +170,11 @@ function RulesSidebar(): JSX.Element {
   const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
 
   function checkSubscription() {
-    if (!subscription && findRuleCount(apiRules) > MAX_FREE_RULES) {
+    if (
+      !subscription &&
+      checkSubscriptionActive(subscription) &&
+      findRuleCount(apiRules) > MAX_FREE_RULES
+    ) {
       modal.confirm({
         title: strings.subscriptionRequired,
         content: strings.formatString(strings.subscriptionRequiredDesc, MAX_FREE_RULES),

@@ -20,6 +20,7 @@ import { strings } from '@renderer/services/localization'
 import { useUserStore } from '@renderer/store/user'
 import { MAX_FREE_TESTS } from '@shared/constants'
 import { Log, TestItem } from '@shared/contract'
+import { checkSubscriptionActive } from '@shared/utils'
 
 type TestResultItem = {
   testResult: TestItem
@@ -129,7 +130,7 @@ export default function TestScriptsPage() {
 
   return (
     <Flex className="app-page" vertical>
-      {!subscription && (
+      {!checkSubscriptionActive(subscription) && (
         <ConfigProvider
           theme={{
             components: {

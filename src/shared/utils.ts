@@ -1,4 +1,4 @@
-import { ApiRules, RuleData, RuleGroup } from './contract'
+import { ApiRules, RuleData, RuleGroup, Subscription } from './contract'
 
 export function isURL(url: string): boolean {
   const expression =
@@ -71,4 +71,14 @@ export const findRuleCount = (rules: ApiRules): number => {
     }
     return acc
   }, 0)
+}
+
+export const checkSubscriptionActive = (subscription: Subscription | null) => {
+  if (!subscription) {
+    return false
+  }
+  // Compare subscription end date with current date
+  const endDate = new Date(subscription.end_at)
+  const currentDate = new Date()
+  return endDate > currentDate
 }
