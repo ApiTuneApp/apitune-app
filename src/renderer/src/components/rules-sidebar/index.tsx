@@ -223,12 +223,12 @@ function RulesSidebar(): JSX.Element {
       okType: 'danger',
       cancelText: strings.no,
       onOk() {
-        handleDelConfirm()
+        handleDelConfirm(groupId)
       }
     })
   }
-  const handleDelConfirm = async () => {
-    const result = await window.api.deleteRule(editGroupId as string)
+  const handleDelConfirm = async (groupId: string) => {
+    const result = await window.api.deleteRule(groupId as string)
     if (result.status === EventResultStatus.Success) {
       Service.getApiRules()
     }

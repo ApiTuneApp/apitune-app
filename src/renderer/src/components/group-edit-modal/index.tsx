@@ -21,7 +21,7 @@ export default function GroupEditModal(props: NameModalProps): JSX.Element {
 
   React.useEffect(() => {
     setName(groupId ? apiRules.find((r) => r.id === groupId)!.name : '')
-  }, [groupId])
+  }, [groupId, open])
 
   const handleNewGroupNameChange = (value: string) => {
     setName(value)
