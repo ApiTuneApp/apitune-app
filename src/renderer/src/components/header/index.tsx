@@ -1,6 +1,6 @@
 import './header.less'
 
-import { Avatar, Badge, Button, Dropdown, Popover, QRCode, Typography } from 'antd'
+import { Avatar, Badge, Button, Dropdown, Popover, QRCode, Tooltip, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
 import { CheckCircleTwoTone, LoadingOutlined, QrcodeOutlined } from '@ant-design/icons'
@@ -245,9 +245,11 @@ function Header(): JSX.Element {
         </Popover>
       </div>
       {!loggedIn ? (
-        <Button type="primary" onClick={handleSignIn}>
-          {strings.signIn}
-        </Button>
+        <Tooltip title={strings.signInTooltip} placement="bottom">
+          <Button type="primary" onClick={handleSignIn}>
+            {strings.signIn}
+          </Button>
+        </Tooltip>
       ) : (
         <Dropdown menu={{ items: profileMenu }}>
           <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }}>

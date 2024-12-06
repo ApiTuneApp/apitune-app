@@ -9,6 +9,7 @@ import {
   Select,
   Space,
   Tag,
+  Tooltip,
   Typography
 } from 'antd'
 import dayjs from 'dayjs'
@@ -113,11 +114,40 @@ function SettingsPage(): JSX.Element {
     })
   }
 
-  const renderUserProfile = () => {
-    if (!user || !user.email) return null
+  const openSignInPage = () => {
+    window.api.openSignInPage()
+  }
 
+  const renderUserProfile = () => {
     const openPricingPage = () => {
       window.api.openExternal('https://apitune.io/#Pricing')
+    }
+
+    if (!user || !user.email) {
+      return (
+        <Form.Item label={strings.profile}>
+          <Card size="small">
+            <Space align="start" style={{ width: '100%', justifyContent: 'space-between' }}>
+              <Space direction="vertical" size="small">
+                <Tooltip title={strings.signInTooltip}>
+                  <Button type="default" onClick={openSignInPage}>
+                    {strings.signIn}
+                  </Button>
+                </Tooltip>
+                <Text type="secondary">{strings.signInTooltip}</Text>
+              </Space>
+              <Space direction="vertical" size="small" align="end">
+                <Tag style={{ backgroundColor: 'var(--color-elevation-1)' }} color="default">
+                  Free
+                </Tag>
+                <Button type="link" onClick={openPricingPage}>
+                  {strings.upgradeToPro}
+                </Button>
+              </Space>
+            </Space>
+          </Card>
+        </Form.Item>
+      )
     }
 
     return (
