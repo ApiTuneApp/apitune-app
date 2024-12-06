@@ -17,12 +17,13 @@ import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
+import { useUserStore } from '@renderer/store/user'
 import { useUxStore } from '@renderer/store/ux'
+import { MAX_FREE_RULES } from '@shared/constants'
 import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
-import { findGroupOrRule, findParentGroup } from '@shared/utils'
+import { findGroupOrRule, findParentGroup, findRuleCount } from '@shared/utils'
 
 import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
-
 type RuleTreeDataNode = TreeDataNode & {
   rule: RuleGroup | RuleData
 }
@@ -157,10 +158,26 @@ function RulesSidebar(): JSX.Element {
   const navigate = useNavigate()
   const { modal } = App.useApp()
   const apiRules = useRuleStore((state) => state.apiRules)
+  const { subscription } = useUserStore((state) => state)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
   const ruleSidebarExpandedKeys = useUxStore((state) => state.ruleSidebarExpandedKeys)
   const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
+
+  function checkSubscription() {
+    if (!subscription && findRuleCount(apiRules) > MAX_FREE_RULES) {
+      modal.confirm({
+        title: strings.subscriptionRequired,
+        content: strings.formatString(strings.subscriptionRequiredDesc, MAX_FREE_RULES),
+        okText: strings.upgradeToPro,
+        onOk: () => {
+          window.api.openExternal('https://apitune.io/#Pricing')
+        }
+      })
+      return false
+    }
+    return true
+  }
 
   const treeData = React.useMemo<RuleTreeDataNode[]>(() => {
     return apiRules.map((rule) => {
@@ -254,6 +271,12 @@ function RulesSidebar(): JSX.Element {
     setAddGroupDialogOpen(true)
   }
 
+  const handleAddRule = () => {
+    if (checkSubscription()) {
+      navigate('/rules/new')
+    }
+  }
+
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
@@ -261,9 +284,7 @@ function RulesSidebar(): JSX.Element {
           <Button type="text" icon={<FolderAddOutlined />} onClick={() => handleAddGroup()} />
         </Tooltip>
         <Tooltip title={strings.addRule} arrow overlayClassName="j-autohide-tooltip">
-          <NavLink to="/rules/new">
-            <Button type="text" icon={<PlusSquareOutlined />} />
-          </NavLink>
+          <Button type="text" icon={<PlusSquareOutlined />} onClick={() => handleAddRule()} />
         </Tooltip>
         <Tooltip title={strings.goGroupList} arrow overlayClassName="j-autohide-tooltip">
           <NavLink to="/rules/list">

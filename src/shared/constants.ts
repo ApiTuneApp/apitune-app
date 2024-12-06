@@ -305,3 +305,5 @@ export const ResponseRuleKeys: RuleType[] = [
   RuleType.ResponseDelay,
   RuleType.RequestSpeedLimit
 ]
+
+export const MAX_FREE_RULES = 3

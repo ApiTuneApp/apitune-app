@@ -4,7 +4,7 @@ import { Avatar, Badge, Button, Dropdown, Popover, QRCode, Tooltip, Typography }
 import { useEffect, useState } from 'react'
 
 import { CheckCircleTwoTone, LoadingOutlined, QrcodeOutlined } from '@ant-design/icons'
-import { getAvatarUrl } from '@renderer/common/utils'
+import { getAvatarUrl } from '@shared/utils'
 import * as authService from '@renderer/services/auth'
 import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'

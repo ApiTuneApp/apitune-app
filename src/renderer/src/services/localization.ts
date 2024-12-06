@@ -194,7 +194,13 @@ export const strings = new LocalizedStrings({
     duplicateSuccess: 'Duplicate success',
     profile: 'Profile',
     expires: 'Expires',
-    upgradeToPro: 'Upgrade to Pro'
+    upgradeToPro: 'Upgrade to Pro',
+    subscriptionRequired: 'Subscription Required',
+    subscriptionRequiredDesc: 'Free users can only create up to {0} rules',
+    subscriptionRequiredDescLog:
+      'Free users can only create up to {0} logs, please upgrade to Pro to create more rules',
+    subscriptionRequiredDescTest:
+      'Free users can only create up to {0} rules, please upgrade to Pro to create more rules'
   },
   zh: {
     close: '关闭',
@@ -225,7 +231,7 @@ export const strings = new LocalizedStrings({
     testPassed: '通过用例',
     testResults: '测试结果',
     reqDetails: '请求详情',
-    somethingWrong: '哎呀！��的操作出了点问题。',
+    somethingWrong: '哎呀！的操作出了点问题。',
     clearLog: '清空日志',
     filter: '过滤',
     ruleMatched: '已匹配规则',
@@ -339,14 +345,14 @@ export const strings = new LocalizedStrings({
     headerValueRquired: '头部值是必填项',
     repDelayTime: '响应延迟时间',
     delayRequired: '延迟时间是必填项',
-    inputResDelayTime: '请输入响应延迟时间',
+    inputResDelayTime: '请输入响应延��时间',
     repStatus: '响应状态',
     rewriteTo: '重写为',
     rewriteUrlRequired: '重写 URL 是必填项',
     invalidUrl: '无效的 URL',
     inputRewriteUrl: '请输入重写 URL',
     signIn: '登录',
-    signInTooltip: '登录以同步数据并解锁所有功能',
+    signInTooltip: '登录以同步所有数据并解锁所有功能',
     signOut: '登出',
     syncing: '开始同步规则数据',
     synced: '规则数据已同步',
@@ -375,7 +381,7 @@ export const strings = new LocalizedStrings({
     pleaseLoginFirst: '请先登录',
     logEditTooltip: '创建新规则以编辑此请求或响应',
     viewDetails: '查看详情',
-    importToMyShare: '保存到我的共享列表',
+    importToMyShare: '���存到我的共享列表',
     openMyShare: '您打开了您自己的共享',
     createBy: '创建者',
     duplicateToMyRules: '复制到我的规则',
@@ -384,6 +390,8 @@ export const strings = new LocalizedStrings({
     duplicateSuccess: '复制成功',
     profile: '个人资料',
     expires: '到期时间',
-    upgradeToPro: '升级到专业版'
+    upgradeToPro: '升级到专业版',
+    subscriptionRequired: '需要订阅',
+    subscriptionRequiredDesc: '此功能需要专业版订阅'
   }
 })

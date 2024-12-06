@@ -16,7 +16,7 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 import { CloseCircleOutlined, DownloadOutlined, FileProtectOutlined } from '@ant-design/icons'
-import { getAvatarUrl } from '@renderer/common/utils'
+import { getAvatarUrl } from '@shared/utils'
 import { strings } from '@renderer/services/localization'
 import { useSettingStore } from '@renderer/store/setting'
 import { useUserStore } from '@renderer/store/user'
