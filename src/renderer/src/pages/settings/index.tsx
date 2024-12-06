@@ -137,7 +137,12 @@ function SettingsPage(): JSX.Element {
 
             {/* Right column - Subscription info */}
             <Space direction="vertical" size="small" style={{ textAlign: 'right' }}>
-              <Tag color={subscription ? 'gold' : 'default'}>{subscription ? 'Pro' : 'Free'}</Tag>
+              <Tag
+                style={{ backgroundColor: 'var(--color-elevation-1)' }}
+                color={subscription ? 'gold' : 'default'}
+              >
+                {subscription ? 'Pro' : 'Free'}
+              </Tag>
               {subscription ? (
                 <Text type="secondary">
                   {strings.expires}: {dayjs(subscription.end_at).format('YYYY-MM-DD')}
