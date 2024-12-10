@@ -17,6 +17,7 @@ type Action = {
   initSyncInfo: (syncInfo: RuleStorage['syncInfo']) => void
   undo: () => void
   redo: () => void
+  clearRedoUnDo: () => void
 }
 
 export const useRuleStore = create<State & Action>((set) => ({
@@ -67,5 +68,6 @@ export const useRuleStore = create<State & Action>((set) => ({
         }
       }
       return {}
-    })
+    }),
+  clearRedoUnDo: () => set(() => ({ undoRedoStack: { undo: [], redo: [] } }))
 }))

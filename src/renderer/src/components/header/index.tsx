@@ -26,6 +26,7 @@ function Header(): JSX.Element {
   const apiRules = useRuleStore((state) => state.apiRules)
   const initSyncInfo = useRuleStore.getState().initSyncInfo
   const initApiRules = useRuleStore.getState().initApiRules
+  const clearRedoUnDo = useRuleStore.getState().clearRedoUnDo
   const { user, setUser, setSubscription } = useUserStore.getState()
 
   const port = useSettingStore((state) => state.port)
@@ -211,6 +212,7 @@ function Header(): JSX.Element {
         setUser({} as User)
         setLoggedIn(false)
         _cleanApiRules()
+        clearRedoUnDo()
       }
     }
   ]

@@ -171,6 +171,7 @@ function RulesSidebar(): JSX.Element {
   const ruleSidebarExpandedKeys = useUxStore((state) => state.ruleSidebarExpandedKeys)
   const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
 
+  const isProUser = checkSubscriptionActive(subscription)
   const canUndo = undoRedoStack.undo.length > 0
   const canRedo = undoRedoStack.redo.length > 0
 
@@ -292,21 +293,35 @@ function RulesSidebar(): JSX.Element {
   }
 
   const handleUndo = () => {
-    if (canUndo) {
+    if (!isProUser) {
+      modal.confirm({
+        title: strings.subscriptionRequired,
+        content: strings.subcriptionFeature,
+        okText: strings.upgradeToPro,
+        onOk: () => {
+          window.api.openExternal('https://apitune.io/#Pricing')
+        }
+      })
+    } else if (canUndo) {
       undo()
-      // Get the latest state after undo
       const latestRules = useRuleStore.getState().apiRules
-      // After undo, we need to sync the changes back to storage
       window.api.saveRules(latestRules)
     }
   }
 
   const handleRedo = () => {
-    if (canRedo) {
+    if (!isProUser) {
+      modal.confirm({
+        title: strings.subscriptionRequired,
+        content: strings.subcriptionFeature,
+        okText: strings.upgradeToPro,
+        onOk: () => {
+          window.api.openExternal('https://apitune.io/#Pricing')
+        }
+      })
+    } else if (canRedo) {
       redo()
-      // Get the latest state after redo
       const latestRules = useRuleStore.getState().apiRules
-      // After redo, we need to sync the changes back to storage
       window.api.saveRules(latestRules)
     }
   }

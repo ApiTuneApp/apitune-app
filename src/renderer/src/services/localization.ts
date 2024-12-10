@@ -196,6 +196,7 @@ export const strings = new LocalizedStrings({
     expires: 'Expires',
     upgradeToPro: 'Upgrade to Pro',
     subscriptionRequired: 'Subscription Required',
+    subcriptionFeature: 'This is a feature of Pro version',
     subscriptionRequiredDesc:
       'Free users can only create up to {0} rules, please upgrade to Pro to create more rules',
     subscriptionRequiredDescLog:
@@ -395,6 +396,7 @@ export const strings = new LocalizedStrings({
     expires: '到期时间',
     upgradeToPro: '升级到专业版',
     subscriptionRequired: '需要订阅',
+    subcriptionFeature: '这是专业版的功能',
     subscriptionRequiredDesc: '免费用户只能创建{0}个规则，请升级到专业版以创建更多规则',
     subscriptionRequiredDescTest: '免费用户只能创建{0}个测试用例，请升级到专业版以创建更多测试用例',
     subscriptionRequiredDescLog: '免费用户只能创建{0}个日志，请升级到专业版以创建更多日志',
