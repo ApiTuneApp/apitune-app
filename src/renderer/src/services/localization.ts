@@ -207,7 +207,12 @@ export const strings = new LocalizedStrings({
     redo: 'Redo',
     httpsDecodeRequired: 'HTTPS Decoding Required',
     enableHttpsDecodeHint:
-      'This is a HTTPS CONNECT request. To view the response body, you need to enable HTTPS decoding for this domain in the settings.'
+      'This is a HTTPS CONNECT request. To view the response body, you need to enable HTTPS decrypt for this domain in the settings.',
+    httpsDecryptDomains: 'HTTPS Decrypt Domains',
+    httpsDecryptDomainsHint:
+      'Enter domain patterns to inspect HTTPS traffic. One per line. Supports wildcards (*). Example: *.example.com',
+    readMoreDocs: 'Read more in documentation',
+    learnMore: 'Learn more'
   },
   zh: {
     close: '关闭',
@@ -290,7 +295,7 @@ export const strings = new LocalizedStrings({
     groupEnabled: '分组是否启用',
     updatedOn: '更新时间',
     actions: '操作',
-    ruleName: '规则名称',
+    ruleName: '规则名',
     description: '描述',
     ruleEnabled: '规则是否启用',
     myWorkspace: '我的工作区',
@@ -329,7 +334,7 @@ export const strings = new LocalizedStrings({
     removeRule: '删除规则',
     snippets: '代码片段',
     rules: '规则',
-    testAndScripts: '测试&脚���',
+    testAndScripts: '测试&脚本',
     ruleNotFound: '未找到规则',
     youCanModify: '您可以在这里修改{0}',
     contextVarYouCanUse: '您可以使用的上下文变量',
@@ -358,10 +363,10 @@ export const strings = new LocalizedStrings({
     rewriteUrlRequired: '重写 URL 是必填项',
     invalidUrl: '无效的 URL',
     inputRewriteUrl: '请输入重写 URL',
-    signIn: '登录',
+    signIn: '��录',
     signInTooltip: '登录以同步所有数据并解锁所有功能',
     signOut: '登出',
-    syncing: '开始同步规则数据',
+    syncing: '开始同步则数据',
     synced: '规则数据已同步',
     syncedDiffDetected: '同步的规则数据与本地规则数据不同，是否同步？',
     syncedDiffDesc: '本地规则数据将被同步的规则数据覆盖',
@@ -383,13 +388,13 @@ export const strings = new LocalizedStrings({
     shareRule: '共享规则',
     shareRuleWithYou: '{0} 共享了一个规则给你',
     copyLink: '复制链接',
-    shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他���可以手动更新到最新版本',
+    shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他可以手动更新到最新版本',
     generatingLink: '生成链接中...',
     pleaseLoginFirst: '请先登录',
     logEditTooltip: '创建新规则以编辑此请求或响应',
     viewDetails: '查看详情',
-    importToMyShare: '保存到我的共享列表',
-    openMyShare: '您打开了您自己的共享',
+    importToMyShare: '��存到我的共享列表',
+    openMyShare: '您打开了您的共享',
     createBy: '创建者',
     duplicateToMyRules: '复制到我的规则',
     myShared: '我的共享',
@@ -407,6 +412,11 @@ export const strings = new LocalizedStrings({
     redo: '重做',
     httpsDecodeRequired: 'HTTPS 解码要求',
     enableHttpsDecodeHint:
-      '这是一个 HTTPS CONNECT 请求。要查看响应体，您需要在设置中启用此域名的 HTTPS 解码。'
+      '这是一个 HTTPS CONNECT 请求。要查看响应体，您需要在设置中启用此域名的 HTTPS 解码。',
+    httpsDecryptDomains: 'HTTPS 检查',
+    httpsDecryptDomainsHint:
+      '输入需要检查HTTPS流量的域名模式。每行一个域名，支持通配符(*)。示例：*.example.com',
+    readMoreDocs: '查看文档了解更多',
+    learnMore: '了解更多'
   }
 })

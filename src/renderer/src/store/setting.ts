@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 import { AppTheme, SettingStorage } from '@shared/contract'
 
@@ -8,6 +9,7 @@ type State = {
   language: SettingStorage['language']
   // real theme apply for app
   appTheme: AppTheme
+  httpsDecryptDomains: string[]
 }
 
 type Action = {
@@ -16,6 +18,7 @@ type Action = {
   setAppTheme: (theme: AppTheme) => void
   setLanguage: (language: SettingStorage['language']) => void
   initSettings: (settings: SettingStorage) => void
+  setHttpsDecryptDomains: (domains: string[]) => void
 }
 
 export const useSettingStore = create<State & Action>((set) => ({
@@ -23,6 +26,7 @@ export const useSettingStore = create<State & Action>((set) => ({
   theme: 'system',
   appTheme: null,
   language: 'en',
+  httpsDecryptDomains: [],
   setPort: (port) => set(() => ({ port })),
   setTheme: (theme) => {
     window.api.changeTheme(theme)
@@ -30,5 +34,6 @@ export const useSettingStore = create<State & Action>((set) => ({
   },
   setAppTheme: (appTheme) => set(() => ({ appTheme })),
   setLanguage: (language) => set(() => ({ language })),
-  initSettings: (settings: SettingStorage) => set(() => ({ ...settings }))
+  initSettings: (settings: SettingStorage) => set(() => ({ ...settings })),
+  setHttpsDecryptDomains: (domains) => set({ httpsDecryptDomains: domains })
 }))

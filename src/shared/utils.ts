@@ -87,3 +87,34 @@ export const checkSubscriptionActive = (subscription: Subscription | null) => {
 
   return endDate.getTime() >= currentDate.getTime()
 }
+
+/**
+ * Convert wildcard pattern to regex pattern
+ * @param pattern Domain pattern that may contain wildcards (e.g. *.example.com)
+ * @returns RegExp object for matching
+ */
+export function wildcardToRegex(pattern: string): RegExp {
+  return new RegExp(
+    '^' +
+      pattern
+        .replace(/\./g, '\\.') // Escape dots
+        .replace(/\*/g, '[^.]+') + // Convert * to regex pattern
+      '$'
+  )
+}
+
+/**
+ * Check if hostname matches any of the patterns
+ * @param hostname Hostname to check
+ * @param patterns Array of domain patterns that may contain wildcards
+ * @returns boolean indicating if hostname matches any pattern
+ */
+export function matchHostname(hostname: string, patterns: string[]): boolean {
+  return patterns.some((pattern) => {
+    if (pattern === hostname) return true
+    if (pattern.includes('*')) {
+      return wildcardToRegex(pattern).test(hostname)
+    }
+    return false
+  })
+}

@@ -2,7 +2,9 @@ import log from 'electron-log/main'
 import { IncomingMessage } from 'http'
 import { Socket } from 'net'
 
+import { matchHostname } from '../../shared/utils'
 import { proxyLog } from '../communicator'
+import { DefaultSettingData } from '../storage'
 import config from './config'
 import { HttpsControl } from './contracts'
 import { decodeHttps } from './decode-https'
@@ -119,26 +121,15 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
 }
 
 export function getHttpsControl(hostname: string, socket: Socket): HttpsControl {
-  // 为了下载cer证书，所以不解本站点（此时手机没有证书）
-  // if (KPROXY_DOMAINS.includes(hostname)) {
-  //   return 'tunnel'
-  // }
-
-  const httpsControl = 'decode'
-  // const url = new URL('https://' + hostname + '/');
-  // const rules = envIdRulesMap[envId] || [];
-
-  // for (const rule of rules) {
-  //   if ('httpsControl' in rule) {
-  //     if (isMatchArray(url, rule.includes) && !isMatchArray(url, rule.excludes)) {
-  //       httpsControl = rule.httpsControl
-  //     }
-  //   }
-  //   if (rule.break) {
-  //     break;
-  //   }
-  // }
-
-  return HttpsControl.decode
-  // return HttpsControl.tunnel
+  if (
+    !DefaultSettingData.httpsDecryptDomains ||
+    DefaultSettingData.httpsDecryptDomains.length === 0
+  ) {
+    return HttpsControl.decode
+  }
+  if (matchHostname(hostname, DefaultSettingData.httpsDecryptDomains)) {
+    return HttpsControl.decode
+  } else {
+    return HttpsControl.tunnel
+  }
 }

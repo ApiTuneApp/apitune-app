@@ -36,7 +36,8 @@ export enum RenderEvent {
   DuplicateRules = 'duplicateRules',
   OpenExternal = 'openExternal',
   SetSubscription = 'setSubscription',
-  SaveRules = 'saveRules'
+  SaveRules = 'saveRules',
+  UpdateHttpsDecryptDomains = 'updateHttpsDecryptDomains'
 }
 
 export enum MainEvent {
@@ -223,6 +224,7 @@ export interface SettingStorage {
   port: number
   theme: Theme
   language: 'zh' | 'en'
+  httpsDecryptDomains?: string[]
 }
 
 export type ApiRuleItem = RuleGroup | RuleData

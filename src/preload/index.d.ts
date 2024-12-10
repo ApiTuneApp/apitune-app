@@ -65,6 +65,7 @@ declare global {
       openExternal: (url: string) => void
       setSubscription: (subscription: Subscription | null) => void
       saveRules: (rules: ApiRules) => Promise<IpcResult>
+      updateHttpsDecryptDomains: (domains: string[]) => Promise<IpcResult>
     }
   }
 }

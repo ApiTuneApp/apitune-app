@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Form,
+  Input,
   InputNumber,
   Radio,
   Select,
@@ -15,7 +16,12 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
-import { CloseCircleOutlined, DownloadOutlined, FileProtectOutlined } from '@ant-design/icons'
+import {
+  CloseCircleOutlined,
+  DownloadOutlined,
+  FileProtectOutlined,
+  InfoCircleOutlined
+} from '@ant-design/icons'
 import { getAvatarUrl } from '@shared/utils'
 import { strings } from '@renderer/services/localization'
 import { useSettingStore } from '@renderer/store/setting'
@@ -25,13 +31,21 @@ import { EventResultStatus, RenderEvent } from '@shared/contract'
 import packageJson from '../../../../../package.json'
 
 const { Text } = Typography
+const { TextArea } = Input
 
 function SettingsPage(): JSX.Element {
   const { message } = App.useApp()
 
-  const { port, theme, language, setTheme, setAppTheme, setLanguage } = useSettingStore(
-    (state) => state
-  )
+  const {
+    port,
+    theme,
+    language,
+    httpsDecryptDomains,
+    setTheme,
+    setAppTheme,
+    setLanguage,
+    setHttpsDecryptDomains
+  } = useSettingStore((state) => state)
   const [proxyPort, setProxyPort] = useState(port)
   const [caTrust, setCaTrust] = useState(false)
   const [checkingUpdate, setCheckingUpdate] = useState(false)
@@ -189,6 +203,26 @@ function SettingsPage(): JSX.Element {
     )
   }
 
+  const handleHttpsDomainsChange = (value: string, e) => {
+    const domains = value
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+
+    // Otherwise, call the API to update domains
+    window.api.updateHttpsDecryptDomains(domains).then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        setHttpsDecryptDomains(domains)
+      } else {
+        message.error('Failed to update HTTPS decrypt domains')
+      }
+    })
+  }
+
+  const openHttpsDecryptDocs = () => {
+    window.api.openExternal('https://apitune/docs/guide/https-decrypt.html')
+  }
+
   return (
     <div className="app-page page-settings">
       <Typography.Title level={4} style={{ marginBottom: 20 }}>
@@ -237,6 +271,41 @@ function SettingsPage(): JSX.Element {
                   {strings.update}
                 </Button>
               </Space.Compact>
+            </Form.Item>
+          </Space>
+
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Form.Item
+              label={
+                <Space>
+                  {strings.httpsDecryptDomains}
+                  <Tooltip title={strings.httpsDecryptDomainsHint}>
+                    <InfoCircleOutlined style={{ color: 'var(--color-text-quaternary)' }} />
+                  </Tooltip>
+                  <Button
+                    type="link"
+                    size="small"
+                    style={{
+                      padding: 0,
+                      height: 'auto',
+                      fontSize: '12px'
+                    }}
+                    onClick={openHttpsDecryptDocs}
+                  >
+                    {strings.learnMore}
+                  </Button>
+                </Space>
+              }
+            >
+              <TextArea
+                defaultValue={httpsDecryptDomains?.join('\n')}
+                placeholder={`${strings.httpsDecryptDomainsHint}
+Example:
+*.example.com
+api.example.com`}
+                onChange={(e) => handleHttpsDomainsChange(e.target.value, e)}
+                autoSize={{ minRows: 4, maxRows: 8 }}
+              />
             </Form.Item>
           </Space>
           <Space>

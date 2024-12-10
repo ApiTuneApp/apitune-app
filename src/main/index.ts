@@ -996,6 +996,24 @@ app.whenReady().then(() => {
     })
   })
 
+  ipcMain.handle(RenderEvent.UpdateHttpsDecryptDomains, (event, domains: string[]) => {
+    return new Promise((resolve) => {
+      updateSettingData(
+        {
+          httpsDecryptDomains: domains
+        },
+        () => {
+          resolve({
+            status: EventResultStatus.Success
+          })
+        },
+        (error) => {
+          log.error('[UpdateHttpsDecryptDomains] Failed to update HTTPS decrypt domains', error)
+        }
+      )
+    })
+  })
+
   // const dataPath = Storage.getDataPath()
   // log.debug('datapath =>> ', dataPath)
 

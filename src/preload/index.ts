@@ -134,6 +134,9 @@ const api = {
   },
   setSubscription: (subscription: Subscription | null): void => {
     ipcRenderer.send(RenderEvent.SetSubscription, subscription)
+  },
+  updateHttpsDecryptDomains: (domains: string[]): Promise<IpcResult> => {
+    return ipcRenderer.invoke(RenderEvent.UpdateHttpsDecryptDomains, domains)
   }
 }
 
