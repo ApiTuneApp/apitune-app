@@ -201,7 +201,9 @@ export const strings = new LocalizedStrings({
     subscriptionRequiredDescLog:
       'Free users can only create up to {0} logs, please upgrade to Pro to create more logs',
     subscriptionRequiredDescTest:
-      'Free users can only create up to {0} test cases, please upgrade to Pro to create more test cases'
+      'Free users can only create up to {0} test cases, please upgrade to Pro to create more test cases',
+    undo: 'Undo',
+    redo: 'Redo'
   },
   zh: {
     close: '关闭',
@@ -323,7 +325,7 @@ export const strings = new LocalizedStrings({
     removeRule: '删除规则',
     snippets: '代码片段',
     rules: '规则',
-    testAndScripts: '测试&脚本',
+    testAndScripts: '测试&脚���',
     ruleNotFound: '未找到规则',
     youCanModify: '您可以在这里修改{0}',
     contextVarYouCanUse: '您可以使用的上下文变量',
@@ -346,7 +348,7 @@ export const strings = new LocalizedStrings({
     headerValueRquired: '头部值是必填项',
     repDelayTime: '响应延迟时间',
     delayRequired: '延迟时间是必填项',
-    inputResDelayTime: '请输入响应延��时间',
+    inputResDelayTime: '请输入响应延迟时间',
     repStatus: '响应状态',
     rewriteTo: '重写为',
     rewriteUrlRequired: '重写 URL 是必填项',
@@ -377,12 +379,12 @@ export const strings = new LocalizedStrings({
     shareRule: '共享规则',
     shareRuleWithYou: '{0} 共享了一个规则给你',
     copyLink: '复制链接',
-    shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他人可以手动更新到最新版本',
+    shareDesc: '复制链接并分享给其他人, 只有创建者可以编辑规则，其他���可以手动更新到最新版本',
     generatingLink: '生成链接中...',
     pleaseLoginFirst: '请先登录',
     logEditTooltip: '创建新规则以编辑此请求或响应',
     viewDetails: '查看详情',
-    importToMyShare: '���存到我的共享列表',
+    importToMyShare: '保存到我的共享列表',
     openMyShare: '您打开了您自己的共享',
     createBy: '创建者',
     duplicateToMyRules: '复制到我的规则',
@@ -395,6 +397,8 @@ export const strings = new LocalizedStrings({
     subscriptionRequired: '需要订阅',
     subscriptionRequiredDesc: '免费用户只能创建{0}个规则，请升级到专业版以创建更多规则',
     subscriptionRequiredDescTest: '免费用户只能创建{0}个测试用例，请升级到专业版以创建更多测试用例',
-    subscriptionRequiredDescLog: '免费用户只能创建{0}个日志，请升级到专业版以创建更多日志'
+    subscriptionRequiredDescLog: '免费用户只能创建{0}个日志，请升级到专业版以创建更多日志',
+    undo: '撤销',
+    redo: '重做'
   }
 })

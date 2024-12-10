@@ -81,7 +81,6 @@ function Header(): JSX.Element {
   function _syncLocalRules() {
     setSyncingStatus(true)
     window.api.getApiRules().then((rules) => {
-      console.log('syncing rules', rules)
       dbService
         .syncRuleData(rules)
         .then((res) => {
@@ -148,7 +147,7 @@ function Header(): JSX.Element {
 
   useEffect(() => {
     // Used to sync local rule to server when local rule changes
-    if (apiRules && loggedIn) {
+    if (apiRules && loggedIn && !syncingStatus) {
       console.log('apiRules updated', apiRules)
       _syncLocalRules()
     }

@@ -64,6 +64,7 @@ declare global {
       duplicateRules: (rule: string) => Promise<IpcResult>
       openExternal: (url: string) => void
       setSubscription: (subscription: Subscription | null) => void
+      saveRules: (rules: ApiRules) => Promise<IpcResult>
     }
   }
 }

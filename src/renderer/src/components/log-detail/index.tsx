@@ -25,7 +25,7 @@ import TestResults from '@renderer/components/test-results'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
 import { useSettingStore } from '@renderer/store/setting'
-import { EventResultStatus, HeaderItem, Log, Modify, RuleType } from '@shared/contract'
+import { EventResultStatus, HeaderItem, Log, Modify, RenderEvent, RuleType } from '@shared/contract'
 
 import MonacoEditor, { supportLanguage } from '../monaco-editor'
 import RuleLink from '../rule-link'
@@ -478,7 +478,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
           )
           .then((result) => {
             if (result.status === EventResultStatus.Success) {
-              Service.getApiRules()
+              Service.getApiRules(RenderEvent.AddRule)
               notification.success({
                 message: strings.ruleAdded,
                 description: (

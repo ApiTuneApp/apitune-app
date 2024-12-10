@@ -10,7 +10,7 @@ import ShareModal from '@renderer/components/share-modal'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
-import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
+import { ApiRuleItem, EventResultStatus, RenderEvent, RuleData, RuleGroup } from '@shared/contract'
 
 import type { TableProps } from 'antd'
 import { findGroupOrRule, findParentGroup } from '@shared/utils'
@@ -26,7 +26,7 @@ function RuleListPage(): JSX.Element {
   function triggerRuleEnable(rule, enabled) {
     window.api.enableRule(rule.id, enabled).then((result) => {
       if (result.status === EventResultStatus.Success) {
-        Service.getApiRules()
+        Service.getApiRules(RenderEvent.EnableRule)
       }
     })
   }
@@ -56,7 +56,7 @@ function RuleListPage(): JSX.Element {
       onOk: async () => {
         const result = await window.api.deleteRule(id)
         if (result.status === EventResultStatus.Success) {
-          Service.getApiRules()
+          Service.getApiRules(RenderEvent.DeleteRule)
         }
       }
     })

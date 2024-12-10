@@ -11,7 +11,9 @@ import {
   FolderOutlined,
   MoreOutlined,
   PlusSquareOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  UndoOutlined,
+  RedoOutlined
 } from '@ant-design/icons'
 import GroupEditModal from '@renderer/components/group-edit-modal'
 import * as Service from '@renderer/services'
@@ -20,7 +22,7 @@ import { useRuleStore } from '@renderer/store'
 import { useUserStore } from '@renderer/store/user'
 import { useUxStore } from '@renderer/store/ux'
 import { MAX_FREE_RULES } from '@shared/constants'
-import { EventResultStatus, RuleData, RuleGroup } from '@shared/contract'
+import { EventResultStatus, RenderEvent, RuleData, RuleGroup } from '@shared/contract'
 import {
   checkSubscriptionActive,
   findGroupOrRule,
@@ -90,7 +92,7 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
     e.stopPropagation()
     window.api.enableRule(ruleId, checked).then((result) => {
       if (result.status === EventResultStatus.Success) {
-        Service.getApiRules()
+        Service.getApiRules(RenderEvent.EnableRule)
       }
     })
   }
@@ -162,12 +164,15 @@ const RuleTreeItem = React.forwardRef(function RuleTreeItem(
 function RulesSidebar(): JSX.Element {
   const navigate = useNavigate()
   const { modal } = App.useApp()
-  const apiRules = useRuleStore((state) => state.apiRules)
+  const { undo, redo, apiRules, undoRedoStack } = useRuleStore((state) => state)
   const { subscription } = useUserStore((state) => state)
   const [addGroupDialogOpen, setAddGroupDialogOpen] = React.useState(false)
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
   const ruleSidebarExpandedKeys = useUxStore((state) => state.ruleSidebarExpandedKeys)
   const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
+
+  const canUndo = undoRedoStack.undo.length > 0
+  const canRedo = undoRedoStack.redo.length > 0
 
   function checkSubscription() {
     if (
@@ -230,7 +235,7 @@ function RulesSidebar(): JSX.Element {
   const handleDelConfirm = async (groupId: string) => {
     const result = await window.api.deleteRule(groupId as string)
     if (result.status === EventResultStatus.Success) {
-      Service.getApiRules()
+      Service.getApiRules(RenderEvent.DeleteRule)
     }
   }
 
@@ -246,7 +251,7 @@ function RulesSidebar(): JSX.Element {
     } else if (menuItem === 'ruleGroupEnable') {
       window.api.enableRule(rule.id, !rule.enable).then((result) => {
         if (result.status === EventResultStatus.Success) {
-          Service.getApiRules()
+          Service.getApiRules(RenderEvent.EnableRule)
         }
       })
     }
@@ -286,6 +291,26 @@ function RulesSidebar(): JSX.Element {
     }
   }
 
+  const handleUndo = () => {
+    if (canUndo) {
+      undo()
+      // Get the latest state after undo
+      const latestRules = useRuleStore.getState().apiRules
+      // After undo, we need to sync the changes back to storage
+      window.api.saveRules(latestRules)
+    }
+  }
+
+  const handleRedo = () => {
+    if (canRedo) {
+      redo()
+      // Get the latest state after redo
+      const latestRules = useRuleStore.getState().apiRules
+      // After redo, we need to sync the changes back to storage
+      window.api.saveRules(latestRules)
+    }
+  }
+
   return (
     <div className="rules-sidebar">
       <Flex align="center" gap="small" style={{ paddingTop: 4 }}>
@@ -299,6 +324,12 @@ function RulesSidebar(): JSX.Element {
           <NavLink to="/rules/list">
             <Button type="text" icon={<UnorderedListOutlined />} />
           </NavLink>
+        </Tooltip>
+        <Tooltip title={strings.undo} arrow overlayClassName="j-autohide-tooltip">
+          <Button type="text" icon={<UndoOutlined />} onClick={handleUndo} disabled={!canUndo} />
+        </Tooltip>
+        <Tooltip title={strings.redo} arrow overlayClassName="j-autohide-tooltip">
+          <Button type="text" icon={<RedoOutlined />} onClick={handleRedo} disabled={!canRedo} />
         </Tooltip>
       </Flex>
       <GroupEditModal

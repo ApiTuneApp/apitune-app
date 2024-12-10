@@ -7,6 +7,7 @@ import fs from 'fs'
 import ip from 'ip'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
+// import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 
@@ -580,12 +581,13 @@ app.whenReady().then(() => {
   ipcMain.handle(RenderEvent.GetApiRules, (event) => {
     return new Promise((resolve, reject) => {
       try {
-        const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
-        if (data) {
-          resolve(data.apiRules || [])
-        } else {
-          resolve([])
-        }
+        Storage.get(config.RuleDefaultStorageKey, (error, data) => {
+          if (data) {
+            resolve(data.apiRules || [])
+          } else {
+            resolve([])
+          }
+        })
       } catch (error) {
         reject(error)
       }
@@ -965,6 +967,35 @@ app.whenReady().then(() => {
     }
   })
 
+  ipcMain.handle(RenderEvent.SaveRules, (event, rules: ApiRules) => {
+    return new Promise((resolve) => {
+      const data = Storage.getSync(config.RuleDefaultStorageKey) as RuleStorage
+      if (data) {
+        data.apiRules = rules
+        data.updatedAt = new Date().getTime()
+        Storage.set(config.RuleDefaultStorageKey, data, (error) => {
+          if (error) {
+            log.error('[SaveRules] Failed to save rules', error)
+            resolve({
+              status: EventResultStatus.Error,
+              error: error.message
+            })
+          } else {
+            resolve({
+              status: EventResultStatus.Success
+            })
+          }
+        })
+      } else {
+        log.error('[SaveRules] User data not found')
+        resolve({
+          status: EventResultStatus.Error,
+          error: 'User data not found'
+        })
+      }
+    })
+  })
+
   // const dataPath = Storage.getDataPath()
   // log.debug('datapath =>> ', dataPath)
 
@@ -976,7 +1007,7 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  // installExtension(REACT_DEVELOPER_TOOLS).catch((err) => {
+  // installExtension(REDUX_DEVTOOLS).catch((err) => {
   //   log.debug('Added Extension Error: ', err)
   // })
 })

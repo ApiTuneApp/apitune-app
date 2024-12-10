@@ -4,7 +4,7 @@ import * as React from 'react'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
-import { EventResultStatus } from '@shared/contract'
+import { EventResultStatus, RenderEvent } from '@shared/contract'
 
 type NameModalProps = {
   open: boolean
@@ -36,7 +36,7 @@ export default function GroupEditModal(props: NameModalProps): JSX.Element {
     if (groupId) {
       const result = await window.api.updateRuleGroupName(groupId, name)
       if (result.status === EventResultStatus.Success) {
-        Service.getApiRules()
+        Service.getApiRules(RenderEvent.UpdateRuleGroupName)
       }
     } else {
       const result = await window.api.addRule(
@@ -48,7 +48,7 @@ export default function GroupEditModal(props: NameModalProps): JSX.Element {
         })
       )
       if (result.status === EventResultStatus.Success) {
-        Service.getApiRules()
+        Service.getApiRules(RenderEvent.AddRule)
       }
     }
     onSubmit && onSubmit()

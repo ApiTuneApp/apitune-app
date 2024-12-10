@@ -41,7 +41,14 @@ import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
 import { useRuleStore } from '@renderer/store'
 import { ReqMethods } from '@shared/constants'
-import { EventResultStatus, IpcResult, Modify, RuleData, RuleType } from '@shared/contract'
+import {
+  EventResultStatus,
+  IpcResult,
+  Modify,
+  RenderEvent,
+  RuleData,
+  RuleType
+} from '@shared/contract'
 import { findGroupOrRule, findParentGroup } from '@shared/utils'
 import MonacoEditor from '@renderer/components/monaco-editor'
 
@@ -218,7 +225,7 @@ function RuleEditor({
   const showAddRuleResult = (result: IpcResult) => {
     if (result.status === EventResultStatus.Success) {
       message.success(editRuleId ? strings.ruleEdited : strings.ruleAdded, () => {
-        Service.getApiRules()
+        Service.getApiRules(editRuleId ? RenderEvent.UpdateRule : RenderEvent.AddRule)
         // navigate('/rules/list')
       })
     } else {
@@ -417,7 +424,7 @@ function RuleEditor({
       onOk: async () => {
         const result = await window.api.deleteRule(id)
         if (result.status === EventResultStatus.Success) {
-          Service.getApiRules()
+          Service.getApiRules(RenderEvent.DeleteRule)
           navigate('/rules/list')
         } else {
           message.error(result.error)

@@ -5,7 +5,14 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import RuleViewModal from '@renderer/components/rule-view-modal'
 import * as Service from '@renderer/services'
 import { strings } from '@renderer/services/localization'
-import { ApiRuleItem, EventResultStatus, RuleData, RuleGroup, ShareRule } from '@shared/contract'
+import {
+  ApiRuleItem,
+  EventResultStatus,
+  RenderEvent,
+  RuleData,
+  RuleGroup,
+  ShareRule
+} from '@shared/contract'
 
 export default function ShareViewPage() {
   const location = useLocation()
@@ -26,7 +33,7 @@ export default function ShareViewPage() {
     if (shareData?.rule_data) {
       window.api.duplicateRules(JSON.stringify(shareData)).then((res) => {
         if (res.status === EventResultStatus.Success) {
-          Service.getApiRules()
+          Service.getApiRules(RenderEvent.DuplicateRules)
           message.success(strings.duplicateSuccess)
           if (shareData?.rule_data.kind === 'group') {
             navigate('/rules/list')

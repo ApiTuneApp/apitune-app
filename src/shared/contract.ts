@@ -1,4 +1,5 @@
 import React from 'react'
+import { Operation } from 'fast-json-patch'
 
 export enum RenderEvent {
   ping = 'ping',
@@ -34,7 +35,8 @@ export enum RenderEvent {
   CopyText = 'copyText',
   DuplicateRules = 'duplicateRules',
   OpenExternal = 'openExternal',
-  SetSubscription = 'setSubscription'
+  SetSubscription = 'setSubscription',
+  SaveRules = 'saveRules'
 }
 
 export enum MainEvent {
@@ -51,6 +53,18 @@ export enum EventResultStatus {
 }
 
 export type CaEventType = 'status' | 'genRoot' | 'trust' | 'export'
+
+export const validUndoRedoActionTypes = [
+  RenderEvent.AddRule,
+  RenderEvent.UpdateRule,
+  RenderEvent.EditRuleGroup,
+  RenderEvent.EnableRule,
+  RenderEvent.UpdateRuleGroupName,
+  RenderEvent.DeleteRule,
+  RenderEvent.DuplicateRules
+]
+
+export type UndoRedoActionType = (typeof validUndoRedoActionTypes)[number]
 
 export interface IpcResult {
   status: EventResultStatus
@@ -308,4 +322,9 @@ export interface Subscription {
   customer_id: string
   subscription_id: string
   id: string
+}
+
+export interface UndoRedoPatch {
+  patches: Operation[]
+  actionType: string
 }
