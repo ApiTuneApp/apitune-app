@@ -2,6 +2,7 @@ import './log-detail.less'
 
 import {
   App,
+  Alert,
   Button,
   Collapse,
   CollapseProps,
@@ -44,11 +45,15 @@ function LogObjBlock({ data }: LogObjBlockProps) {
     <Descriptions
       size="small"
       column={1}
-      items={Object.keys(data).map((key) => ({
-        key,
-        label: key,
-        children: [data[key]]
-      }))}
+      items={
+        data
+          ? Object.keys(data).map((key) => ({
+              key,
+              label: key,
+              children: [data[key]]
+            }))
+          : []
+      }
     />
   )
 }
@@ -167,6 +172,8 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   const appTheme = useSettingStore((state) => state.appTheme)
   const { notification } = App.useApp()
 
+  const isConnect = log.method === 'CONNECT'
+
   const [editLog, setEditLog] = useState(false)
   const [form] = Form.useForm()
 
@@ -190,11 +197,13 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     },
     {
       type: RuleType.ResponseHeader,
-      value: Object.keys(log.responseHeaders).map((key) => ({
-        type: 'override',
-        name: key,
-        value: log.responseHeaders[key]
-      }))
+      value: log.responseHeaders
+        ? Object.keys(log.responseHeaders).map((key) => ({
+            type: 'override',
+            name: key,
+            value: log.responseHeaders[key]
+          }))
+        : []
     },
     {
       type: RuleType.ResponseBody,
@@ -331,7 +340,16 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     {
       key: 'responseBody',
       label: strings.responseBody,
-      children: (
+      children: isConnect ? (
+        <div style={{ padding: '16px' }}>
+          <Alert
+            type="info"
+            message={strings.httpsDecodeRequired}
+            description={strings.enableHttpsDecodeHint}
+            showIcon
+          />
+        </div>
+      ) : (
         <MonacoEditor
           defaultLanguage="plaintext"
           height={400}
@@ -417,6 +435,9 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
   }
 
   const handleSave = () => {
+    if (isConnect) {
+      return
+    }
     form.validateFields().then((values) => {
       const realModifyList: Modify[] = []
       for (let i = 0; i < values.modifyList.length; i++) {
@@ -509,7 +530,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
             items={items}
             style={{ padding: '0 10px', height: '100%' }}
             tabBarExtraContent={{
-              right: editLog ? (
+              right: isConnect ? null : editLog ? (
                 <Space style={{ marginRight: 30 }}>
                   <Button
                     size="small"

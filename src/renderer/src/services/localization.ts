@@ -204,7 +204,10 @@ export const strings = new LocalizedStrings({
     subscriptionRequiredDescTest:
       'Free users can only create up to {0} test cases, please upgrade to Pro to create more test cases',
     undo: 'Undo',
-    redo: 'Redo'
+    redo: 'Redo',
+    httpsDecodeRequired: 'HTTPS Decoding Required',
+    enableHttpsDecodeHint:
+      'This is a HTTPS CONNECT request. To view the response body, you need to enable HTTPS decoding for this domain in the settings.'
   },
   zh: {
     close: '关闭',
@@ -401,6 +404,9 @@ export const strings = new LocalizedStrings({
     subscriptionRequiredDescTest: '免费用户只能创建{0}个测试用例，请升级到专业版以创建更多测试用例',
     subscriptionRequiredDescLog: '免费用户只能创建{0}个日志，请升级到专业版以创建更多日志',
     undo: '撤销',
-    redo: '重做'
+    redo: '重做',
+    httpsDecodeRequired: 'HTTPS 解码要求',
+    enableHttpsDecodeHint:
+      '这是一个 HTTPS CONNECT 请求。要查看响应体，您需要在设置中启用此域名的 HTTPS 解码。'
   }
 })

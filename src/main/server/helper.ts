@@ -62,7 +62,7 @@ export function pipeSocket(from: Socket, to: Socket) {
       to.destroy()
     })
 
-    // 2s 后强制 destroy 掉 socket
+    // 2s later force destroy socket
     setTimeout(() => {
       if (!from.destroyed) {
         log.info('[PipSocket] From socket destroyed', {

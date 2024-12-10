@@ -2,13 +2,19 @@ import log from 'electron-log/main'
 import { IncomingMessage } from 'http'
 import { Socket } from 'net'
 
+import { proxyLog } from '../communicator'
 import config from './config'
 import { HttpsControl } from './contracts'
 import { decodeHttps } from './decode-https'
 import { isHttps } from './helper'
-import { makeTcpTunnel } from './make-tcp-tunnel'
+import { makeTcpTunnel, makeTcpTunnel2 } from './make-tcp-tunnel'
+import { genLogId } from './middleware/log'
 
 export async function onConnect(req: IncomingMessage, socket: Socket, head: Buffer) {
+  const startTime = Date.now() // 添加开始时间
+  let requestSize = head.length
+  let responseSize = 0
+
   socket.on('error', (err: Error) => {
     log.error('[OnConnect] Error', err, req.url)
   })
@@ -37,20 +43,40 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
   } as any
 
   let otherOption
+  const tunnelLog = {
+    id: genLogId(),
+    matchedRules: [],
+    method: 'CONNECT',
+    protocol: 'https:',
+    host: host,
+    url: `https://${host}:${port}`,
 
+    // 连接信息
+    clientIp: socket.remoteAddress,
+    clientPort: socket.remotePort,
+
+    // 请求头
+    requestHeaders: req.headers,
+
+    // 时间信息
+    startTime: startTime,
+
+    // 状态
+    status: 200,
+    message: 'Connection Established'
+  } as any
   if (isHttps(head)) {
     if (/[^a-z]$/.test(host)) {
       log.info('[OnConnect] Https host invalid', url)
       // do nothing
     } else {
       const httpsControl = getHttpsControl(host, socket)
-      if (httpsControl === 'decode') {
-        // https decode
+      if (httpsControl === HttpsControl.decode) {
         decodeHttps(host, socket, head)
         return
       } else {
         otherOption = {
-          noLog: httpsControl === 'ignore'
+          noLog: httpsControl === HttpsControl.ignore
         }
       }
     }
@@ -69,9 +95,26 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
       })
     }
   }
-  makeTcpTunnel(socket, head, tcpOption, {
+  makeTcpTunnel2(socket, head, tcpOption, {
     ...otherOption,
-    url
+    url: `https://${host}:${port}`,
+    onData: (fromClient: boolean, chunk: Buffer) => {
+      if (fromClient) {
+        requestSize += chunk.length
+      } else {
+        responseSize += chunk.length
+      }
+    },
+    onEnd: () => {
+      // 连接结束时完成日志
+      tunnelLog.finishTime = Date.now()
+      tunnelLog.requestBodyLength = requestSize
+      tunnelLog.responseBodyLength = responseSize
+
+      if (!otherOption?.noLog) {
+        proxyLog(tunnelLog)
+      }
+    }
   })
 }
 
@@ -97,4 +140,5 @@ export function getHttpsControl(hostname: string, socket: Socket): HttpsControl 
   // }
 
   return HttpsControl.decode
+  // return HttpsControl.tunnel
 }

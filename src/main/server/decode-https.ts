@@ -15,7 +15,7 @@ export async function decodeHttps(hostname: string, socket: Socket, head: Buffer
   const httpsServer = await getMiddleHttpsServer(hostname)
   const address = httpsServer.address() as any
 
-  // tcp 层代理到 中间服务器
+  // TCP layer proxy to intermediate server
   makeTcpTunnel(
     socket,
     head,
@@ -60,7 +60,8 @@ interface closeServerTimers {
   [x: string]: NodeJS.Timeout
 }
 const closeServerTimers: closeServerTimers = {}
-// https server 不活跃之后回收
+
+// https server not active recycle
 function touchCloseServerCountdown(hostname: string) {
   clearTimeout(closeServerTimers[hostname])
   closeServerTimers[hostname] = setTimeout(() => {

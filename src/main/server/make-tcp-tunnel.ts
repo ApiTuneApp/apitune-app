@@ -14,9 +14,40 @@ export function makeTcpTunnel(
     conn.write(head)
     pipeSocket(conn, socket)
     pipeSocket(socket, conn)
+  })
 
-    // connect 请求返回握手 之前为了获取 head 已经返回过了，这里不再返回
-    // socket.write('HTTP/1.1 200 OK\r\n\r\n');
+  socket.on('error', (err: Error) => {
+    log.error('[makeTcpTunnel] error', err, otherOption?.url)
+  })
+}
+
+export function makeTcpTunnel2(
+  socket: Socket,
+  head: Buffer,
+  options: NetConnectOpts,
+  otherOption?: {
+    url?: string
+    noLog?: boolean
+    onData?: (fromClient: boolean, chunk: Buffer) => void
+    onEnd?: () => void
+  }
+) {
+  const conn = connect(options, () => {
+    conn.write(head)
+
+    socket.on('data', (chunk) => {
+      conn.write(chunk)
+      otherOption?.onData?.(true, chunk)
+    })
+
+    conn.on('data', (chunk) => {
+      socket.write(chunk)
+      otherOption?.onData?.(false, chunk)
+    })
+
+    conn.on('end', () => {
+      otherOption?.onEnd?.()
+    })
   })
 
   socket.on('error', (err: Error) => {
