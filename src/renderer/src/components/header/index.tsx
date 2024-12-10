@@ -209,6 +209,7 @@ function Header(): JSX.Element {
       key: 'sign-out',
       onClick: () => {
         authService.signOut()
+        setUser({} as User)
         setLoggedIn(false)
         _cleanApiRules()
       }
