@@ -212,7 +212,8 @@ export const strings = new LocalizedStrings({
     httpsDecryptDomainsHint:
       'Enter domain patterns to inspect HTTPS traffic. One per line. Supports wildcards (*). Example: *.example.com',
     readMoreDocs: 'Read more in documentation',
-    learnMore: 'Learn more'
+    learnMore: 'Learn more',
+    httpsDecryptProFeature: 'HTTPS decrypt domain list is a Pro feature.'
   },
   zh: {
     close: '关闭',
@@ -334,7 +335,7 @@ export const strings = new LocalizedStrings({
     removeRule: '删除规则',
     snippets: '代码片段',
     rules: '规则',
-    testAndScripts: '测试&脚本',
+    testAndScripts: '���试&脚本',
     ruleNotFound: '未找到规则',
     youCanModify: '您可以在这里修改{0}',
     contextVarYouCanUse: '您可以使用的上下文变量',
@@ -363,7 +364,7 @@ export const strings = new LocalizedStrings({
     rewriteUrlRequired: '重写 URL 是必填项',
     invalidUrl: '无效的 URL',
     inputRewriteUrl: '请输入重写 URL',
-    signIn: '��录',
+    signIn: '登录',
     signInTooltip: '登录以同步所有数据并解锁所有功能',
     signOut: '登出',
     syncing: '开始同步则数据',
@@ -393,7 +394,7 @@ export const strings = new LocalizedStrings({
     pleaseLoginFirst: '请先登录',
     logEditTooltip: '创建新规则以编辑此请求或响应',
     viewDetails: '查看详情',
-    importToMyShare: '��存到我的共享列表',
+    importToMyShare: '保存到我的共享列表',
     openMyShare: '您打开了您的共享',
     createBy: '创建者',
     duplicateToMyRules: '复制到我的规则',
@@ -417,6 +418,7 @@ export const strings = new LocalizedStrings({
     httpsDecryptDomainsHint:
       '输入需要检查HTTPS流量的域名模式。每行一个域名，支持通配符(*)。示例：*.example.com',
     readMoreDocs: '查看文档了解更多',
-    learnMore: '了解更多'
+    learnMore: '了解更多',
+    httpsDecryptProFeature: 'HTTPS 检查是专业版功能。'
   }
 })

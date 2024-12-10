@@ -131,12 +131,11 @@ function SettingsPage(): JSX.Element {
   const openSignInPage = () => {
     window.api.openSignInPage()
   }
+  const openPricingPage = () => {
+    window.api.openExternal('https://apitune.io/#Pricing')
+  }
 
   const renderUserProfile = () => {
-    const openPricingPage = () => {
-      window.api.openExternal('https://apitune.io/#Pricing')
-    }
-
     if (!user || !user.email) {
       return (
         <Form.Item label={strings.profile}>
@@ -297,15 +296,31 @@ function SettingsPage(): JSX.Element {
                 </Space>
               }
             >
-              <TextArea
-                defaultValue={httpsDecryptDomains?.join('\n')}
-                placeholder={`${strings.httpsDecryptDomainsHint}
+              {subscription ? (
+                <TextArea
+                  defaultValue={httpsDecryptDomains?.join('\n')}
+                  placeholder={`${strings.httpsDecryptDomainsHint}
 Example:
 *.example.com
 api.example.com`}
-                onChange={(e) => handleHttpsDomainsChange(e.target.value, e)}
-                autoSize={{ minRows: 4, maxRows: 8 }}
-              />
+                  onChange={(e) => handleHttpsDomainsChange(e.target.value, e)}
+                  autoSize={{ minRows: 4, maxRows: 8 }}
+                />
+              ) : (
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <TextArea
+                    placeholder={strings.httpsDecryptDomainsHint}
+                    disabled
+                    autoSize={{ minRows: 4, maxRows: 8 }}
+                  />
+                  <Space>
+                    <Text type="secondary">{strings.httpsDecryptProFeature}</Text>
+                    <Button type="link" size="small" onClick={openPricingPage}>
+                      {strings.upgradeToPro}
+                    </Button>
+                  </Space>
+                </Space>
+              )}
             </Form.Item>
           </Space>
           <Space>
