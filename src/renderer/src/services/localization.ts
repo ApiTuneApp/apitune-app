@@ -213,7 +213,9 @@ export const strings = new LocalizedStrings({
       'Enter domain patterns to inspect HTTPS traffic. One per line. Supports wildcards (*). Example: *.example.com',
     readMoreDocs: 'Read more in documentation',
     learnMore: 'Learn more',
-    httpsDecryptProFeature: 'HTTPS decrypt domain list is a Pro feature.'
+    httpsDecryptProFeature: 'HTTPS decrypt domain list is a Pro feature.',
+    subscriptionExpired: 'Your subscription has expired.',
+    renewSubscription: 'Renew subscription'
   },
   zh: {
     close: '关闭',
@@ -335,7 +337,7 @@ export const strings = new LocalizedStrings({
     removeRule: '删除规则',
     snippets: '代码片段',
     rules: '规则',
-    testAndScripts: '���试&脚本',
+    testAndScripts: '测试&脚本',
     ruleNotFound: '未找到规则',
     youCanModify: '您可以在这里修改{0}',
     contextVarYouCanUse: '您可以使用的上下文变量',
@@ -368,7 +370,7 @@ export const strings = new LocalizedStrings({
     signInTooltip: '登录以同步所有数据并解锁所有功能',
     signOut: '登出',
     syncing: '开始同步则数据',
-    synced: '规则数据已同步',
+    synced: '规则数据已同��',
     syncedDiffDetected: '同步的规则数据与本地规则数据不同，是否同步？',
     syncedDiffDesc: '本地规则数据将被同步的规则数据覆盖',
     syncUseServer: '使用服务器数据',
@@ -398,7 +400,7 @@ export const strings = new LocalizedStrings({
     openMyShare: '您打开了您的共享',
     createBy: '创建者',
     duplicateToMyRules: '复制到我的规则',
-    myShared: '我的共享',
+    myShared: '我的��享',
     sharedByThers: '他人的共享',
     duplicateSuccess: '复制成功',
     profile: '个人资料',
@@ -419,6 +421,8 @@ export const strings = new LocalizedStrings({
       '输入需要检查HTTPS流量的域名模式。每行一个域名，支持通配符(*)。示例：*.example.com',
     readMoreDocs: '查看文档了解更多',
     learnMore: '了解更多',
-    httpsDecryptProFeature: 'HTTPS 检查是专业版功能。'
+    httpsDecryptProFeature: 'HTTPS 检查是专业版功能。',
+    subscriptionExpired: '您的订阅已过期。',
+    renewSubscription: '续订'
   }
 })

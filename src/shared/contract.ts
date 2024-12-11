@@ -323,6 +323,7 @@ export interface Subscription {
   end_at: string
   customer_id: string
   subscription_id: string
+  is_lifetime: boolean | null
   id: string
 }
 

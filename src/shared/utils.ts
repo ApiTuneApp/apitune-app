@@ -78,7 +78,10 @@ export const checkSubscriptionActive = (subscription: Subscription | null) => {
     return false
   }
 
-  const endDate = new Date(subscription.end_at)
+  if (subscription.is_lifetime) {
+    return true
+  }
+  const endDate = new Date(subscription.end_at!)
   const currentDate = new Date()
 
   // Set both dates to start of day for accurate comparison

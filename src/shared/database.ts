@@ -116,6 +116,7 @@ export type Database = {
           email: string
           end_at: string | null
           id: string
+          is_lifetime: boolean | null
           pay_from: string | null
           subscription_id: string
         }
@@ -125,6 +126,7 @@ export type Database = {
           email: string
           end_at?: string | null
           id?: string
+          is_lifetime?: boolean | null
           pay_from?: string | null
           subscription_id: string
         }
@@ -134,6 +136,7 @@ export type Database = {
           email?: string
           end_at?: string | null
           id?: string
+          is_lifetime?: boolean | null
           pay_from?: string | null
           subscription_id?: string
         }
