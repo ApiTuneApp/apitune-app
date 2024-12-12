@@ -929,6 +929,7 @@ app.whenReady().then(() => {
               error: error.message
             })
           } else {
+            updateRuntimeRules([])
             resolve({
               status: EventResultStatus.Success
             })
@@ -958,6 +959,7 @@ app.whenReady().then(() => {
               error: error.message
             })
           } else {
+            updateRuntimeRules(rules)
             resolve({
               status: EventResultStatus.Success
             })
@@ -1019,6 +1021,7 @@ app.whenReady().then(() => {
               error: error.message
             })
           } else {
+            updateRuntimeRules(rules)
             resolve({
               status: EventResultStatus.Success
             })
