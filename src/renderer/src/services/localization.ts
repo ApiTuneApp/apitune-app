@@ -215,7 +215,8 @@ export const strings = new LocalizedStrings({
     learnMore: 'Learn more',
     httpsDecryptProFeature: 'HTTPS decrypt domain list is a Pro feature.',
     subscriptionExpired: 'Your subscription has expired.',
-    renewSubscription: 'Renew subscription'
+    renewSubscription: 'Renew subscription',
+    downloadingUpdate: 'Downloading update'
   },
   zh: {
     close: '关闭',
@@ -423,6 +424,7 @@ export const strings = new LocalizedStrings({
     learnMore: '了解更多',
     httpsDecryptProFeature: 'HTTPS 检查是专业版功能。',
     subscriptionExpired: '您的订阅已过期。',
-    renewSubscription: '续订'
+    renewSubscription: '续订',
+    downloadingUpdate: '正在下载更新'
   }
 })

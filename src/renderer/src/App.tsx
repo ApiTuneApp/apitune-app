@@ -9,6 +9,7 @@ import { MainEvent } from '@shared/contract'
 import Header from './components/header'
 import Sidebar from './components/sidebar'
 import ShareRuleNoticer from './components/share-modal/noticer'
+import DownloadProgress from './components/notifictation/download-progress'
 import { getApiRules, getSettings } from './services'
 import { useSettingStore } from './store/setting'
 
@@ -110,6 +111,7 @@ function App(): JSX.Element {
             </Layout>
           </Layout>
           <ShareRuleNoticer />
+          <DownloadProgress />
         </Layout>
       </AntApp>
     </ConfigProvider>

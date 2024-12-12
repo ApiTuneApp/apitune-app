@@ -24,6 +24,8 @@ type onOpenShareCallback = (shareId: string) => void
 
 type onPrintLogCallback = (printItem: PrintItem) => void
 
+type onUpdateProgressCallback = (progress: number) => void
+
 declare global {
   interface Window {
     electron: ElectronAPI
@@ -32,6 +34,7 @@ declare global {
       onAuthCode: (callback: onAuthCodeCallback) => void
       onOpenShare: (callback: onOpenShareCallback) => void
       onPrintLog: (callback: onPrintLogCallback) => void
+      onUpdateProgress: (callback: onUpdateProgressCallback) => void
       getPrintLogs: () => Promise<PrintItem[]>
       clearPrintLogs: () => void
       setAuth: (accessToken: string, refreshToken: string) => void

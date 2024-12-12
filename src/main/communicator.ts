@@ -45,3 +45,8 @@ export function openShare(shareId: string): void {
   if (!webContents) return
   webContents.send(MainEvent.OpenShare, shareId)
 }
+
+export function updateProgress(progress: number): void {
+  if (!webContents) return
+  webContents.send(MainEvent.UpdateProgress, progress)
+}

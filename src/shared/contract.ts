@@ -45,7 +45,8 @@ export enum MainEvent {
   ProxyLog = 'proxyLog',
   PrintLog = 'printLog',
   GetAuthCode = 'getAuthCode',
-  OpenShare = 'openShare'
+  OpenShare = 'openShare',
+  UpdateProgress = 'updateProgress'
 }
 
 export enum EventResultStatus {

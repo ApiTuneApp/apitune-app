@@ -27,7 +27,7 @@ import {
   Theme
 } from '../shared/contract'
 import { findGroupOrRule, findParentGroup } from '../shared/utils'
-import { getAuthCode, initCommunicator, openShare } from './communicator'
+import { getAuthCode, initCommunicator, openShare, updateProgress } from './communicator'
 import crtMgr from './server/cert-manager'
 import config from './server/config'
 import { changeServerPort, initServer } from './server/init'
@@ -51,23 +51,21 @@ log.transports.file.level = 'info'
 
 autoUpdater.forceDevUpdateConfig = true
 
+autoUpdater.autoDownload = false
+
+let progressDialog: Electron.MessageBoxReturnValue | null = null
+let showProgress = true
+
 autoUpdater.on('update-available', (releaseInfo: UpdateInfo) => {
   log.info('[AutoUpdater] update-available', releaseInfo)
-})
-
-autoUpdater.on('error', (error: Error) => {
-  log.error('[AutoUpdater] error', error)
-})
-
-autoUpdater.on('update-downloaded', () => {
-  const local = app.getLocale() // en-US
-  let title = 'Application Update'
-  let message = 'A new version is available, update now?'
-  let buttons = ['Yes', 'No']
+  const local = app.getLocale()
+  let title = 'Update Available'
+  let message = 'A new version is available. Would you like to download it now?'
+  let buttons = ['Download', 'Later']
   if (local && local.includes('zh')) {
-    title = '应用更新'
-    message = '发现新版本，是否更新？'
-    buttons = ['是', '否']
+    title = '发现新版本'
+    message = '发现新版本，是否现在下载？'
+    buttons = ['下载', '稍后']
   }
   dialog
     .showMessageBox({
@@ -77,10 +75,50 @@ autoUpdater.on('update-downloaded', () => {
       buttons
     })
     .then((buttonIndex) => {
-      if (buttonIndex.response == 0) {
+      if (buttonIndex.response === 0) {
+        autoUpdater.downloadUpdate()
+      }
+    })
+  showProgress = true
+})
+
+autoUpdater.on('error', (error: Error) => {
+  log.error('[AutoUpdater] error', error)
+  progressDialog = null
+  showProgress = true
+})
+
+autoUpdater.on('update-downloaded', () => {
+  progressDialog = null
+  showProgress = true
+
+  const local = app.getLocale()
+  let title = 'Update Ready'
+  let message = 'Update has been downloaded. Install now?'
+  let buttons = ['Install', 'Later']
+  if (local && local.includes('zh')) {
+    title = '更新就绪'
+    message = '更新已下载完成，是否现在安装？'
+    buttons = ['安装', '稍后']
+  }
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title,
+      message,
+      buttons
+    })
+    .then((buttonIndex) => {
+      if (buttonIndex.response === 0) {
         autoUpdater.quitAndInstall()
       }
     })
+})
+
+autoUpdater.on('download-progress', async (progressObj) => {
+  if (!progressObj || !progressObj.percent) return
+  const progress = Math.round(progressObj.percent)
+  updateProgress(progress)
 })
 
 initSettingData()
