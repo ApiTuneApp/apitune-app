@@ -41,7 +41,9 @@ export function rewrite(ctx: IAppContext, modify: RedirectModify) {
     url.protocol = newUrl.protocol.replace(':', '')
   }
   url.host = newUrl.host
-  url.pathname = newUrl.pathname
+  if (newUrl.pathname) {
+    url.pathname = newUrl.pathname
+  }
 }
 
 export function requestHeaders(ctx: IAppContext, modify: HeaderModify) {

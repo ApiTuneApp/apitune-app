@@ -86,6 +86,10 @@ export const HTTP_REQUEST_HEADER = [
 ]
 export const HTTP_RESPONSE_HEADER = [
   'Access-Control-Allow-Origin',
+  'Access-Control-Allow-Methods',
+  'Access-Control-Allow-Headers',
+  'Access-Control-Allow-Credentials',
+  'Access-Control-Max-Age',
   'Connection',
   'Content-Encoding',
   'Content-Type',

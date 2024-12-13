@@ -216,7 +216,9 @@ export const strings = new LocalizedStrings({
     httpsDecryptProFeature: 'HTTPS decrypt domain list is a Pro feature.',
     subscriptionExpired: 'Your subscription has expired.',
     renewSubscription: 'Renew subscription',
-    downloadingUpdate: 'Downloading update'
+    downloadingUpdate: 'Downloading update',
+    rewriteTips:
+      'Keep the path empty to maintain the same path structure. Example: a.com/api/v1/users → b.com/api/v1/users'
   },
   zh: {
     close: '关闭',
@@ -260,7 +262,7 @@ export const strings = new LocalizedStrings({
     status: '状态',
     matchedRules: '匹配规则',
     method: '方法',
-    cannotPreview: '无法预览此类型，您可以在响应body中查看结果',
+    cannotPreview: '无法预览此类型，您可以���响应body中查看结果',
     general: '概要',
     requestUrl: '请求 URL',
     requestMethod: '请求方法',
@@ -371,7 +373,7 @@ export const strings = new LocalizedStrings({
     signInTooltip: '登录以同步所有数据并解锁所有功能',
     signOut: '登出',
     syncing: '开始同步则数据',
-    synced: '规则数据已同��',
+    synced: '规则数据已同步',
     syncedDiffDetected: '同步的规则数据与本地规则数据不同，是否同步？',
     syncedDiffDesc: '本地规则数据将被同步的规则数据覆盖',
     syncUseServer: '使用服务器数据',
@@ -401,7 +403,7 @@ export const strings = new LocalizedStrings({
     openMyShare: '您打开了您的共享',
     createBy: '创建者',
     duplicateToMyRules: '复制到我的规则',
-    myShared: '我的��享',
+    myShared: '我的共享',
     sharedByThers: '他人的共享',
     duplicateSuccess: '复制成功',
     profile: '个人资料',
@@ -425,6 +427,7 @@ export const strings = new LocalizedStrings({
     httpsDecryptProFeature: 'HTTPS 检查是专业版功能。',
     subscriptionExpired: '您的订阅已过期。',
     renewSubscription: '续订',
-    downloadingUpdate: '正在下载更新'
+    downloadingUpdate: '正在下载更新',
+    rewriteTips: '保持路径为空以保持相同的结构。示例：a.com/api/v1/users → b.com/api/v1/users'
   }
 })
