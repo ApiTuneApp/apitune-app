@@ -30,6 +30,7 @@
     "@electron/remote": "^2.1.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@koa/cors": "^5.0.0",
     "@microlink/react-json-view": "^1.23.0",
     "@monaco-editor/react": "^4.6.0",
     "@supabase/supabase-js": "^2.45.0",

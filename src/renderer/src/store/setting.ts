@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 import { AppTheme, SettingStorage } from '@shared/contract'
 
@@ -10,6 +9,8 @@ type State = {
   // real theme apply for app
   appTheme: AppTheme
   httpsDecryptDomains: string[]
+  autoHandleCORS: boolean
+  corsConfig: string
 }
 
 type Action = {
@@ -19,6 +20,8 @@ type Action = {
   setLanguage: (language: SettingStorage['language']) => void
   initSettings: (settings: SettingStorage) => void
   setHttpsDecryptDomains: (domains: string[]) => void
+  setAutoHandleCORS: (autoHandleCORS: boolean) => void
+  setCorsConfig: (config: string) => void
 }
 
 export const useSettingStore = create<State & Action>((set) => ({
@@ -27,6 +30,8 @@ export const useSettingStore = create<State & Action>((set) => ({
   appTheme: null,
   language: 'en',
   httpsDecryptDomains: [],
+  autoHandleCORS: false,
+  corsConfig: '',
   setPort: (port) => set(() => ({ port })),
   setTheme: (theme) => {
     window.api.changeTheme(theme)
@@ -35,5 +40,7 @@ export const useSettingStore = create<State & Action>((set) => ({
   setAppTheme: (appTheme) => set(() => ({ appTheme })),
   setLanguage: (language) => set(() => ({ language })),
   initSettings: (settings: SettingStorage) => set(() => ({ ...settings })),
-  setHttpsDecryptDomains: (domains) => set({ httpsDecryptDomains: domains })
+  setHttpsDecryptDomains: (domains) => set({ httpsDecryptDomains: domains }),
+  setAutoHandleCORS: (autoHandleCORS) => set({ autoHandleCORS }),
+  setCorsConfig: (corsConfig) => set({ corsConfig })
 }))

@@ -24,7 +24,8 @@ import {
   ShareRule,
   Subscription,
   SyncInfo,
-  Theme
+  Theme,
+  UpdateSettingsParams
 } from '../shared/contract'
 import { findGroupOrRule, findParentGroup } from '../shared/utils'
 import { getAuthCode, initCommunicator, openShare, updateProgress } from './communicator'
@@ -1052,6 +1053,16 @@ app.whenReady().then(() => {
           log.error('[UpdateHttpsDecryptDomains] Failed to update HTTPS decrypt domains', error)
         }
       )
+    })
+  })
+
+  ipcMain.handle(RenderEvent.UpdateSettings, (event, params: UpdateSettingsParams) => {
+    return new Promise((resolve) => {
+      updateSettingData(params, () => {
+        resolve({
+          status: EventResultStatus.Success
+        })
+      })
     })
   })
 

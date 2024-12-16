@@ -37,7 +37,8 @@ export enum RenderEvent {
   OpenExternal = 'openExternal',
   SetSubscription = 'setSubscription',
   SaveRules = 'saveRules',
-  UpdateHttpsDecryptDomains = 'updateHttpsDecryptDomains'
+  UpdateHttpsDecryptDomains = 'updateHttpsDecryptDomains',
+  UpdateSettings = 'updateSettings'
 }
 
 export enum MainEvent {
@@ -226,6 +227,8 @@ export interface SettingStorage {
   theme: Theme
   language: 'zh' | 'en'
   httpsDecryptDomains?: string[]
+  autoHandleCORS: boolean
+  corsConfig?: string
 }
 
 export type ApiRuleItem = RuleGroup | RuleData
@@ -331,4 +334,9 @@ export interface Subscription {
 export interface UndoRedoPatch {
   patches: Operation[]
   actionType: string
+}
+
+export interface UpdateSettingsParams {
+  autoHandleCORS?: boolean
+  corsConfig?: string
 }

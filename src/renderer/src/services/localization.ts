@@ -218,7 +218,11 @@ export const strings = new LocalizedStrings({
     renewSubscription: 'Renew subscription',
     downloadingUpdate: 'Downloading update',
     rewriteTips:
-      'Keep the path empty to maintain the same path structure. Example: a.com/api/v1/users → b.com/api/v1/users'
+      'Keep the path empty to maintain the same path structure. Example: a.com/api/v1/users → b.com/api/v1/users',
+    autoHandleCORS: 'Auto Handle CORS',
+    autoHandleCORSHint: 'Automatically handle Cross-Origin Resource Sharing (CORS) requests',
+    advancedConfig: 'Advanced Config',
+    corsAdvancedConfig: 'CORS Advanced Configuration'
   },
   zh: {
     close: '关闭',
@@ -262,7 +266,7 @@ export const strings = new LocalizedStrings({
     status: '状态',
     matchedRules: '匹配规则',
     method: '方法',
-    cannotPreview: '无法预览此类型，您可以���响应body中查看结果',
+    cannotPreview: '无法预览此类型，您可以在响应body中查看结果',
     general: '概要',
     requestUrl: '请求 URL',
     requestMethod: '请求方法',
@@ -304,7 +308,7 @@ export const strings = new LocalizedStrings({
     ruleName: '规则名',
     description: '描述',
     ruleEnabled: '规则是否启用',
-    myWorkspace: '我的工作区',
+    myWorkspace: '我���工作区',
     proxyServerListeningOn: '代理服务器监听地址',
     requestModify: '修改请求',
     responseModify: '修改响应',
@@ -428,6 +432,10 @@ export const strings = new LocalizedStrings({
     subscriptionExpired: '您的订阅已过期。',
     renewSubscription: '续订',
     downloadingUpdate: '正在下载更新',
-    rewriteTips: '保持路径为空以保持相同的结构。示例：a.com/api/v1/users → b.com/api/v1/users'
+    rewriteTips: '保持路径为空以保持相同的结构。示例：a.com/api/v1/users → b.com/api/v1/users',
+    autoHandleCORS: '自动处理跨域',
+    autoHandleCORSHint: '自动处理跨域资源共享（CORS）请求',
+    advancedConfig: '高级配置',
+    corsAdvancedConfig: 'CORS 高级配置'
   }
 })

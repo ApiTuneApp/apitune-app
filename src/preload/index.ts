@@ -14,7 +14,8 @@ import {
   RuleStorage,
   SyncInfo,
   PrintItem,
-  Subscription
+  Subscription,
+  UpdateSettingsParams
 } from '../shared/contract'
 
 // Custom APIs for renderer
@@ -140,6 +141,9 @@ const api = {
   },
   updateHttpsDecryptDomains: (domains: string[]): Promise<IpcResult> => {
     return ipcRenderer.invoke(RenderEvent.UpdateHttpsDecryptDomains, domains)
+  },
+  updateSettings: (params: UpdateSettingsParams) => {
+    return ipcRenderer.invoke(RenderEvent.UpdateSettings, params)
   }
 }
 

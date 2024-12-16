@@ -10,8 +10,33 @@ import httpClient from './http-client'
 import { LogRequestMiddleware, LogResponseMiddleware } from './middleware/log'
 import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
+import { DefaultSettingData } from '../storage'
+import cors from '@koa/cors'
+import vm from 'node:vm'
 
 export const app = new Koa<IAppState, IAppContext>()
+
+// Usage example
+app.use(async (ctx, next) => {
+  if (DefaultSettingData.autoHandleCORS) {
+    let options = {}
+    if (DefaultSettingData.corsConfig) {
+      try {
+        const contextObj = { options: {} }
+        vm.runInNewContext(`options = ${DefaultSettingData.corsConfig}`, contextObj, {
+          timeout: 1000
+        })
+        options = contextObj.options
+      } catch (error) {
+        options = {}
+        log.error('[AppMiddleware] Cors config error', error)
+      }
+    }
+    await cors(options)(ctx, next)
+  } else {
+    await next()
+  }
+})
 
 app.use(async function errorHandler(ctx: Context, next: Next) {
   if (ctx.header[config.proxyHeader]) {
