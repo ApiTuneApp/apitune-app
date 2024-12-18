@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 
 import { Subscription, User } from '@shared/contract'
+import { checkSubscriptionActive } from '@shared/utils'
 
 type State = {
   user: User
@@ -11,6 +12,7 @@ type Action = {
   setUser: (user: User) => void
   setSubscription: (subscription: Subscription | null) => void
   isSignedIn: () => boolean
+  isPro: () => boolean
 }
 
 export const useUserStore = create<State & Action>((set, get) => ({
@@ -23,5 +25,6 @@ export const useUserStore = create<State & Action>((set, get) => ({
   subscription: null,
   setUser: (user) => set(() => ({ user })),
   setSubscription: (subscription) => set(() => ({ subscription })),
-  isSignedIn: () => !!get().user
+  isSignedIn: () => !!get().user,
+  isPro: () => checkSubscriptionActive(get().subscription)
 }))

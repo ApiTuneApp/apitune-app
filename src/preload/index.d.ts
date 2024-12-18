@@ -13,7 +13,8 @@ import {
   LogTestResultMap,
   PrintItem,
   SyncInfo,
-  Subscription
+  Subscription,
+  UpdateSettingsParams
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -69,6 +70,7 @@ declare global {
       setSubscription: (subscription: Subscription | null) => void
       saveRules: (rules: ApiRules) => Promise<IpcResult>
       updateHttpsDecryptDomains: (domains: string[]) => Promise<IpcResult>
+      updateSettings: (params: UpdateSettingsParams) => Promise<IpcResult>
     }
   }
 }

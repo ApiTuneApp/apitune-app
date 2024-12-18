@@ -48,7 +48,9 @@ export let DefaultSettingData: SettingStorage = {
   version: packageJson.version,
   port: config.port,
   theme: 'system',
-  language: 'en'
+  language: 'en',
+  autoHandleCORS: false,
+  corsConfig: ''
 }
 
 export function initSettingData() {

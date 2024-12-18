@@ -11,7 +11,9 @@ import {
   Space,
   Tag,
   Tooltip,
-  Typography
+  Typography,
+  Switch,
+  Modal
 } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -20,13 +22,16 @@ import {
   CloseCircleOutlined,
   DownloadOutlined,
   FileProtectOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  DownOutlined,
+  UpOutlined
 } from '@ant-design/icons'
 import { getAvatarUrl } from '@shared/utils'
 import { strings } from '@renderer/services/localization'
 import { useSettingStore } from '@renderer/store/setting'
 import { useUserStore } from '@renderer/store/user'
 import { EventResultStatus, RenderEvent } from '@shared/contract'
+import MonacoEditor from '@renderer/components/monaco-editor'
 
 import packageJson from '../../../../../package.json'
 
@@ -44,13 +49,26 @@ function SettingsPage(): JSX.Element {
     setTheme,
     setAppTheme,
     setLanguage,
-    setHttpsDecryptDomains
+    setHttpsDecryptDomains,
+    autoHandleCORS,
+    setAutoHandleCORS,
+    corsConfig,
+    setCorsConfig
   } = useSettingStore((state) => state)
   const [proxyPort, setProxyPort] = useState(port)
   const [caTrust, setCaTrust] = useState(false)
   const [checkingUpdate, setCheckingUpdate] = useState(false)
+  const [showCorsEditor, setShowCorsEditor] = useState(false)
 
-  const { user, subscription } = useUserStore((state) => state)
+  const { user, subscription, isPro } = useUserStore((state) => state)
+
+  const corsConfigDefaultValue = `// For more config, please check: https://www.npmjs.com/package/@koa/cors
+
+options = {
+    origin: '*',
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+}
+`
 
   useEffect(() => {
     setProxyPort(port)
@@ -224,6 +242,10 @@ function SettingsPage(): JSX.Element {
     window.api.openExternal('https://apitune/docs/guide/https-decrypt.html')
   }
 
+  const openCorsDocs = () => {
+    window.api.openExternal('https://apitune/docs/guide/cors.html')
+  }
+
   const isSubscriptionExpired = (subscription) => {
     if (!subscription) return false
     if (subscription.is_lifetime) return false
@@ -231,6 +253,32 @@ function SettingsPage(): JSX.Element {
     const endDate = new Date(subscription.end_at)
     const currentDate = new Date()
     return endDate.getTime() < currentDate.getTime()
+  }
+
+  const handleCORSChange = (checked: boolean) => {
+    setAutoHandleCORS(checked)
+    window.api.updateSettings({ autoHandleCORS: checked }).then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        setAutoHandleCORS(checked)
+      } else {
+        message.error('Failed to update CORS settings')
+      }
+    })
+  }
+
+  const toggleCorsEditor = () => {
+    setShowCorsEditor(!showCorsEditor)
+  }
+
+  const handleCorsConfigChange = (value: string | undefined) => {
+    setCorsConfig(value || '')
+    window.api.updateSettings({ corsConfig: value }).then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        // Optionally show success message
+      } else {
+        message.error('Failed to update CORS configuration')
+      }
+    })
   }
 
   return (
@@ -288,6 +336,62 @@ function SettingsPage(): JSX.Element {
             <Form.Item
               label={
                 <Space>
+                  {strings.autoHandleCORS}
+                  <Tooltip title={strings.autoHandleCORSHint}>
+                    <InfoCircleOutlined style={{ color: 'var(--color-text-quaternary)' }} />
+                  </Tooltip>
+                  <Button
+                    type="link"
+                    size="small"
+                    style={{
+                      padding: 0,
+                      height: 'auto',
+                      fontSize: '12px'
+                    }}
+                    onClick={openCorsDocs}
+                  >
+                    {strings.learnMore}
+                  </Button>
+                  <Tooltip title={strings.subcriptionFeature}>
+                    <Tag color="gold">Pro</Tag>
+                  </Tooltip>
+                </Space>
+              }
+            >
+              <Switch checked={autoHandleCORS} disabled={!isPro()} onChange={handleCORSChange} />
+              {autoHandleCORS && (
+                <Button
+                  type="link"
+                  onClick={toggleCorsEditor}
+                  style={{ padding: '0 4px' }}
+                  iconPosition="end"
+                  icon={showCorsEditor ? <UpOutlined /> : <DownOutlined />}
+                >
+                  {strings.advancedConfig}
+                </Button>
+              )}
+              {autoHandleCORS && showCorsEditor && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ height: 200 }}>
+                    <MonacoEditor
+                      defaultLanguage="javascript"
+                      defaultValue={corsConfigDefaultValue}
+                      height={200}
+                      value={corsConfig}
+                      onChange={handleCorsConfigChange}
+                      options={{
+                        minimap: { enabled: false },
+                        scrollBeyondLastLine: false,
+                        fontSize: 12
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </Form.Item>
+            <Form.Item
+              label={
+                <Space>
                   {strings.httpsDecryptDomains}
                   <Tooltip title={strings.httpsDecryptDomainsHint}>
                     <InfoCircleOutlined style={{ color: 'var(--color-text-quaternary)' }} />
@@ -304,6 +408,9 @@ function SettingsPage(): JSX.Element {
                   >
                     {strings.learnMore}
                   </Button>
+                  <Tooltip title={strings.subcriptionFeature}>
+                    <Tag color="gold">Pro</Tag>
+                  </Tooltip>
                 </Space>
               }
             >

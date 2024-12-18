@@ -457,7 +457,7 @@ function RuleEditor({
       form={form}
       disabled={disabled}
       initialValues={formInitValues}
-      style={{ padding: '4px 16px', overflowY: 'auto' }}
+      style={{ padding: '4px 16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
       layout="vertical"
       onFinish={handleAddRuleSubmit}
     >
@@ -519,184 +519,190 @@ function RuleEditor({
         </div>
       )}
 
-      <div className="paper-block e2">
-        <div className="paper-title">{strings.ruleInfo}: </div>
-        <Form.Item
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: strings.formatString(strings.isRequired, strings.ruleName) as string
-            }
-          ]}
-        >
-          <Input placeholder={strings.addRuleName} />
-        </Form.Item>
-        <Form.Item name="description">
-          <Input.TextArea placeholder={strings.addRuleDescription} />
-        </Form.Item>
-      </div>
-
-      <div className="paper-block e2">
-        <div className="paper-title">{strings.matchRules}: </div>
-        <Flex gap={4} style={{ paddingBottom: '4px' }} align="baseline">
-          <Form.Item name={['matches', 'matchType']} noStyle>
-            <Select
-              style={{ width: 100 }}
-              options={[
-                { label: strings.url, value: 'url' },
-                { label: strings.host, value: 'host' },
-                { label: strings.path, value: 'path' }
-              ]}
-            />
-          </Form.Item>
-          <Form.Item name={['matches', 'matchMode']} noStyle>
-            <Select
-              style={{ width: 180 }}
-              options={[
-                { label: strings.contains, value: 'contains' },
-                { label: strings.equals, value: 'equals' },
-                { label: strings.matchesRegex, value: 'matches' }
-              ]}
-            />
-          </Form.Item>
+      <div id="ruleEditorContainer" style={{ overflowY: 'auto' }}>
+        <div className="paper-block e2">
+          <div className="paper-title">{strings.ruleInfo}: </div>
           <Form.Item
-            name={['matches', 'value']}
-            style={{ flex: 1 }}
+            name="name"
             rules={[
               {
                 required: true,
-                message: strings.formatString(strings.isRequired, strings.matchValue) as string
+                message: strings.formatString(strings.isRequired, strings.ruleName) as string
               }
             ]}
-            noStyle
           >
-            <Input placeholder={strings.matchValue} />
+            <Input placeholder={strings.addRuleName} />
           </Form.Item>
-          <Flex style={{ position: 'relative', top: 4 }}>
-            <Tooltip title={strings.testMatchValue}>
-              <ExperimentOutlined
-                style={{ fontSize: '16px', marginLeft: '8px' }}
-                onClick={() => setShowMatchTestModal(true)}
-              />
-            </Tooltip>
-            <Tooltip title={strings.reqMethodsFilter}>
-              <DownCircleOutlined
-                onClick={() => setShowReqMethodsFilter(!showReqMethodsFilter)}
-                style={{
-                  fontSize: '16px',
-                  marginLeft: '8px',
-                  rotate: showReqMethodsFilter ? '180deg' : 'none'
-                }}
-              />
-            </Tooltip>
-          </Flex>
-        </Flex>
-        <Form.Item noStyle name={['matches', 'methods']}>
-          <Select
-            allowClear
-            mode="multiple"
-            placeholder={strings.selectMethods}
-            style={{
-              width: '100%',
-              marginTop: '8px',
-              display: showReqMethodsFilter ? 'block' : 'none'
-            }}
-            options={reqMethods}
-          />
-        </Form.Item>
-      </div>
-      <MatchTestModal
-        open={showMatchTestModal}
-        initValue={{
-          matchType: form.getFieldValue(['matches', 'matchType']),
-          matchOperator: form.getFieldValue(['matches', 'matchMode']),
-          matchValue: form.getFieldValue(['matches', 'value'])
-        }}
-        onCancel={() => setShowMatchTestModal(false)}
-      />
-      <Tabs
-        defaultActiveKey={targetTab}
-        items={[
-          {
-            key: 'rules',
-            label: strings.rules,
-            children: (
-              <Form.List name="modifyList">
-                {(fields, { add, remove }) => (
-                  <>
-                    <Dropdown
-                      trigger={['click']}
-                      menu={{
-                        items: addRulesMenu,
-                        onClick: (item) => handleAddRuleClick(item.key as RuleType, add)
-                      }}
-                    >
-                      <Button type="primary" style={{ margin: '8px 0' }}>
-                        <Space>
-                          {strings.addRules}
-                          <DownOutlined />
-                        </Space>
-                      </Button>
-                    </Dropdown>
-                    {form.getFieldValue('modifyList').map((rule, index) => (
-                      <div key={index} style={{ position: 'relative' }} className="paper-block e2">
-                        <Tooltip title={strings.removeRule} placement="top" arrow>
-                          <DeleteOutlined
-                            style={{
-                              position: 'absolute',
-                              top: '15px',
-                              right: '15px',
-                              zIndex: 999
-                            }}
-                            onClick={() => {
-                              remove(index)
-                              setMenuDisabled()
-                            }}
-                          />
-                        </Tooltip>
+          <Form.Item name="description">
+            <Input.TextArea placeholder={strings.addRuleDescription} />
+          </Form.Item>
+        </div>
 
-                        {getAddRuleValueComponent(rule, index)}
-                      </div>
-                    ))}
-                  </>
-                )}
-              </Form.List>
-            )
-          },
-          {
-            key: 'tests',
-            label: strings.testAndScripts,
-            children: (
-              <Flex justify="space-between" style={{ width: '100%' }}>
-                <Form.Item name="testScript" style={{ flex: 1 }}>
-                  <MonacoEditor defaultLanguage="javascript" height={400} />
-                </Form.Item>
-                <div style={{ minWidth: 240, padding: '0 10px' }}>
-                  <div style={{ fontWeight: 'bold' }}>{strings.snippets}</div>
-                  <Flex vertical align="flex-start">
-                    <Button type="text" onClick={() => insertSnippet('responseStatus200')}>
-                      Response status code is 200
-                    </Button>
-                    <Button type="text" onClick={() => insertSnippet('expectedHeaders')}>
-                      Response includes expected headers
-                    </Button>
-                    <Button type="text" onClick={() => insertSnippet('asyncTest')}>
-                      Should pass in async script
-                    </Button>
-                    <Button type="text" onClick={() => insertSnippet('printResponseStatus')}>
-                      Print response status
-                    </Button>
-                    <Button type="text" onClick={() => insertSnippet('printAllResponseHeaders')}>
-                      Print all response headers
-                    </Button>
-                  </Flex>
-                </div>
-              </Flex>
-            )
-          }
-        ]}
-      />
+        <div className="paper-block e2">
+          <div className="paper-title">{strings.matchRules}: </div>
+          <Flex gap={4} style={{ paddingBottom: '4px' }} align="baseline">
+            <Form.Item name={['matches', 'matchType']} noStyle>
+              <Select
+                style={{ width: 100 }}
+                options={[
+                  { label: strings.url, value: 'url' },
+                  { label: strings.host, value: 'host' },
+                  { label: strings.path, value: 'path' }
+                ]}
+              />
+            </Form.Item>
+            <Form.Item name={['matches', 'matchMode']} noStyle>
+              <Select
+                style={{ width: 180 }}
+                options={[
+                  { label: strings.contains, value: 'contains' },
+                  { label: strings.equals, value: 'equals' },
+                  { label: strings.matchesRegex, value: 'matches' }
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              name={['matches', 'value']}
+              style={{ flex: 1 }}
+              rules={[
+                {
+                  required: true,
+                  message: strings.formatString(strings.isRequired, strings.matchValue) as string
+                }
+              ]}
+              noStyle
+            >
+              <Input placeholder={strings.matchValue} />
+            </Form.Item>
+            <Flex style={{ position: 'relative', top: 4 }}>
+              <Tooltip title={strings.testMatchValue}>
+                <ExperimentOutlined
+                  style={{ fontSize: '16px', marginLeft: '8px' }}
+                  onClick={() => setShowMatchTestModal(true)}
+                />
+              </Tooltip>
+              <Tooltip title={strings.reqMethodsFilter}>
+                <DownCircleOutlined
+                  onClick={() => setShowReqMethodsFilter(!showReqMethodsFilter)}
+                  style={{
+                    fontSize: '16px',
+                    marginLeft: '8px',
+                    rotate: showReqMethodsFilter ? '180deg' : 'none'
+                  }}
+                />
+              </Tooltip>
+            </Flex>
+          </Flex>
+          <Form.Item noStyle name={['matches', 'methods']}>
+            <Select
+              allowClear
+              mode="multiple"
+              placeholder={strings.selectMethods}
+              style={{
+                width: '100%',
+                marginTop: '8px',
+                display: showReqMethodsFilter ? 'block' : 'none'
+              }}
+              options={reqMethods}
+            />
+          </Form.Item>
+        </div>
+        <MatchTestModal
+          open={showMatchTestModal}
+          initValue={{
+            matchType: form.getFieldValue(['matches', 'matchType']),
+            matchOperator: form.getFieldValue(['matches', 'matchMode']),
+            matchValue: form.getFieldValue(['matches', 'value'])
+          }}
+          onCancel={() => setShowMatchTestModal(false)}
+        />
+        <Tabs
+          defaultActiveKey={targetTab}
+          items={[
+            {
+              key: 'rules',
+              label: strings.rules,
+              children: (
+                <Form.List name="modifyList">
+                  {(fields, { add, remove }) => (
+                    <>
+                      <Dropdown
+                        trigger={['click']}
+                        menu={{
+                          items: addRulesMenu,
+                          onClick: (item) => handleAddRuleClick(item.key as RuleType, add)
+                        }}
+                      >
+                        <Button type="primary" style={{ margin: '8px 0' }}>
+                          <Space>
+                            {strings.addRules}
+                            <DownOutlined />
+                          </Space>
+                        </Button>
+                      </Dropdown>
+                      {form.getFieldValue('modifyList').map((rule, index) => (
+                        <div
+                          key={index}
+                          style={{ position: 'relative' }}
+                          className="paper-block e2"
+                        >
+                          <Tooltip title={strings.removeRule} placement="top" arrow>
+                            <DeleteOutlined
+                              style={{
+                                position: 'absolute',
+                                top: '15px',
+                                right: '15px',
+                                zIndex: 999
+                              }}
+                              onClick={() => {
+                                remove(index)
+                                setMenuDisabled()
+                              }}
+                            />
+                          </Tooltip>
+
+                          {getAddRuleValueComponent(rule, index)}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </Form.List>
+              )
+            },
+            {
+              key: 'tests',
+              label: strings.testAndScripts,
+              children: (
+                <Flex justify="space-between" style={{ width: '100%' }}>
+                  <Form.Item name="testScript" style={{ flex: 1 }}>
+                    <MonacoEditor defaultLanguage="javascript" height={400} />
+                  </Form.Item>
+                  <div style={{ minWidth: 240, padding: '0 10px' }}>
+                    <div style={{ fontWeight: 'bold' }}>{strings.snippets}</div>
+                    <Flex vertical align="flex-start">
+                      <Button type="text" onClick={() => insertSnippet('responseStatus200')}>
+                        Response status code is 200
+                      </Button>
+                      <Button type="text" onClick={() => insertSnippet('expectedHeaders')}>
+                        Response includes expected headers
+                      </Button>
+                      <Button type="text" onClick={() => insertSnippet('asyncTest')}>
+                        Should pass in async script
+                      </Button>
+                      <Button type="text" onClick={() => insertSnippet('printResponseStatus')}>
+                        Print response status
+                      </Button>
+                      <Button type="text" onClick={() => insertSnippet('printAllResponseHeaders')}>
+                        Print all response headers
+                      </Button>
+                    </Flex>
+                  </div>
+                </Flex>
+              )
+            }
+          ]}
+        />
+      </div>
     </Form>
   )
 }
