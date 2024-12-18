@@ -222,7 +222,9 @@ export const strings = new LocalizedStrings({
     autoHandleCORS: 'Auto Handle CORS',
     autoHandleCORSHint: 'Automatically handle Cross-Origin Resource Sharing (CORS) requests',
     advancedConfig: 'Advanced Config',
-    corsAdvancedConfig: 'CORS Advanced Configuration'
+    corsAdvancedConfig: 'CORS Advanced Configuration',
+    exitFullscreen: 'Exit Fullscreen',
+    fullscreen: 'Fullscreen'
   },
   zh: {
     close: '关闭',
@@ -436,6 +438,8 @@ export const strings = new LocalizedStrings({
     autoHandleCORS: '自动处理跨域',
     autoHandleCORSHint: '自动处理跨域资源共享（CORS）请求',
     advancedConfig: '高级配置',
-    corsAdvancedConfig: 'CORS 高级配置'
+    corsAdvancedConfig: 'CORS 高级配置',
+    exitFullscreen: '退出全屏',
+    fullscreen: '全屏'
   }
 })

@@ -21,7 +21,12 @@ function FunctionEditor({ field, type }: AddRuleValueProps & BodyEditorProps): J
         ) + ':'
       }
     >
-      <MonacoEditor height={400} defaultLanguage="javascript" />
+      <MonacoEditor
+        height={400}
+        defaultLanguage="javascript"
+        showFullscreenButton
+        fullscreenTargetSelector="#ruleEditorContainer"
+      />
     </Form.Item>
   )
 }
