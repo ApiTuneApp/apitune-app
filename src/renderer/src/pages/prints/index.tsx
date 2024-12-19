@@ -123,10 +123,10 @@ export default function PrintsPage() {
             <Card
               size="small"
               key={printItem.logId + '_' + index}
-              title={printScript.options.title}
+              title={printScript.options?.title}
               className="print-card"
             >
-              <div style={printScript.options.styles}>{printScript.printStr}</div>
+              <div style={printScript.options?.styles}>{printScript.printStr}</div>
               <div className="print-card-actions">
                 <div>
                   {strings.rule}: <RuleLink id={printItem.ruleId} tab="tests" />
