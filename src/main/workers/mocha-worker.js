@@ -22,14 +22,14 @@ const at = {
   print: function (printStr) {
     log.debug('[TestWorker] print', printStr)
     printList.push({
-      printStr
+      value: printStr
     })
   }
 }
 at.print.log = function (printStr) {
   log.debug('[TestWorker] print.log', printStr)
   printList.push({
-    printStr,
+    value: printStr,
     type: 'log'
   })
 }
@@ -38,7 +38,7 @@ at.print.log = function (printStr) {
 at.print.info = function (printStr) {
   log.debug('[TestWorker] print.info', printStr)
   printList.push({
-    printStr,
+    value: printStr,
     type: 'info'
   })
 }
@@ -46,7 +46,7 @@ at.print.info = function (printStr) {
 at.print.error = function (printStr) {
   log.debug('[TestWorker] print.error', printStr)
   printList.push({
-    printStr,
+    value: printStr,
     type: 'error'
   })
 }
@@ -54,7 +54,7 @@ at.print.error = function (printStr) {
 at.print.debug = function (printStr) {
   log.debug('[TestWorker] print.debug', printStr)
   printList.push({
-    printStr,
+    value: printStr,
     type: 'debug'
   })
 }
@@ -62,8 +62,25 @@ at.print.debug = function (printStr) {
 at.print.warn = function (printStr) {
   log.debug('[TestWorker] print.warning', printStr)
   printList.push({
-    printStr,
+    value: printStr,
     type: 'warning'
+  })
+}
+
+at.print.list = function (list) {
+  if (!Array.isArray(list)) return
+  const listItem = []
+  for (const item of list) {
+    if (item.value && typeof item.value === 'string') {
+      listItem.push({
+        value: item.value,
+        type: item.type
+      })
+    }
+  }
+  printList.push({
+    type: 'list',
+    value: listItem
   })
 }
 

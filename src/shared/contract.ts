@@ -294,13 +294,16 @@ export type User = {
   avatar: string
 }
 
-export type PrintScript = {
-  printStr: string
+export type NormalPrintScript = {
   type?: 'info' | 'error' | 'warning' | 'debug' | 'log'
+  value: string
+}
+
+export type PrintScript = {
   options?: {
     styles?: React.CSSProperties
   }
-}
+} & ({ type: 'list'; value: Array<NormalPrintScript> } | NormalPrintScript)
 
 export type PrintItem = {
   logId: number

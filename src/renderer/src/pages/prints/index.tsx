@@ -1,6 +1,6 @@
 import './print.less'
 
-import { Alert, Button, Card, ConfigProvider, Empty, Flex, Space, Typography } from 'antd'
+import { Alert, Button, Card, ConfigProvider, Empty, Flex, List, Space, Typography } from 'antd'
 import { BaseType } from 'antd/es/typography/Base'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -10,7 +10,7 @@ import RuleLink from '@renderer/components/rule-link'
 import { strings } from '@renderer/services/localization'
 import { useUserStore } from '@renderer/store/user'
 import { MAX_FREE_LOGS } from '@shared/constants'
-import { MainEvent, PrintItem } from '@shared/contract'
+import { MainEvent, NormalPrintScript, PrintItem } from '@shared/contract'
 import { checkSubscriptionActive } from '@shared/utils'
 
 const { Text } = Typography
@@ -95,6 +95,19 @@ export default function PrintsPage() {
     window.api.clearPrintLogs()
     setPrintItems([])
   }
+
+  const renderNormalPrintScript = (printScript: NormalPrintScript) => {
+    return (
+      <>
+        {printScript.type && (
+          <Text className="print-line-type" type={getTextType(printScript.type) as BaseType}>
+            [{printScript.type.toUpperCase()}]
+          </Text>
+        )}
+        <Text className="print-line-text">{printScript.value}</Text>
+      </>
+    )
+  }
   return (
     <Flex className="app-page" vertical gap={4}>
       {!checkSubscriptionActive(subscription) && (
@@ -140,12 +153,16 @@ export default function PrintsPage() {
       {printItems.map((printItem) => {
         return printItem.printList.map((printScript, index) => (
           <div key={printItem.logId + '_' + index} className="print-line">
-            {printScript.type && (
-              <Text className="print-line-type" type={getTextType(printScript.type) as BaseType}>
-                [{printScript.type.toUpperCase()}]
-              </Text>
+            {printScript.type === 'list' ? (
+              <List
+                size="small"
+                className="print-list"
+                dataSource={printScript.value}
+                renderItem={(item) => <List.Item>{renderNormalPrintScript(item)}</List.Item>}
+              />
+            ) : (
+              renderNormalPrintScript(printScript)
             )}
-            <Text className="print-line-text">{printScript.printStr}</Text>
             <Space className="print-meta">
               <Text type="secondary" className="print-meta-item">
                 {strings.rule}: <RuleLink id={printItem.ruleId} tab="tests" />
