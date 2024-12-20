@@ -62,7 +62,7 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
       worker.on('message', (data: TestItem | PrintItem) => {
         electronLog.info('[TestScript] Worker result:', data)
         if ((data as TestItem).tests) {
-          LogTestResult.updateTestResult(data.logId, data as TestItem)
+          LogTestResult.updateTestResult(data.logId.toString(), data as TestItem)
         } else {
           printLog(data as PrintItem)
         }

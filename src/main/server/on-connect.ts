@@ -4,7 +4,7 @@ import { Socket } from 'net'
 
 import { matchHostname } from '../../shared/utils'
 import { proxyLog } from '../communicator'
-import { DefaultSettingData } from '../storage'
+import { DefaultSettingData, SubscriptionStorage } from '../storage'
 import config from './config'
 import { HttpsControl } from './contracts'
 import { decodeHttps } from './decode-https'
@@ -72,7 +72,7 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
       log.info('[OnConnect] Https host invalid', url)
       // do nothing
     } else {
-      const httpsControl = getHttpsControl(host, socket)
+      const httpsControl = getHttpsControl(host)
       if (httpsControl === HttpsControl.decode) {
         decodeHttps(host, socket, head)
         return
@@ -120,7 +120,10 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
   })
 }
 
-export function getHttpsControl(hostname: string, socket: Socket): HttpsControl {
+export function getHttpsControl(hostname: string): HttpsControl {
+  if (!SubscriptionStorage.checkActive()) {
+    return HttpsControl.decode
+  }
   if (
     !DefaultSettingData.httpsDecryptDomains ||
     DefaultSettingData.httpsDecryptDomains.length === 0

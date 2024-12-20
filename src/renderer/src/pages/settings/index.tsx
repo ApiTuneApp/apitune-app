@@ -16,7 +16,7 @@ import {
   Modal
 } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import {
   CloseCircleOutlined,
@@ -61,6 +61,10 @@ function SettingsPage(): JSX.Element {
   const [showCorsEditor, setShowCorsEditor] = useState(false)
 
   const { user, subscription, isPro } = useUserStore((state) => state)
+
+  const hasProSubscription = useMemo(() => {
+    return isPro()
+  }, [subscription])
 
   const corsConfigDefaultValue = `// For more config, please check: https://www.npmjs.com/package/@koa/cors
 
@@ -200,14 +204,16 @@ options = {
             <Space direction="vertical" size="small" style={{ textAlign: 'right' }}>
               <Tag
                 style={{ backgroundColor: 'var(--color-elevation-1)' }}
-                color={subscription ? (subscription.is_lifetime ? 'purple' : 'gold') : 'default'}
+                color={
+                  hasProSubscription ? (subscription?.is_lifetime ? 'purple' : 'gold') : 'default'
+                }
               >
-                {subscription ? (subscription.is_lifetime ? 'Lifetime' : 'Pro') : 'Free'}
+                {hasProSubscription ? (subscription?.is_lifetime ? 'Lifetime' : 'Pro') : 'Free'}
               </Tag>
-              {subscription ? (
-                subscription.is_lifetime ? null : (
+              {hasProSubscription ? (
+                subscription?.is_lifetime ? null : (
                   <Text type="secondary">
-                    {strings.expires}: {dayjs(subscription.end_at).format('YYYY-MM-DD')}
+                    {strings.expires}: {dayjs(subscription?.end_at).format('YYYY-MM-DD')}
                   </Text>
                 )
               ) : (
@@ -244,15 +250,6 @@ options = {
 
   const openCorsDocs = () => {
     window.api.openExternal('https://apitune/docs/guide/cors.html')
-  }
-
-  const isSubscriptionExpired = (subscription) => {
-    if (!subscription) return false
-    if (subscription.is_lifetime) return false
-
-    const endDate = new Date(subscription.end_at)
-    const currentDate = new Date()
-    return endDate.getTime() < currentDate.getTime()
   }
 
   const handleCORSChange = (checked: boolean) => {
@@ -358,7 +355,11 @@ options = {
                 </Space>
               }
             >
-              <Switch checked={autoHandleCORS} disabled={!isPro()} onChange={handleCORSChange} />
+              <Switch
+                checked={autoHandleCORS}
+                disabled={!hasProSubscription}
+                onChange={handleCORSChange}
+              />
               {autoHandleCORS && (
                 <Button
                   type="link"
@@ -414,32 +415,16 @@ options = {
                 </Space>
               }
             >
-              {subscription ? (
-                subscription.is_lifetime || !isSubscriptionExpired(subscription) ? (
-                  <TextArea
-                    defaultValue={httpsDecryptDomains?.join('\n')}
-                    placeholder={`${strings.httpsDecryptDomainsHint}
+              {hasProSubscription ? (
+                <TextArea
+                  defaultValue={httpsDecryptDomains?.join('\n')}
+                  placeholder={`${strings.httpsDecryptDomainsHint}
 Example:
 *.example.com
 api.example.com`}
-                    onChange={(e) => handleHttpsDomainsChange(e.target.value, e)}
-                    autoSize={{ minRows: 4, maxRows: 8 }}
-                  />
-                ) : (
-                  <Space direction="vertical" style={{ width: '100%' }}>
-                    <TextArea
-                      placeholder={strings.httpsDecryptDomainsHint}
-                      disabled
-                      autoSize={{ minRows: 4, maxRows: 8 }}
-                    />
-                    <Space>
-                      <Text type="warning">{strings.subscriptionExpired}</Text>
-                      <Button type="link" size="small" onClick={openPricingPage}>
-                        {strings.renewSubscription}
-                      </Button>
-                    </Space>
-                  </Space>
-                )
+                  onChange={(e) => handleHttpsDomainsChange(e.target.value, e)}
+                  autoSize={{ minRows: 4, maxRows: 8 }}
+                />
               ) : (
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <TextArea
@@ -448,9 +433,9 @@ api.example.com`}
                     autoSize={{ minRows: 4, maxRows: 8 }}
                   />
                   <Space>
-                    <Text type="secondary">{strings.httpsDecryptProFeature}</Text>
+                    <Text type="warning">{strings.subscriptionExpired}</Text>
                     <Button type="link" size="small" onClick={openPricingPage}>
-                      {strings.upgradeToPro}
+                      {strings.renewSubscription}
                     </Button>
                   </Space>
                 </Space>

@@ -10,7 +10,7 @@ import httpClient from './http-client'
 import { LogRequestMiddleware, LogResponseMiddleware } from './middleware/log'
 import RulesMiddleware from './middleware/rules'
 import testScriptMiddleware from './middleware/testScript'
-import { DefaultSettingData } from '../storage'
+import { DefaultSettingData, SubscriptionStorage } from '../storage'
 import cors from '@koa/cors'
 import vm from 'node:vm'
 
@@ -18,7 +18,7 @@ export const app = new Koa<IAppState, IAppContext>()
 
 // Usage example
 app.use(async (ctx, next) => {
-  if (DefaultSettingData.autoHandleCORS) {
+  if (DefaultSettingData.autoHandleCORS && SubscriptionStorage.checkActive()) {
     let options = {}
     if (DefaultSettingData.corsConfig) {
       try {
