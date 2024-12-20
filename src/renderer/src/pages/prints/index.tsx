@@ -1,16 +1,35 @@
 import './print.less'
 
-import { Alert, Button, Card, ConfigProvider, Empty, Flex, Space } from 'antd'
+import { Alert, Button, Card, ConfigProvider, Empty, Flex, Space, Typography } from 'antd'
+import { BaseType } from 'antd/es/typography/Base'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import LogLink from '@renderer/components/log-link'
 import RuleLink from '@renderer/components/rule-link'
 import { strings } from '@renderer/services/localization'
 import { useUserStore } from '@renderer/store/user'
-import { MainEvent, PrintItem } from '@shared/contract'
 import { MAX_FREE_LOGS } from '@shared/constants'
+import { MainEvent, PrintItem } from '@shared/contract'
 import { checkSubscriptionActive } from '@shared/utils'
-import LogLink from '@renderer/components/log-link'
+
+const { Text } = Typography
+
+// Helper function to get text type based on log type
+const getTextType = (type: string) => {
+  switch (type) {
+    case 'info':
+      return 'success'
+    case 'error':
+      return 'danger'
+    case 'warning':
+      return 'warning'
+    case 'debug':
+      return 'secondary'
+    default:
+      return undefined
+  }
+}
 
 export default function PrintsPage() {
   const navigate = useNavigate()
@@ -77,7 +96,7 @@ export default function PrintsPage() {
     setPrintItems([])
   }
   return (
-    <Flex className="app-page" vertical gap={14}>
+    <Flex className="app-page" vertical gap={4}>
       {!checkSubscriptionActive(subscription) && (
         <ConfigProvider
           theme={{
@@ -118,28 +137,26 @@ export default function PrintsPage() {
           </Button>
         </Space>
       )}
-      {printItems.map((printItem) => (
-        <div key={printItem.logId}>
-          {printItem.printList.map((printScript, index) => (
-            <Card
-              size="small"
-              key={printItem.logId + '_' + index}
-              title={printScript.options?.title}
-              className="print  -card"
-            >
-              <div style={printScript.options?.styles}>{printScript.printStr}</div>
-              <Space className="print-card-actions">
-                <span>
-                  {strings.rule}: <RuleLink id={printItem.ruleId} tab="tests" />
-                </span>
-                <span>
-                  {strings.logId}: <LogLink id={printItem.logId} />
-                </span>
-              </Space>
-            </Card>
-          ))}
-        </div>
-      ))}
+      {printItems.map((printItem) => {
+        return printItem.printList.map((printScript, index) => (
+          <div key={printItem.logId + '_' + index} className="print-line">
+            {printScript.type && (
+              <Text className="print-line-type" type={getTextType(printScript.type) as BaseType}>
+                [{printScript.type.toUpperCase()}]
+              </Text>
+            )}
+            <Text className="print-line-text">{printScript.printStr}</Text>
+            <Space className="print-meta">
+              <Text type="secondary" className="print-meta-item">
+                {strings.rule}: <RuleLink id={printItem.ruleId} tab="tests" />
+              </Text>
+              <Text type="secondary" className="print-meta-item">
+                {strings.logId}: <LogLink id={printItem.logId} />
+              </Text>
+            </Space>
+          </div>
+        ))
+      })}
       {printItems.length === 0 && (
         <Empty>
           <Button type="primary" onClick={goCreatePrint}>

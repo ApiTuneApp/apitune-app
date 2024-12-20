@@ -19,13 +19,52 @@ const at = {
       testFunc
     })
   },
-  print: function (printStr, options) {
-    log.debug('[TestWorker] print', printStr, options)
+  print: function (printStr) {
+    log.debug('[TestWorker] print', printStr)
     printList.push({
-      printStr,
-      options
+      printStr
     })
   }
+}
+at.print.log = function (printStr) {
+  log.debug('[TestWorker] print.log', printStr)
+  printList.push({
+    printStr,
+    type: 'log'
+  })
+}
+
+// Add color variants
+at.print.info = function (printStr) {
+  log.debug('[TestWorker] print.info', printStr)
+  printList.push({
+    printStr,
+    type: 'info'
+  })
+}
+
+at.print.error = function (printStr) {
+  log.debug('[TestWorker] print.error', printStr)
+  printList.push({
+    printStr,
+    type: 'error'
+  })
+}
+
+at.print.debug = function (printStr) {
+  log.debug('[TestWorker] print.debug', printStr)
+  printList.push({
+    printStr,
+    type: 'debug'
+  })
+}
+
+at.print.warn = function (printStr) {
+  log.debug('[TestWorker] print.warning', printStr)
+  printList.push({
+    printStr,
+    type: 'warning'
+  })
 }
 
 const scriptParseContext = vm.createContext({

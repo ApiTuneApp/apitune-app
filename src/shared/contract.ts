@@ -296,9 +296,9 @@ export type User = {
 
 export type PrintScript = {
   printStr: string
-  options: {
-    title: string
-    styles: React.CSSProperties
+  type?: 'info' | 'error' | 'warning' | 'debug' | 'log'
+  options?: {
+    styles?: React.CSSProperties
   }
 }
 
