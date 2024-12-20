@@ -131,7 +131,9 @@ export default function PrintsPage() {
                 <span>
                   {strings.rule}: <RuleLink id={printItem.ruleId} tab="tests" />
                 </span>
-                <span>LogId: {printItem.logId}</span>
+                <span>
+                  {strings.logId}: {printItem.logId}
+                </span>
               </Space>
             </Card>
           ))}
