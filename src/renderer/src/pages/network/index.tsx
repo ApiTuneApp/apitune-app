@@ -1,7 +1,20 @@
 import './network.less'
 import 'react-resizable/css/styles.css'
 
-import { Button, Divider, Flex, Input, Radio, RadioChangeEvent, Space, Table, Tooltip } from 'antd'
+import {
+  Button,
+  Divider,
+  Dropdown,
+  Flex,
+  Input,
+  Radio,
+  RadioChangeEvent,
+  Space,
+  Table,
+  Tooltip,
+  Checkbox,
+  MenuProps
+} from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { useEffectOnActive } from 'keepalive-for-react'
 import { useCallback, useEffect, useState } from 'react'
@@ -15,7 +28,8 @@ import {
   FilterOutlined,
   HolderOutlined,
   PauseCircleOutlined,
-  PlayCircleOutlined
+  PlayCircleOutlined,
+  ControlOutlined
 } from '@ant-design/icons'
 import LogDetail from '@renderer/components/log-detail'
 import { strings } from '@renderer/services/localization'
@@ -24,6 +38,7 @@ import { useUxStore } from '@renderer/store/ux'
 import { Log } from '@shared/contract'
 import { findGroupOrRule } from '@shared/utils'
 import { useSettingStore } from '@renderer/store/setting'
+import { CheckboxChangeEvent } from 'antd/es/checkbox'
 
 const AppHeaderHeight = 40
 const NetworkPagePadding = 40
@@ -65,35 +80,6 @@ function NetworkPage(): JSX.Element {
   const { language } = useSettingStore((state) => state)
 
   const apiRules = useRuleStore((state) => state.apiRules)
-
-  const stopRecordStr = strings.pause
-  const startRecordStr = strings.resume
-  const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
-  const [showFilter, setShowFilter] = useState(false)
-  const [resultLogs, setResultLogs] = useState<Log[]>([])
-  const [curLog, setCurLog] = useState<Log | undefined>()
-  const [drawerHeight, setDrawerHeight] = useState(0)
-  const [searchValue, setSearchValue] = useState('')
-  const [logType, setLogType] = useState('all')
-  const [logStatus, setLogStatus] = useState('all')
-  const [showRuleMatched, setShowRuleMatched] = useState(false)
-
-  useEffectOnActive(
-    () => {
-      const target = document.getElementsByClassName(
-        'ant-table-tbody-virtual-holder-inner'
-      )[0] as HTMLElement
-      if (target) {
-        /**
-         * When table set virtual to true, the table will show blank after swithing from sidebar.
-         * The issue seems to be caused by the virtual table set reset transform style
-         */
-        target.style.transform = 'none'
-      }
-    },
-    true,
-    []
-  )
 
   const columnBase = [
     {
@@ -163,7 +149,21 @@ function NetworkPage(): JSX.Element {
       dataIndex: 'status',
       key: 'status',
       width: 60,
-      sorter: (a: Log, b: Log) => (a.status && b.status ? a.status - b.status : 0)
+      sorter: (a: Log, b: Log) => (a.status && b.status ? a.status - b.status : 0),
+      render(status: number) {
+        if (!status) return ''
+        let color = ''
+        if (status < 200)
+          color = '#1677ff' // Info blue
+        else if (status < 300)
+          color = '#52c41a' // Success green
+        else if (status < 400)
+          color = '#faad14' // Warning yellow
+        else if (status < 500)
+          color = '#ff4d4f' // Error red
+        else color = '#cf1322' // Dark red
+        return <span style={{ color }}>{status}</span>
+      }
     },
     {
       title: strings.matchedRules,
@@ -204,10 +204,100 @@ function NetworkPage(): JSX.Element {
     }
   ]
 
+  const stopRecordStr = strings.pause
+  const startRecordStr = strings.resume
+  const [pauseBtnText, setPauseBtnText] = useState(stopRecordStr)
+  const [showFilter, setShowFilter] = useState(false)
+  const [resultLogs, setResultLogs] = useState<Log[]>([])
+  const [curLog, setCurLog] = useState<Log | undefined>()
+  const [drawerHeight, setDrawerHeight] = useState(0)
+  const [searchValue, setSearchValue] = useState('')
+  const [logType, setLogType] = useState('all')
+  const [logStatus, setLogStatus] = useState('all')
+  const [showRuleMatched, setShowRuleMatched] = useState(false)
+  const [selectedColumns, setSelectedColumns] = useState<string[]>(
+    columnBase.map((col) => col.key as string)
+  )
+
+  useEffectOnActive(
+    () => {
+      const target = document.getElementsByClassName(
+        'ant-table-tbody-virtual-holder-inner'
+      )[0] as HTMLElement
+      if (target) {
+        /**
+         * When table set virtual to true, the table will show blank after swithing from sidebar.
+         * The issue seems to be caused by the virtual table set reset transform style
+         */
+        target.style.transform = 'none'
+      }
+    },
+    true,
+    []
+  )
+
+  const additionalColumns = [
+    {
+      title: 'Start Time',
+      dataIndex: 'startTime',
+      key: 'startTime',
+      width: 160,
+      render: (timestamp: number) => new Date(timestamp).toLocaleString(),
+      sorter: (a: Log, b: Log) => a.startTime - b.startTime
+    },
+    {
+      title: 'Finish Time',
+      dataIndex: 'finishTime',
+      key: 'finishTime',
+      width: 160,
+      render: (timestamp: number) => new Date(timestamp).toLocaleString(),
+      sorter: (a: Log, b: Log) => (a.finishTime && b.finishTime ? a.finishTime - b.finishTime : 0)
+    },
+    {
+      title: 'Response Type',
+      dataIndex: 'responseType',
+      key: 'responseType',
+      width: 120,
+      render: (_, record: Log) => record.responseHeaders['content-type'] || '',
+      sorter: (a: Log, b: Log) => {
+        const aType = a.responseHeaders['content-type'] || ''
+        const bType = b.responseHeaders['content-type'] || ''
+        return aType.localeCompare(bType)
+      }
+    },
+    {
+      title: 'Remote IP',
+      dataIndex: 'remoteIp',
+      key: 'remoteIp',
+      width: 120
+    },
+    {
+      title: 'Remote Port',
+      dataIndex: 'remotePort',
+      key: 'remotePort',
+      width: 100
+    }
+  ]
+
+  const allColumns = [...columnBase, ...additionalColumns]
+
+  const columnItems: MenuProps['items'] = allColumns.map((col) => ({
+    key: col.key,
+    label: (
+      <Checkbox
+        checked={selectedColumns.includes(col.key as string)}
+        onChange={(e) => handleColumnChange(e, col.key as string)}
+      >
+        {col.title}
+      </Checkbox>
+    )
+  }))
+
   useEffect(() => {
-    setColumns(columnBase)
+    const filteredColumns = allColumns.filter((col) => selectedColumns.includes(col.key as string))
+    setColumns(filteredColumns)
     setPauseBtnText(recordPaused ? startRecordStr : stopRecordStr)
-  }, [language])
+  }, [language, selectedColumns])
 
   const [columns, setColumns] = useState<ColumnType<any>[]>(columnBase)
 
@@ -375,6 +465,16 @@ function NetworkPage(): JSX.Element {
     }
   }
 
+  const handleColumnChange = (e: CheckboxChangeEvent, columnKey: string) => {
+    const { checked } = e.target
+    setSelectedColumns((prev) => {
+      if (checked) {
+        return [...prev, columnKey]
+      }
+      return prev.filter((key) => key !== columnKey)
+    })
+  }
+
   return (
     <Flex className="app-page page-network" vertical>
       <Space style={{ paddingBottom: '10px' }}>
@@ -404,9 +504,9 @@ function NetworkPage(): JSX.Element {
         >
           {strings.ruleMatched}
         </Button>
-        {/* <Tooltip title="Config network column">
-            <ControlOutlined style={{ fontSize: QueryIconSize }} />
-          </Tooltip> */}
+        <Dropdown menu={{ items: columnItems }} trigger={['click']}>
+          <Button icon={<ControlOutlined />}>{strings.columns}</Button>
+        </Dropdown>
       </Space>
       {showFilter && (
         <Space style={{ paddingBottom: '10px' }}>

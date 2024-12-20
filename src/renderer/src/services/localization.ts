@@ -224,7 +224,8 @@ export const strings = new LocalizedStrings({
     advancedConfig: 'Advanced Config',
     corsAdvancedConfig: 'CORS Advanced Configuration',
     exitFullscreen: 'Exit Fullscreen',
-    fullscreen: 'Fullscreen'
+    fullscreen: 'Fullscreen',
+    columns: 'Columns'
   },
   zh: {
     close: '关闭',
@@ -440,6 +441,7 @@ export const strings = new LocalizedStrings({
     advancedConfig: '高级配置',
     corsAdvancedConfig: 'CORS 高级配置',
     exitFullscreen: '退出全屏',
-    fullscreen: '全屏'
+    fullscreen: '全屏',
+    columns: '自定义列'
   }
 })
