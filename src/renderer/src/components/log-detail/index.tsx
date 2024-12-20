@@ -161,7 +161,7 @@ function previewComponent(log: Log, height: number | undefined) {
         defaultLanguage="json"
         value={log.responseBodyInfo?.bodyText}
         showFullscreenButton
-        fullscreenTargetSelector="#ruleEditorContainer"
+        fullscreenTargetSelector=".page-network"
         height={height || 400}
       />
     )
@@ -264,9 +264,13 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
       children: (
         <MonacoEditor
           defaultLanguage={requestParams.isJson ? 'json' : 'plaintext'}
-          value={requestParams.data as string}
+          value={
+            requestParams.isJson
+              ? JSON.stringify(requestParams.data, null, 2)
+              : (requestParams.data as string)
+          }
           showFullscreenButton
-          fullscreenTargetSelector="#ruleEditorContainer"
+          fullscreenTargetSelector=".page-network"
           height={height || 400}
         />
       )
