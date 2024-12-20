@@ -219,6 +219,8 @@ function NetworkPage(): JSX.Element {
     columnBase.map((col) => col.key as string)
   )
 
+  const selectedLogId = useUxStore((state) => state.selectedLogId)
+
   useEffectOnActive(
     () => {
       const target = document.getElementsByClassName(
@@ -474,6 +476,16 @@ function NetworkPage(): JSX.Element {
       return prev.filter((key) => key !== columnKey)
     })
   }
+
+  useEffect(() => {
+    if (selectedLogId) {
+      const log = proxyLogs.find((log) => log.id === selectedLogId)
+      if (log) {
+        handleRowClick(log)
+        useUxStore.getState().setSelectedLogId(undefined)
+      }
+    }
+  }, [selectedLogId, proxyLogs])
 
   return (
     <Flex className="app-page page-network" vertical>

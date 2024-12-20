@@ -10,6 +10,7 @@ import { useUserStore } from '@renderer/store/user'
 import { MainEvent, PrintItem } from '@shared/contract'
 import { MAX_FREE_LOGS } from '@shared/constants'
 import { checkSubscriptionActive } from '@shared/utils'
+import LogLink from '@renderer/components/log-link'
 
 export default function PrintsPage() {
   const navigate = useNavigate()
@@ -132,7 +133,7 @@ export default function PrintsPage() {
                   {strings.rule}: <RuleLink id={printItem.ruleId} tab="tests" />
                 </span>
                 <span>
-                  {strings.logId}: {printItem.logId}
+                  {strings.logId}: <LogLink id={printItem.logId} />
                 </span>
               </Space>
             </Card>

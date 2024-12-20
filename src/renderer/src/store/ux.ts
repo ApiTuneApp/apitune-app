@@ -9,10 +9,12 @@ type State = {
   addProxyLogs: (log: Log) => void
   clearProxyLogs: () => void
   setLogPaused: (paused: boolean) => void
+  selectedLogId?: number
 }
 
 type Action = {
   setRuleSidebarExpandedKeys: (keys: string[]) => void
+  setSelectedLogId: (id: number | undefined) => void
 }
 
 export const useUxStore = create<State & Action>((set) => ({
@@ -26,5 +28,6 @@ export const useUxStore = create<State & Action>((set) => ({
       return { proxyLogs: [...state.proxyLogs, log] }
     }),
   clearProxyLogs: () => set(() => ({ proxyLogs: [] })),
-  setLogPaused: (paused: boolean) => set(() => ({ logPaused: paused }))
+  setLogPaused: (paused: boolean) => set(() => ({ logPaused: paused })),
+  setSelectedLogId: (id) => set({ selectedLogId: id })
 }))

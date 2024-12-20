@@ -303,7 +303,7 @@ export type PrintScript = {
 }
 
 export type PrintItem = {
-  logId: string
+  logId: number
   ruleId: string
   printList: Array<PrintScript>
 }
