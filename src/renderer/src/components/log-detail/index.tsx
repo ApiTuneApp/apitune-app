@@ -17,7 +17,6 @@ import * as _ from 'lodash'
 import { useEffect, useState } from 'react'
 
 import { EditOutlined, SaveOutlined } from '@ant-design/icons'
-import ReactJson from '@microlink/react-json-view'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
 import HeaderEditor from '@renderer/components/add-rule-item/header-editor'
 import ResponseStatus from '@renderer/components/add-rule-item/response-status'
@@ -98,15 +97,15 @@ function getRequestParams(log: Log) {
       data
     }
   }
-  let isJson = false
-  let result = requestBodyInfo
-  try {
-    result = JSON.parse(requestBodyInfo as string)
-    isJson = typeof result === 'object'
-  } catch (error) {
-    isJson = false
-    result = requestBodyInfo
-  }
+  const isJson = false
+  const result = requestBodyInfo
+  // try {
+  //   result = JSON.parse(requestBodyInfo as string)
+  //   isJson = typeof result === 'object'
+  // } catch (error) {
+  //   isJson = false
+  //   result = requestBodyInfo
+  // }
   return {
     isJson,
     data: result
@@ -151,12 +150,19 @@ function previewComponent(log: Log, height: number | undefined) {
   }
   if (log.responseBodyInfo?.isJson) {
     return (
-      <ReactJson
-        src={log.responseBodyInfo?.data}
-        theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
-        displayDataTypes={false}
-        displayObjectSize={false}
-        name={false}
+      // <ReactJson
+      //   src={log.responseBodyInfo?.data}
+      //   theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
+      //   displayDataTypes={false}
+      //   displayObjectSize={false}
+      //   name={false}
+      // />
+      <MonacoEditor
+        defaultLanguage="json"
+        value={log.responseBodyInfo?.bodyText}
+        showFullscreenButton
+        fullscreenTargetSelector="#ruleEditorContainer"
+        height={height || 400}
       />
     )
   }
@@ -255,16 +261,14 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
     {
       key: 'requestParams',
       label: strings.requestParameters,
-      children: requestParams.isJson ? (
-        <ReactJson
-          src={requestParams.data as Record<string, unknown>}
-          theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
-          displayDataTypes={false}
-          displayObjectSize={false}
-          name={false}
+      children: (
+        <MonacoEditor
+          defaultLanguage={requestParams.isJson ? 'json' : 'plaintext'}
+          value={requestParams.data as string}
+          showFullscreenButton
+          fullscreenTargetSelector="#ruleEditorContainer"
+          height={height || 400}
         />
-      ) : (
-        <div className="raw-content">{requestParams.data as string}</div>
       )
     }
   ]
