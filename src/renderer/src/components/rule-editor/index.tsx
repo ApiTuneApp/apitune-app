@@ -15,7 +15,8 @@ import {
   Switch,
   Tabs,
   Tooltip,
-  Typography
+  Typography,
+  Collapse
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -26,7 +27,8 @@ import {
   DownOutlined,
   ExclamationCircleFilled,
   ExperimentOutlined,
-  LeftOutlined
+  LeftOutlined,
+  PlusOutlined
 } from '@ant-design/icons'
 import { RuleItem } from '@renderer/common/contract'
 import BodyEditor from '@renderer/components/add-rule-item/body-editor'
@@ -81,6 +83,14 @@ interface RuleEditorProps {
   disabled?: boolean
   editRuleId?: string
   ruleData?: RuleData
+}
+
+const preStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: '12px',
+  overflowX: 'auto',
+  background: 'var(--color-background-soft)',
+  padding: '8px'
 }
 
 function RuleEditor({
@@ -678,24 +688,150 @@ function RuleEditor({
                     <MonacoEditor defaultLanguage="javascript" height={400} />
                   </Form.Item>
                   <div style={{ minWidth: 240, padding: '0 10px' }}>
-                    <div style={{ fontWeight: 'bold' }}>{strings.snippets}</div>
-                    <Flex vertical align="flex-start">
-                      <Button type="text" onClick={() => insertSnippet('responseStatus200')}>
-                        Response status code is 200
-                      </Button>
-                      <Button type="text" onClick={() => insertSnippet('expectedHeaders')}>
-                        Response includes expected headers
-                      </Button>
-                      <Button type="text" onClick={() => insertSnippet('asyncTest')}>
-                        Should pass in async script
-                      </Button>
-                      <Button type="text" onClick={() => insertSnippet('printResponseStatus')}>
-                        Print response status
-                      </Button>
-                      <Button type="text" onClick={() => insertSnippet('printAllResponseHeaders')}>
-                        Print all response headers
-                      </Button>
-                    </Flex>
+                    <div style={{ fontWeight: 'bold', marginBottom: 8 }}>{strings.snippets}</div>
+                    <Collapse size="small" bordered={false}>
+                      <Collapse.Panel
+                        header="Request body"
+                        key="requestBody"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('requestBody')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('requestBody')}</pre>
+                      </Collapse.Panel>
+                      <Collapse.Panel
+                        header="Request headers"
+                        key="requestHeaders"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('requestHeaders')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('responseStatus200')}</pre>
+                      </Collapse.Panel>
+                      <Collapse.Panel
+                        header="Response status code is 200"
+                        key="responseStatus200"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('responseStatus200')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('responseStatus200')}</pre>
+                      </Collapse.Panel>
+
+                      <Collapse.Panel
+                        header="Response includes expected headers"
+                        key="expectedHeaders"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('expectedHeaders')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('expectedHeaders')}</pre>
+                      </Collapse.Panel>
+
+                      <Collapse.Panel
+                        header="Should pass in async script"
+                        key="asyncTest"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('asyncTest')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('asyncTest')}</pre>
+                      </Collapse.Panel>
+
+                      <Collapse.Panel
+                        header="Print request body"
+                        key="printRequestBody"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('printRequestBody')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('printRequestBody')}</pre>
+                      </Collapse.Panel>
+
+                      <Collapse.Panel
+                        header="Print status with different color"
+                        key="printResponseStatus"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('printResponseStatus')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('printResponseStatus')}</pre>
+                      </Collapse.Panel>
+
+                      <Collapse.Panel
+                        header="Print response headers with list"
+                        key="printAllResponseHeaders"
+                        extra={
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              insertSnippet('printAllResponseHeaders')
+                            }}
+                          />
+                        }
+                      >
+                        <pre style={preStyle}>{getSnippet('printAllResponseHeaders')}</pre>
+                      </Collapse.Panel>
+                    </Collapse>
                   </div>
                 </Flex>
               )
