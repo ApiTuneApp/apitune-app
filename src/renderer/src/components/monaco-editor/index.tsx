@@ -54,67 +54,69 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
         triggerCharacters: ['.'],
         provideCompletionItems: (model, position) => {
           const linePrefix = model.getLineContent(position.lineNumber).substring(0, position.column)
+          const wordUntilPosition = model.getWordUntilPosition(position)
+          const word = wordUntilPosition.word
 
           // Handle request.* completions
           if (linePrefix.endsWith('request.')) {
             return {
               suggestions: [
                 {
-                  label: 'request.protocol',
+                  label: 'protocol',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'protocol',
                   documentation: 'Request protocol (e.g., "http" or "https")'
                 },
                 {
-                  label: 'request.url',
+                  label: 'url',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'url',
                   documentation: 'Full request URL'
                 },
                 {
-                  label: 'request.host',
+                  label: 'host',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'host',
                   documentation: 'Request host'
                 },
                 {
-                  label: 'request.method',
+                  label: 'method',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'method',
                   documentation: 'HTTP method (e.g., "GET", "POST")'
                 },
                 {
-                  label: 'request.ip',
+                  label: 'ip',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'ip',
                   documentation: 'Client IP address'
                 },
                 {
-                  label: 'request.clientPort',
+                  label: 'clientPort',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'clientPort',
                   documentation: 'Client port number'
                 },
                 {
-                  label: 'request.headers',
+                  label: 'headers',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'headers',
                   documentation: 'Request headers object'
                 },
                 {
-                  label: 'request.startTime',
+                  label: 'startTime',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'startTime',
                   documentation: 'Request start timestamp'
                 },
                 {
-                  label: 'request.requestBodyLength',
+                  label: 'requestBodyLength',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'requestBodyLength',
                   documentation: 'Length of request body in bytes'
                 },
                 {
-                  label: 'request.requestBody',
+                  label: 'requestBody',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'requestBody',
                   documentation: 'Request body content'
@@ -128,55 +130,55 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
             return {
               suggestions: [
                 {
-                  label: 'response.status',
+                  label: 'status',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'status',
                   documentation: 'HTTP status code'
                 },
                 {
-                  label: 'response.message',
+                  label: 'message',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'message',
                   documentation: 'Response status message'
                 },
                 {
-                  label: 'response.headers',
+                  label: 'headers',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'headers',
                   documentation: 'Response headers object'
                 },
                 {
-                  label: 'response.remoteIp',
+                  label: 'remoteIp',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'remoteIp',
                   documentation: 'Remote server IP'
                 },
                 {
-                  label: 'response.remotePort',
+                  label: 'remotePort',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'remotePort',
                   documentation: 'Remote server port'
                 },
                 {
-                  label: 'response.responseType',
+                  label: 'responseType',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'responseType',
                   documentation: 'Response content type'
                 },
                 {
-                  label: 'response.finishTime',
+                  label: 'finishTime',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'finishTime',
                   documentation: 'Response finish timestamp'
                 },
                 {
-                  label: 'response.responseBodyLength',
+                  label: 'responseBodyLength',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'responseBodyLength',
                   documentation: 'Length of response body in bytes'
                 },
                 {
-                  label: 'response.responseBody',
+                  label: 'responseBody',
                   kind: monacoInstance.languages.CompletionItemKind.Property,
                   insertText: 'responseBody',
                   documentation: 'Response body content'
@@ -190,7 +192,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
             return {
               suggestions: [
                 {
-                  label: 'at.test',
+                  label: 'test',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: "test('${1:title}', function() {\n\t${2}\n})",
                   insertTextRules:
@@ -198,7 +200,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Add a test case with title and test function'
                 },
                 {
-                  label: 'at.print',
+                  label: 'print',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'print(${1:message})',
                   insertTextRules:
@@ -206,7 +208,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print a message'
                 },
                 {
-                  label: 'at.print.log',
+                  label: 'log',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'log(${1:message})',
                   insertTextRules:
@@ -214,7 +216,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print a log message'
                 },
                 {
-                  label: 'at.print.info',
+                  label: 'info',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'info(${1:message})',
                   insertTextRules:
@@ -222,7 +224,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print an info message'
                 },
                 {
-                  label: 'at.print.error',
+                  label: 'error',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'error(${1:message})',
                   insertTextRules:
@@ -230,7 +232,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print an error message'
                 },
                 {
-                  label: 'at.print.debug',
+                  label: 'debug',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'debug(${1:message})',
                   insertTextRules:
@@ -238,7 +240,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print a debug message'
                 },
                 {
-                  label: 'at.print.warn',
+                  label: 'warn',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'warn(${1:message})',
                   insertTextRules:
@@ -246,7 +248,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print a warning message'
                 },
                 {
-                  label: 'at.print.list',
+                  label: 'list',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'list(${1:array})',
                   insertTextRules:
@@ -262,7 +264,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
             return {
               suggestions: [
                 {
-                  label: 'at.print.log',
+                  label: 'log',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'log(${1:message})',
                   insertTextRules:
@@ -270,7 +272,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print a log message'
                 },
                 {
-                  label: 'at.print.info',
+                  label: 'info',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'info(${1:message})',
                   insertTextRules:
@@ -278,7 +280,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print an info message'
                 },
                 {
-                  label: 'at.print.error',
+                  label: 'error',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'error(${1:message})',
                   insertTextRules:
@@ -286,7 +288,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print an error message'
                 },
                 {
-                  label: 'at.print.debug',
+                  label: 'debug',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'debug(${1:message})',
                   insertTextRules:
@@ -294,7 +296,7 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
                   documentation: 'Print a debug message'
                 },
                 {
-                  label: 'at.print.warn',
+                  label: 'warn',
                   kind: monacoInstance.languages.CompletionItemKind.Function,
                   insertText: 'warn(${1:message})',
                   insertTextRules:
@@ -306,34 +308,42 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
           }
 
           // Default completions (no dot)
-          return {
-            suggestions: [
-              {
-                label: 'at',
-                kind: monacoInstance.languages.CompletionItemKind.Variable,
-                insertText: 'at',
-                documentation: 'APITune test utilities'
-              },
-              {
-                label: 'request',
-                kind: monacoInstance.languages.CompletionItemKind.Variable,
-                insertText: 'request',
-                documentation: 'Request object containing HTTP request details'
-              },
-              {
-                label: 'response',
-                kind: monacoInstance.languages.CompletionItemKind.Variable,
-                insertText: 'response',
-                documentation: 'Response object containing HTTP response details'
-              },
-              {
-                label: 'expect',
-                kind: monacoInstance.languages.CompletionItemKind.Function,
-                insertText: 'expect',
-                documentation: 'Chai expect assertion function'
-              }
-            ]
+          if (
+            !word ||
+            (word !== 'request' && word !== 'response' && word !== 'at' && word !== 'expect')
+          ) {
+            return {
+              suggestions: [
+                {
+                  label: 'at',
+                  kind: monacoInstance.languages.CompletionItemKind.Variable,
+                  insertText: 'at',
+                  documentation: 'APITune test utilities'
+                },
+                {
+                  label: 'request',
+                  kind: monacoInstance.languages.CompletionItemKind.Variable,
+                  insertText: 'request',
+                  documentation: 'Request object containing HTTP request details'
+                },
+                {
+                  label: 'response',
+                  kind: monacoInstance.languages.CompletionItemKind.Variable,
+                  insertText: 'response',
+                  documentation: 'Response object containing HTTP response details'
+                },
+                {
+                  label: 'expect',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'expect',
+                  documentation: 'Chai expect assertion function'
+                }
+              ]
+            }
           }
+
+          // If we're typing one of the known words, don't show any suggestions
+          return { suggestions: [] }
         }
       })
     }
