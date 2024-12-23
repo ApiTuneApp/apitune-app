@@ -46,8 +46,297 @@ export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
   const editorTheme = useSettingStore((state) => state.appTheme) === 'dark' ? 'vs-dark' : 'light'
   const editorRef = useRef(null)
 
-  function handleEditorDidMount(editor, monaco) {
+  function handleEditorDidMount(editor, monacoInstance) {
     editorRef.current = editor
+
+    if (props.defaultLanguage === 'javascript') {
+      monacoInstance.languages.registerCompletionItemProvider('javascript', {
+        triggerCharacters: ['.'],
+        provideCompletionItems: (model, position) => {
+          const linePrefix = model.getLineContent(position.lineNumber).substring(0, position.column)
+
+          // Handle request.* completions
+          if (linePrefix.endsWith('request.')) {
+            return {
+              suggestions: [
+                {
+                  label: 'request.protocol',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'protocol',
+                  documentation: 'Request protocol (e.g., "http" or "https")'
+                },
+                {
+                  label: 'request.url',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'url',
+                  documentation: 'Full request URL'
+                },
+                {
+                  label: 'request.host',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'host',
+                  documentation: 'Request host'
+                },
+                {
+                  label: 'request.method',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'method',
+                  documentation: 'HTTP method (e.g., "GET", "POST")'
+                },
+                {
+                  label: 'request.ip',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'ip',
+                  documentation: 'Client IP address'
+                },
+                {
+                  label: 'request.clientPort',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'clientPort',
+                  documentation: 'Client port number'
+                },
+                {
+                  label: 'request.headers',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'headers',
+                  documentation: 'Request headers object'
+                },
+                {
+                  label: 'request.startTime',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'startTime',
+                  documentation: 'Request start timestamp'
+                },
+                {
+                  label: 'request.requestBodyLength',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'requestBodyLength',
+                  documentation: 'Length of request body in bytes'
+                },
+                {
+                  label: 'request.requestBody',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'requestBody',
+                  documentation: 'Request body content'
+                }
+              ]
+            }
+          }
+
+          // Handle response.* completions
+          if (linePrefix.endsWith('response.')) {
+            return {
+              suggestions: [
+                {
+                  label: 'response.status',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'status',
+                  documentation: 'HTTP status code'
+                },
+                {
+                  label: 'response.message',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'message',
+                  documentation: 'Response status message'
+                },
+                {
+                  label: 'response.headers',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'headers',
+                  documentation: 'Response headers object'
+                },
+                {
+                  label: 'response.remoteIp',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'remoteIp',
+                  documentation: 'Remote server IP'
+                },
+                {
+                  label: 'response.remotePort',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'remotePort',
+                  documentation: 'Remote server port'
+                },
+                {
+                  label: 'response.responseType',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'responseType',
+                  documentation: 'Response content type'
+                },
+                {
+                  label: 'response.finishTime',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'finishTime',
+                  documentation: 'Response finish timestamp'
+                },
+                {
+                  label: 'response.responseBodyLength',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'responseBodyLength',
+                  documentation: 'Length of response body in bytes'
+                },
+                {
+                  label: 'response.responseBody',
+                  kind: monacoInstance.languages.CompletionItemKind.Property,
+                  insertText: 'responseBody',
+                  documentation: 'Response body content'
+                }
+              ]
+            }
+          }
+
+          // Handle at.* completions
+          if (linePrefix.endsWith('at.')) {
+            return {
+              suggestions: [
+                {
+                  label: 'at.test',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: "test('${1:title}', function() {\n\t${2}\n})",
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Add a test case with title and test function'
+                },
+                {
+                  label: 'at.print',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'print(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print a message'
+                },
+                {
+                  label: 'at.print.log',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'log(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print a log message'
+                },
+                {
+                  label: 'at.print.info',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'info(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print an info message'
+                },
+                {
+                  label: 'at.print.error',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'error(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print an error message'
+                },
+                {
+                  label: 'at.print.debug',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'debug(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print a debug message'
+                },
+                {
+                  label: 'at.print.warn',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'warn(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print a warning message'
+                },
+                {
+                  label: 'at.print.list',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'list(${1:array})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print an array of messages with types'
+                }
+              ]
+            }
+          }
+
+          // Handle at.print.* completions
+          if (linePrefix.endsWith('at.print.')) {
+            return {
+              suggestions: [
+                {
+                  label: 'at.print.log',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'log(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print a log message'
+                },
+                {
+                  label: 'at.print.info',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'info(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print an info message'
+                },
+                {
+                  label: 'at.print.error',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'error(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print an error message'
+                },
+                {
+                  label: 'at.print.debug',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'debug(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print a debug message'
+                },
+                {
+                  label: 'at.print.warn',
+                  kind: monacoInstance.languages.CompletionItemKind.Function,
+                  insertText: 'warn(${1:message})',
+                  insertTextRules:
+                    monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  documentation: 'Print a warning message'
+                }
+              ]
+            }
+          }
+
+          // Default completions (no dot)
+          return {
+            suggestions: [
+              {
+                label: 'at',
+                kind: monacoInstance.languages.CompletionItemKind.Variable,
+                insertText: 'at',
+                documentation: 'APITune test utilities'
+              },
+              {
+                label: 'request',
+                kind: monacoInstance.languages.CompletionItemKind.Variable,
+                insertText: 'request',
+                documentation: 'Request object containing HTTP request details'
+              },
+              {
+                label: 'response',
+                kind: monacoInstance.languages.CompletionItemKind.Variable,
+                insertText: 'response',
+                documentation: 'Response object containing HTTP response details'
+              },
+              {
+                label: 'expect',
+                kind: monacoInstance.languages.CompletionItemKind.Function,
+                insertText: 'expect',
+                documentation: 'Chai expect assertion function'
+              }
+            ]
+          }
+        }
+      })
+    }
   }
 
   const getFullscreenStyle = () => {
