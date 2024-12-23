@@ -2,7 +2,7 @@ import * as electronLog from 'electron-log/main'
 import { Context, Next } from 'koa'
 
 import { Log, PrintItem, RuleData, TestItem } from '../../../shared/contract'
-import { printLog } from '../../communicator'
+import { printLog, sendTestResult } from '../../communicator'
 import { LogTestResult, SubscriptionStorage } from '../../storage'
 import { getBase64 } from '../helper'
 
@@ -62,7 +62,7 @@ export default async function testScriptMiddleware(ctx: Context, next: Next) {
       worker.on('message', (data: TestItem | PrintItem) => {
         electronLog.info('[TestScript] Worker result:', data)
         if ((data as TestItem).tests) {
-          LogTestResult.updateTestResult(data.logId.toString(), data as TestItem)
+          sendTestResult(data as TestItem)
         } else {
           printLog(data as PrintItem)
         }

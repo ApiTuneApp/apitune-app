@@ -11,7 +11,7 @@ import {
   Tabs
 } from 'antd'
 import { useEffectOnActive } from 'keepalive-for-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import LogDetail from '@renderer/components/log-detail'
@@ -19,7 +19,7 @@ import TestResults from '@renderer/components/test-results'
 import { strings } from '@renderer/services/localization'
 import { useUserStore } from '@renderer/store/user'
 import { MAX_FREE_TESTS } from '@shared/constants'
-import { Log, TestItem } from '@shared/contract'
+import { Log, MainEvent, TestItem } from '@shared/contract'
 import { checkSubscriptionActive } from '@shared/utils'
 
 type TestResultItem = {
@@ -57,6 +57,27 @@ export default function TestScriptsPage() {
     []
   )
 
+  useEffect(() => {
+    window.api.onTestResult((testResult) => {
+      window.api.getProxyLogs().then((logs) => {
+        const log = logs.find((log) => log.id === Number(testResult.logId))
+        if (log) {
+          const testResultItem = {
+            testResult: testResult,
+            log: log
+          }
+          setTestResultList((prev) => [...prev, testResultItem])
+          if (!activeKey) {
+            setActiveKey(testResultItem.log.id.toString())
+          }
+        }
+      })
+    })
+    return () => {
+      window.api.clearupEvent(MainEvent.TestResult)
+    }
+  }, [])
+
   function getTestResultInfo(testResult: TestItem) {
     const allCaseCount = testResult.tests.reduce((acc, test) => acc + test.cases.length, 0)
     const failedCaseCount = testResult.tests.reduce((acc, test) => {
@@ -74,7 +95,9 @@ export default function TestScriptsPage() {
     const { all, failed, passed } = getTestResultInfo(item.testResult)
     return (
       <Space>
-        <span>LogId: {item.log.id}</span>
+        <span>
+          {strings.logId}: {item.log.id}
+        </span>
         <Divider type="vertical" style={{ borderColor: 'var(--color-text-2)' }} />
         <span>
           {strings.testAll}: {all}
@@ -166,15 +189,15 @@ export default function TestScriptsPage() {
             <Button type="primary" onClick={goCreateTest} style={{ marginRight: 10 }}>
               {strings.addRuleToCreateTest}
             </Button>
-            {/* <Popconfirm
-              title="Are you sure to clear all test result?"
-              description="Your will not be able to recover the result!"
+            <Popconfirm
+              title={strings.formatString(strings.deleteTitle, strings.testResults)}
+              description={strings.formatString(strings.deleteDesc, strings.testResults)}
               onConfirm={clearTestResult}
-              okText="Yes"
-              cancelText="No"
+              okText={strings.yes}
+              cancelText={strings.no}
             >
-              <Button danger>Clear all result</Button>
-            </Popconfirm> */}
+              <Button danger>{strings.clearLog}</Button>
+            </Popconfirm>
           </div>
           <Collapse
             items={items}

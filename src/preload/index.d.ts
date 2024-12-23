@@ -27,6 +27,8 @@ type onPrintLogCallback = (printItem: PrintItem) => void
 
 type onUpdateProgressCallback = (progress: number) => void
 
+type onTestResultCallback = (testResult: TestItem) => void
+
 declare global {
   interface Window {
     electron: ElectronAPI
@@ -34,6 +36,7 @@ declare global {
       onProxyLog: (callback: onProxyLogCallback) => void
       onAuthCode: (callback: onAuthCodeCallback) => void
       onOpenShare: (callback: onOpenShareCallback) => void
+      onTestResult: (callback: onTestResultCallback) => void
       onPrintLog: (callback: onPrintLogCallback) => void
       onUpdateProgress: (callback: onUpdateProgressCallback) => void
       getPrintLogs: () => Promise<PrintItem[]>

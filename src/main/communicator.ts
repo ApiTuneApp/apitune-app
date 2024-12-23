@@ -1,6 +1,6 @@
 import { BrowserWindow, WebContents } from 'electron'
-import { MemeoryLogStorage, PrintStorage } from './storage'
-import { ApiRules, Log, MainEvent, PrintItem, RenderEvent } from '../shared/contract'
+import { LogTestResult, MemeoryLogStorage, PrintStorage } from './storage'
+import { ApiRules, Log, MainEvent, PrintItem, RenderEvent, TestItem } from '../shared/contract'
 
 let webContents: WebContents
 
@@ -33,6 +33,12 @@ export function getApiRules(apiRules: ApiRules): void {
 export function getAuthCode(accessToken: string, refreshToken: string): void {
   if (!webContents) return
   webContents.send(MainEvent.GetAuthCode, accessToken, refreshToken)
+}
+
+export function sendTestResult(testResult: TestItem): void {
+  if (!webContents) return
+  webContents.send(MainEvent.TestResult, testResult)
+  LogTestResult.updateTestResult(testResult.logId.toString(), testResult)
 }
 
 export function printLog(printItem: PrintItem): void {

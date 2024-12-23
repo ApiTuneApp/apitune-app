@@ -34,6 +34,9 @@ const api = {
   onPrintLog: (callback): void => {
     ipcRenderer.on(MainEvent.PrintLog, (_, printItem) => callback(printItem))
   },
+  onTestResult: (callback): void => {
+    ipcRenderer.on(MainEvent.TestResult, (_, testResult) => callback(testResult))
+  },
   onUpdateProgress: (callback): void => {
     ipcRenderer.on(MainEvent.UpdateProgress, (_, progress) => callback(progress))
   },

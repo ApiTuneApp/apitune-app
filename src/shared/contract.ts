@@ -45,6 +45,7 @@ export enum MainEvent {
   RendererLog = 'rendererLog',
   ProxyLog = 'proxyLog',
   PrintLog = 'printLog',
+  TestResult = 'testResult',
   GetAuthCode = 'getAuthCode',
   OpenShare = 'openShare',
   UpdateProgress = 'updateProgress'

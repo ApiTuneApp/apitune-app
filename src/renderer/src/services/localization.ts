@@ -227,7 +227,8 @@ export const strings = new LocalizedStrings({
     exitFullscreen: 'Exit Fullscreen',
     fullscreen: 'Fullscreen',
     columns: 'Columns',
-    insertSnippet: 'Click to insert this snippet'
+    insertSnippet: 'Click to insert this snippet',
+    clearAllTestResults: 'Clear all test results'
   },
   zh: {
     close: '关闭',
@@ -270,7 +271,7 @@ export const strings = new LocalizedStrings({
     path: '路径',
     status: '状态',
     matchedRules: '匹配规则',
-    method: '方法',
+    method: '方���',
     cannotPreview: '无法预览此类型，您可以在响应body中查看结果',
     general: '概要',
     requestUrl: '请求 URL',
@@ -311,7 +312,7 @@ export const strings = new LocalizedStrings({
     groupEnabled: '分组是否启用',
     updatedOn: '更新时间',
     actions: '操作',
-    ruleName: '规则名',
+    ruleName: '规则���',
     description: '描述',
     ruleEnabled: '规则是否启用',
     myWorkspace: '我的工作区',
@@ -438,7 +439,7 @@ export const strings = new LocalizedStrings({
     subscriptionExpired: '您的订阅已过期。',
     renewSubscription: '续订',
     downloadingUpdate: '正在下载更新',
-    rewriteTips: '保持路径为��以保持相同的结构。示例：a.com/api/v1/users → b.com/api/v1/users',
+    rewriteTips: '保持路径为空以保持相同的结构。示例：a.com/api/v1/users → b.com/api/v1/users',
     autoHandleCORS: '自动处理跨域',
     autoHandleCORSHint: '自动处理跨域资源共享（CORS）请求',
     advancedConfig: '高级配置',
@@ -446,6 +447,7 @@ export const strings = new LocalizedStrings({
     exitFullscreen: '退出全屏',
     fullscreen: '全屏',
     columns: '自定义列',
-    insertSnippet: '点击插入此代码片段'
+    insertSnippet: '点击插入此代码片段',
+    clearAllTestResults: '清除所有测试结果'
   }
 })
