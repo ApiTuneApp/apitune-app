@@ -691,35 +691,39 @@ function RuleEditor({
                     <div style={{ fontWeight: 'bold', marginBottom: 8 }}>{strings.snippets}</div>
                     <Collapse size="small" bordered={false}>
                       <Collapse.Panel
-                        header="Request body"
+                        header="Request param is expected"
                         key="requestBody"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('requestBody')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('requestBody')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('requestBody')}</pre>
                       </Collapse.Panel>
                       <Collapse.Panel
-                        header="Request headers"
+                        header="Request headers is expected"
                         key="requestHeaders"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('requestHeaders')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('requestHeaders')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('responseStatus200')}</pre>
@@ -728,15 +732,17 @@ function RuleEditor({
                         header="Response status code is 200"
                         key="responseStatus200"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('responseStatus200')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('responseStatus200')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('responseStatus200')}</pre>
@@ -746,15 +752,17 @@ function RuleEditor({
                         header="Response includes expected headers"
                         key="expectedHeaders"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('expectedHeaders')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('expectedHeaders')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('expectedHeaders')}</pre>
@@ -764,15 +772,17 @@ function RuleEditor({
                         header="Should pass in async script"
                         key="asyncTest"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('asyncTest')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('asyncTest')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('asyncTest')}</pre>
@@ -782,15 +792,17 @@ function RuleEditor({
                         header="Print request body"
                         key="printRequestBody"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('printRequestBody')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('printRequestBody')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('printRequestBody')}</pre>
@@ -800,15 +812,17 @@ function RuleEditor({
                         header="Print status with different color"
                         key="printResponseStatus"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('printResponseStatus')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('printResponseStatus')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('printResponseStatus')}</pre>
@@ -818,15 +832,17 @@ function RuleEditor({
                         header="Print response headers with list"
                         key="printAllResponseHeaders"
                         extra={
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              insertSnippet('printAllResponseHeaders')
-                            }}
-                          />
+                          <Tooltip title={strings.insertSnippet}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                insertSnippet('printAllResponseHeaders')
+                              }}
+                            />
+                          </Tooltip>
                         }
                       >
                         <pre style={preStyle}>{getSnippet('printAllResponseHeaders')}</pre>

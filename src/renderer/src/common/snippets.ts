@@ -11,12 +11,12 @@ export type SnippetType =
 export function getSnippet(type: SnippetType) {
   switch (type) {
     case 'requestBody':
-      return `at.test('Request body', function() {
-  const body = JSON.parse(request.body)
-  expect(body.result).to.equal('success')
+      return `at.test('Request key1 is value1', function() {
+  const body = JSON.parse(request.requestBody)
+  expect(body.key1).to.equal('value1')
 })`
     case 'requestHeaders':
-      return `at.test('Request headers', function() {
+      return `at.test('Request headers is expected', function() {
   expect(request.headers).to.deep.equal({
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'Host': 'example.com'

@@ -226,7 +226,8 @@ export const strings = new LocalizedStrings({
     corsAdvancedConfig: 'CORS Advanced Configuration',
     exitFullscreen: 'Exit Fullscreen',
     fullscreen: 'Fullscreen',
-    columns: 'Columns'
+    columns: 'Columns',
+    insertSnippet: 'Click to insert this snippet'
   },
   zh: {
     close: '关闭',
@@ -313,7 +314,7 @@ export const strings = new LocalizedStrings({
     ruleName: '规则名',
     description: '描述',
     ruleEnabled: '规则是否启用',
-    myWorkspace: '我���工作区',
+    myWorkspace: '我的工作区',
     proxyServerListeningOn: '代理服务器监听地址',
     requestModify: '修改请求',
     responseModify: '修改响应',
@@ -437,13 +438,14 @@ export const strings = new LocalizedStrings({
     subscriptionExpired: '您的订阅已过期。',
     renewSubscription: '续订',
     downloadingUpdate: '正在下载更新',
-    rewriteTips: '保持路径为空以保持相同的结构。示例：a.com/api/v1/users → b.com/api/v1/users',
+    rewriteTips: '保持路径为��以保持相同的结构。示例：a.com/api/v1/users → b.com/api/v1/users',
     autoHandleCORS: '自动处理跨域',
     autoHandleCORSHint: '自动处理跨域资源共享（CORS）请求',
     advancedConfig: '高级配置',
     corsAdvancedConfig: 'CORS 高级配置',
     exitFullscreen: '退出全屏',
     fullscreen: '全屏',
-    columns: '自定义列'
+    columns: '自定义列',
+    insertSnippet: '点击插入此代码片段'
   }
 })
