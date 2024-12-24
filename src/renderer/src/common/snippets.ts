@@ -42,7 +42,7 @@ export function getSnippet(type: SnippetType) {
 })`
 
     case 'printRequestBody':
-      return `const body = JSON.parse(request.body)
+      return `const body = JSON.parse(request.requestBody)
 at.print(\`Request payload result: $\{body.result}\`)`
     case 'printResponseStatus':
       return `at.print.debug('100')
