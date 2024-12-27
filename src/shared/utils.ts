@@ -101,7 +101,7 @@ export function wildcardToRegex(pattern: string): RegExp {
     '^' +
       pattern
         .replace(/\./g, '\\.') // Escape dots
-        .replace(/\*/g, '[^.]+') + // Convert * to regex pattern
+        .replace(/\*/g, '.*') + // Convert * to match any characters
       '$'
   )
 }

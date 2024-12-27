@@ -96,7 +96,9 @@ function RuleListPage(): JSX.Element {
       render: (text, record) => {
         return (
           <Space size="middle">
-            <Button icon={<ShareAltOutlined />} onClick={(e) => handleShare(record.id)}></Button>
+            <Tooltip title={strings.shareGroup} arrow>
+              <Button icon={<ShareAltOutlined />} onClick={(e) => handleShare(record.id)}></Button>
+            </Tooltip>
             <Button onClick={(e) => handleGroupRename(record.id)}>{strings.rename}</Button>
             <Button danger onClick={(e) => handleDelConfirmOpen(record.id)}>
               {strings.delete}
@@ -129,7 +131,7 @@ function RuleListPage(): JSX.Element {
         const ruleGroup = findParentGroup(apiRules, rule.id)
         if (ruleGroup && !ruleGroup.enable) {
           return (
-            <Tooltip title="The rule group is disabled. Please enable it first." arrow>
+            <Tooltip title={strings.disableTooltip} arrow>
               <Switch checked={enable} size="small" disabled />
             </Tooltip>
           )
@@ -157,11 +159,13 @@ function RuleListPage(): JSX.Element {
       render: (text, record) => {
         return (
           <Space size="middle">
-            <Button
-              type="text"
-              icon={<ShareAltOutlined />}
-              onClick={(e) => handleShare(record.id)}
-            ></Button>
+            <Tooltip title={strings.shareRule} arrow>
+              <Button
+                type="text"
+                icon={<ShareAltOutlined />}
+                onClick={(e) => handleShare(record.id)}
+              ></Button>
+            </Tooltip>
             <Button type="text" danger onClick={(e) => handleDelConfirmOpen(record.id)}>
               {strings.delete}
             </Button>
