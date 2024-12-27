@@ -46,9 +46,7 @@ function Header(): JSX.Element {
     }
     const userRules = await dbService.getUserRules()
     const userRuleUpdatedAt = new Date(userRules.updated_at as string)
-    const localDataUpdatedAt = localData.syncInfo?.syncDate
-      ? new Date(localData.syncInfo.syncDate as string)
-      : new Date(0) // Fallback to epoch if invalid
+    const localDataUpdatedAt = localData.updatedAt ? new Date(localData.updatedAt) : new Date(0) // Fallback to epoch if invalid
     if (userRuleUpdatedAt.getTime() >= localDataUpdatedAt.getTime()) {
       // if the local rule is older, we do sync immediately
       _syncServerRules()
