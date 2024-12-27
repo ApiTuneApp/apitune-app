@@ -1,9 +1,6 @@
-# apitune-app
+# ApiTune
 
-Effortlessly mock, hijack, and test API tool
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+ApiTune is an advanced HTTP proxy and debugging toolkit that enables real-time inspection and manipulation of HTTP/HTTPS traffic between client applications and servers. It provides comprehensive API testing and debugging capabilities through an intuitive interface.
 
 ## Project Setup
 
@@ -11,6 +8,12 @@ Effortlessly mock, hijack, and test API tool
 
 ```bash
 $ pnpm install
+```
+
+### Clone the env file
+
+```bash
+$ cp .env.example .env
 ```
 
 ### Development
