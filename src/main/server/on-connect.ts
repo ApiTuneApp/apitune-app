@@ -22,14 +22,14 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
   })
   log.info('[OnConnect] Url', req.url)
 
-  // connect 返回接受代理握手
+  // connect returns to accept the proxy handshake
   socket.write('HTTP/1.1 200 Connection Established\r\n')
   socket.write('Connection: Keep-Alive\r\n')
   socket.write(`Proxy-agent: ${config.name}\r\n`)
   socket.write('\r\n')
 
-  // head 可能为空
-  // 需要从 head 中得到是否是 https 请求
+  // head maybe empty
+  // need to get whether it is a https request from head
   if (!head || head.length === 0) {
     head = await new Promise((resolve) => {
       socket.once('data', resolve)
@@ -53,17 +53,17 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
     host: host,
     url: `https://${host}:${port}`,
 
-    // 连接信息
+    // connection information
     clientIp: socket.remoteAddress,
     clientPort: socket.remotePort,
 
-    // 请求头
+    // request headers
     requestHeaders: req.headers,
 
-    // 时间信息
+    // time information
     startTime: startTime,
 
-    // 状态
+    // status
     status: 200,
     message: 'Connection Established'
   } as any
@@ -85,12 +85,12 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
   } else {
     const headerStr = head.toString()
     if (headerStr.includes('websocket')) {
-      // 代理 websocket，然后会触发 upgrade
+      // proxy websocket, then trigger upgrade
       tcpOption = {
         port: config.port
       }
     } else {
-      // 对于其他 connect 请求，采取透明代理
+      // for other connect requests, use transparent proxy
       log.info('[OnConnect] Pass tunnel', {
         url,
         headerStr
@@ -108,7 +108,7 @@ export async function onConnect(req: IncomingMessage, socket: Socket, head: Buff
       }
     },
     onEnd: () => {
-      // 连接结束时完成日志
+      // complete log when connection ends
       tunnelLog.finishTime = Date.now()
       tunnelLog.requestBodyLength = requestSize
       tunnelLog.responseBodyLength = responseSize

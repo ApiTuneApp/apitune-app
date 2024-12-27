@@ -331,19 +331,19 @@ function streamDelay(old: Stream, to: number) {
 }
 
 /**
- * 所有修改body的操作 都需要先调用本方法，做了以下事情：
- * 1. 删除 content-length
- * 2. 为 responseBody 解压缩
+ * All operations that modify the body need to call this method first, which does the following:
+ * 1. Delete content-length
+ * 2. Decompress responseBody
  *
  * @param ctx
  */
 function beforeModifyResBody(ctx: IAppContext) {
-  // 1. 修改结果体会导致长度变化
-  // 2. 且不方便计算最终长度，所以简单使用chunked输出
-  // nodejs http.Server 如果没有设置 content-length 就会按chunked输出
+  // 1. Modifying the response body will cause the length to change
+  // 2. It is not convenient to calculate the final length, so simply use chunked output
+  // nodejs http.Server will output by chunked if content-length is not set
   delete ctx.state.responseHeaders['content-length']
-  // 解压
-  // 修改内容之前需要先解开压缩
+  // Decompress
+  // Need to decompress before modifying the content
   const contentEncoding = ctx.state.responseHeaders['content-encoding']
   if (contentEncoding) {
     delete ctx.state.responseHeaders['content-encoding']
@@ -352,7 +352,7 @@ function beforeModifyResBody(ctx: IAppContext) {
     } else if (contentEncoding === 'br') {
       ctx.state.responseBody = ctx.state.responseBody.pipe(createBrotliDecompress())
     } else {
-      // 在请求时已经限制了只能用 gzip 和 br, 遇到其他错误算法, 无法解压，也就不能修改内部
+      // The request has already limited to gzip and br, if other compression algorithms are encountered, they cannot be decompressed, so the internal content cannot be modified
       log.error('[BeforeModifyResBody] Content-encoding not support', contentEncoding)
     }
   }
