@@ -34,6 +34,7 @@ interface LogDetailProps {
   log: Log
   height?: number
   hideTestResult?: boolean
+  hideRuleEditActions?: boolean
 }
 interface LogObjBlockProps {
   data: Record<string, string>
@@ -181,7 +182,12 @@ function previewComponent(log: Log, height: number | undefined) {
   return <h4>{strings.cannotPreview}</h4>
 }
 
-function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element {
+function LogDetail({
+  log,
+  height,
+  hideTestResult,
+  hideRuleEditActions
+}: LogDetailProps): JSX.Element {
   const requestParams = getRequestParams(log)
   const appTheme = useSettingStore((state) => state.appTheme)
   const { notification } = App.useApp()
@@ -560,7 +566,7 @@ function LogDetail({ log, height, hideTestResult }: LogDetailProps): JSX.Element
                     {strings.cancel}
                   </Button>
                 </Space>
-              ) : (
+              ) : hideRuleEditActions ? null : (
                 <Space style={{ marginRight: 30 }}>
                   {log.matchedRules.length > 0 && (
                     <div style={{ marginRight: 10 }}>

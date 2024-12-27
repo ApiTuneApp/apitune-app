@@ -66,7 +66,7 @@ function SettingsPage(): JSX.Element {
     return isPro()
   }, [subscription])
 
-  const corsConfigDefaultValue = `// For more config, please check: https://www.npmjs.com/package/@koa/cors
+  const corsConfigDefaultValue = `// For more config, please check: https://apitune.io/docs/guide/settings.html#auto-handle-cors
 
 options = {
     origin: '*',
@@ -245,11 +245,11 @@ options = {
   }
 
   const openHttpsDecryptDocs = () => {
-    window.api.openExternal('https://apitune/docs/guide/https-decrypt.html')
+    window.api.openExternal('https://apitune.io/docs/guide/settings.html#https-inspection')
   }
 
   const openCorsDocs = () => {
-    window.api.openExternal('https://apitune/docs/guide/cors.html')
+    window.api.openExternal('https://apitune.io/docs/guide/settings.html#cors-management')
   }
 
   const handleCORSChange = (checked: boolean) => {

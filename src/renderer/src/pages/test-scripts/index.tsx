@@ -129,7 +129,7 @@ export default function TestScriptsPage() {
           {
             key: 'log',
             label: strings.reqDetails,
-            children: <LogDetail log={item.log} hideTestResult={true} />
+            children: <LogDetail log={item.log} hideTestResult={true} hideRuleEditActions={true} />
           }
         ]}
       />
