@@ -148,27 +148,35 @@ function previewComponent(log: Log, height: number | undefined) {
   if (isImg(type)) {
     return <img src={log.url} alt={strings.preview} />
   }
-  if (log.responseBodyInfo?.isJson) {
-    return (
-      // <ReactJson
-      //   src={log.responseBodyInfo?.data}
-      //   theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
-      //   displayDataTypes={false}
-      //   displayObjectSize={false}
-      //   name={false}
-      // />
-      <MonacoEditor
-        defaultLanguage="json"
-        value={log.responseBodyInfo?.bodyText}
-        showFullscreenButton
-        fullscreenTargetSelector=".page-network"
-        height={height || 400}
-      />
-    )
-  }
+  // if (log.responseBodyInfo?.isJson) {
+  //   return (
+  //     // <ReactJson
+  //     //   src={log.responseBodyInfo?.data}
+  //     //   theme={appTheme === 'dark' ? 'bright' : 'bright:inverted'}
+  //     //   displayDataTypes={false}
+  //     //   displayObjectSize={false}
+  //     //   name={false}
+  //     // />
+  //     <MonacoEditor
+  //       defaultLanguage="json"
+  //       value={log.responseBodyInfo?.bodyText}
+  //       showFullscreenButton
+  //       fullscreenTargetSelector=".page-network"
+  //       height={height || 400}
+  //     />
+  //   )
+  // }
   const codeInfo = getCodeInfo(type)
   if (codeInfo.isCode) {
-    return <MonacoEditor defaultLanguage={codeInfo.language} height={height || 400} value={data} />
+    return (
+      <MonacoEditor
+        showFullscreenButton
+        defaultLanguage={codeInfo.language}
+        height={height || 400}
+        value={data}
+        autoFormat
+      />
+    )
   }
   return <h4>{strings.cannotPreview}</h4>
 }

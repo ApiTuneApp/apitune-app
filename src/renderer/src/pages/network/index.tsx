@@ -380,31 +380,37 @@ function NetworkPage(): JSX.Element {
         return logs
       case 'fetch':
         return logs.filter((log) => {
+          if (!log.responseHeaders) return false
           const resType = log.responseHeaders['content-type']
           return resType && (resType.includes('json') || resType.includes('text'))
         })
       case 'doc':
         return logs.filter((log) => {
+          if (!log.responseHeaders) return false
           const resType = log.responseHeaders['content-type']
           return resType && resType.includes('html')
         })
       case 'css':
         return logs.filter((log) => {
+          if (!log.responseHeaders) return false
           const resType = log.responseHeaders['content-type']
           return resType && resType.includes('css')
         })
       case 'js':
         return logs.filter((log) => {
+          if (!log.responseHeaders) return false
           const resType = log.responseHeaders['content-type']
           return resType && resType.includes('javascript')
         })
       case 'font':
         return logs.filter((log) => {
+          if (!log.responseHeaders) return false
           const resType = log.responseHeaders['content-type']
           return resType && resType.includes('font')
         })
       case 'img':
         return logs.filter((log) => {
+          if (!log.responseHeaders) return false
           const resType = log.responseHeaders['content-type']
           return resType && resType.includes('image')
         })

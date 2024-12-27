@@ -5,7 +5,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { FullscreenOutlined } from '@ant-design/icons'
 import Editor, { EditorProps, loader } from '@monaco-editor/react'
@@ -39,12 +39,25 @@ type MonacoEditorProps = {
   height: number | string
   showFullscreenButton?: boolean
   fullscreenTargetSelector?: string
+  autoFormat?: boolean
 }
 
 export default function MonacoEditor(props: MonacoEditorProps & EditorProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const editorTheme = useSettingStore((state) => state.appTheme) === 'dark' ? 'vs-dark' : 'light'
-  const editorRef = useRef(null)
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
+
+  useEffect(() => {
+    if (props.autoFormat) {
+      try {
+        setTimeout(() => {
+          editorRef?.current?.getAction('editor.action.formatDocument')?.run()
+        }, 0)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }, [props.autoFormat, props.value])
 
   function handleEditorDidMount(editor, monacoInstance) {
     editorRef.current = editor
