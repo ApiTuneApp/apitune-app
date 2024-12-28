@@ -5,7 +5,7 @@ import { autoUpdater, UpdateInfo } from 'electron-updater'
 import { nativeTheme } from 'electron/main'
 import fs from 'fs'
 import ip from 'ip'
-import { join } from 'path'
+import path, { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 // import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer'
 
@@ -56,6 +56,26 @@ autoUpdater.autoDownload = false
 
 let progressDialog: Electron.MessageBoxReturnValue | null = null
 let showProgress = true
+
+// 3. add URL handling function
+function handleUrl(url: string) {
+  if (!url.startsWith('apitune://')) return
+
+  const parsedUrl = new URL(url)
+  const host = parsedUrl.host
+  if (host === 'share') {
+    const shareId = parsedUrl.searchParams.get('id')
+    if (shareId) {
+      openShare(shareId)
+    }
+  } else if (host === 'login') {
+    const accessToken = parsedUrl.searchParams.get('access_token')
+    const refreshToken = parsedUrl.searchParams.get('refresh_token')
+    if (accessToken && refreshToken) {
+      getAuthCode(accessToken, refreshToken)
+    }
+  }
+}
 
 autoUpdater.on('update-available', (releaseInfo: UpdateInfo) => {
   log.info('[AutoUpdater] update-available', releaseInfo)
@@ -127,6 +147,54 @@ initSettingData()
 // TODO: handle default port is in use
 initServer(DefaultSettingData.port)
 
+// 1. make sure the app is set as default protocol client
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('apitune', process.execPath, [path.resolve(process.argv[1])])
+  }
+} else {
+  app.setAsDefaultProtocolClient('apitune')
+}
+
+// 2. add second-instance event handler
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // when the second instance is running, the main instance will receive this event
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+
+    // handle protocol URL
+    const url = commandLine.pop()
+    if (url) {
+      handleUrl(url)
+    }
+
+    // focus main window
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+
+  // 4. handle URL when starting from command line
+  app.on('ready', () => {
+    // handle URL when starting from protocol on Windows
+    const args = process.argv
+    if (args.length > 1) {
+      handleUrl(args[args.length - 1])
+    }
+  })
+
+  // 5. keep the original open-url event handler (mainly for macOS)
+  app.on('open-url', (event, url) => {
+    event.preventDefault()
+    handleUrl(url)
+  })
+}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -163,8 +231,6 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
-
-app.setAsDefaultProtocolClient('apitune')
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
