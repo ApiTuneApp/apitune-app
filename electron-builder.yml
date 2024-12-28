@@ -55,7 +55,7 @@ npmRebuild: false
 publish:
   provider: github
   owner: ApiTuneApp
-  repo: apitune-desktop
+  repo: apitune-app
   private: true
   releaseType: release
 releaseInfo:
