@@ -5,7 +5,7 @@ import { autoUpdater, UpdateInfo } from 'electron-updater'
 import { nativeTheme } from 'electron/main'
 import fs from 'fs'
 import ip from 'ip'
-import { join } from 'path'
+import path, { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 // import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer'
 
@@ -56,6 +56,25 @@ autoUpdater.autoDownload = false
 
 let progressDialog: Electron.MessageBoxReturnValue | null = null
 let showProgress = true
+
+function handleUrl(url: string) {
+  if (!url.startsWith('apitune://')) return
+
+  const parsedUrl = new URL(url)
+  const host = parsedUrl.host
+  if (host === 'share') {
+    const shareId = parsedUrl.searchParams.get('id')
+    if (shareId) {
+      openShare(shareId)
+    }
+  } else if (host === 'login') {
+    const accessToken = parsedUrl.searchParams.get('access_token')
+    const refreshToken = parsedUrl.searchParams.get('refresh_token')
+    if (accessToken && refreshToken) {
+      getAuthCode(accessToken, refreshToken)
+    }
+  }
+}
 
 autoUpdater.on('update-available', (releaseInfo: UpdateInfo) => {
   log.info('[AutoUpdater] update-available', releaseInfo)
@@ -127,6 +146,56 @@ initSettingData()
 // TODO: handle default port is in use
 initServer(DefaultSettingData.port)
 
+// 1. 确保在 app ready 之前就设置协议
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('apitune', process.execPath, [path.resolve(process.argv[1])])
+  }
+} else {
+  app.setAsDefaultProtocolClient('apitune')
+}
+
+// 2. 添加 second-instance 事件处理
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // 当运行第二个实例时，主实例会接收到这个事件
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+
+    // 处理协议 URL
+    const url = commandLine.pop()
+    if (url) {
+      handleUrl(url)
+    }
+
+    // 聚焦主窗口
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+
+  // 3. 添加处理 URL 的函数
+
+  // 4. 处理命令行启动时的 URL
+  app.on('ready', () => {
+    // 处理 Windows 下通过协议启动时的参数
+    const args = process.argv
+    if (args.length > 1) {
+      handleUrl(args[args.length - 1])
+    }
+  })
+
+  // 5. 保留原有的 open-url 事件处理（主要用于 macOS）
+  app.on('open-url', (event, url) => {
+    event.preventDefault()
+    handleUrl(url)
+  })
+}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -163,8 +232,6 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
-
-app.setAsDefaultProtocolClient('apitune')
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
