@@ -1,4 +1,4 @@
 provider: github
 owner: ApiTuneApp
-repo: apitune-desktop
+repo: apitune-app
 updaterCacheDirName: apitune-app-updater

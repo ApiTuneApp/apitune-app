@@ -1,6 +1,6 @@
 import './rules-sidebar.less'
 
-import { App, Button, Dropdown, Flex, Switch, Tooltip, Tree } from 'antd'
+import { App, Button, Dropdown, Empty, Flex, Switch, Tooltip, Tree } from 'antd'
 import * as React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
@@ -371,6 +371,13 @@ function RulesSidebar(): JSX.Element {
         onSelect={handleTreeSelect}
         onExpand={onExpand}
       />
+      {apiRules.length === 0 && (
+        <Empty style={{ marginTop: 100 }}>
+          <Button type="primary" onClick={() => handleAddRule()}>
+            {strings.addRule}
+          </Button>
+        </Empty>
+      )}
     </div>
   )
 }
