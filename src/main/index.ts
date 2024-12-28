@@ -57,6 +57,7 @@ autoUpdater.autoDownload = false
 let progressDialog: Electron.MessageBoxReturnValue | null = null
 let showProgress = true
 
+// 3. add URL handling function
 function handleUrl(url: string) {
   if (!url.startsWith('apitune://')) return
 
@@ -146,7 +147,7 @@ initSettingData()
 // TODO: handle default port is in use
 initServer(DefaultSettingData.port)
 
-// 1. 确保在 app ready 之前就设置协议
+// 1. make sure the app is set as default protocol client
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
     app.setAsDefaultProtocolClient('apitune', process.execPath, [path.resolve(process.argv[1])])
@@ -155,41 +156,39 @@ if (process.defaultApp) {
   app.setAsDefaultProtocolClient('apitune')
 }
 
-// 2. 添加 second-instance 事件处理
+// 2. add second-instance event handler
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
   app.quit()
 } else {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
-    // 当运行第二个实例时，主实例会接收到这个事件
+    // when the second instance is running, the main instance will receive this event
     const mainWindow = BrowserWindow.getAllWindows()[0]
 
-    // 处理协议 URL
+    // handle protocol URL
     const url = commandLine.pop()
     if (url) {
       handleUrl(url)
     }
 
-    // 聚焦主窗口
+    // focus main window
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus()
     }
   })
 
-  // 3. 添加处理 URL 的函数
-
-  // 4. 处理命令行启动时的 URL
+  // 4. handle URL when starting from command line
   app.on('ready', () => {
-    // 处理 Windows 下通过协议启动时的参数
+    // handle URL when starting from protocol on Windows
     const args = process.argv
     if (args.length > 1) {
       handleUrl(args[args.length - 1])
     }
   })
 
-  // 5. 保留原有的 open-url 事件处理（主要用于 macOS）
+  // 5. keep the original open-url event handler (mainly for macOS)
   app.on('open-url', (event, url) => {
     event.preventDefault()
     handleUrl(url)
