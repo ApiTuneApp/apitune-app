@@ -1,10 +1,24 @@
 import './header.less'
 
-import { Avatar, Badge, Button, Dropdown, Popover, QRCode, Tooltip, Typography } from 'antd'
+import {
+  Avatar,
+  Badge,
+  Button,
+  Dropdown,
+  message,
+  Popover,
+  QRCode,
+  Tooltip,
+  Typography
+} from 'antd'
 import { useEffect, useState } from 'react'
 
-import { CheckCircleTwoTone, LoadingOutlined, QrcodeOutlined } from '@ant-design/icons'
-import { getAvatarUrl } from '@shared/utils'
+import {
+  CheckCircleTwoTone,
+  LoadingOutlined,
+  QrcodeOutlined,
+  SafetyCertificateTwoTone
+} from '@ant-design/icons'
 import * as authService from '@renderer/services/auth'
 import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
@@ -15,10 +29,12 @@ import {
   ApiRules,
   EventResultStatus,
   MainEvent,
+  RenderEvent,
   Subscription,
   SyncInfo,
   User
 } from '@shared/contract'
+import { getAvatarUrl } from '@shared/utils'
 
 const { Text } = Typography
 
@@ -28,11 +44,23 @@ function Header(): JSX.Element {
   const initApiRules = useRuleStore.getState().initApiRules
   const clearRedoUnDo = useRuleStore.getState().clearRedoUnDo
   const { user, setUser, setSubscription } = useUserStore.getState()
+  const [caTrust, setCaTrust] = useState(false)
 
   const port = useSettingStore((state) => state.port)
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [ip, setIp] = useState<string>('')
   const [syncingStatus, setSyncingStatus] = useState<boolean>(false)
+
+  useEffect(() => {
+    window.api.ca('status').then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        setCaTrust(res.data.isCertificateInstalled)
+      }
+    })
+    return () => {
+      window.api.clearupEvent(RenderEvent.CA)
+    }
+  }, [])
 
   // only run in the first time when the user sign in
   async function _initSyncRule(user: User) {
@@ -215,6 +243,18 @@ function Header(): JSX.Element {
     }
   ]
 
+  function trustCa() {
+    if (caTrust) {
+      return
+    }
+    window.api.ca('trust').then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        setCaTrust(true)
+        message.success('ApiTune CA Certificate trusted')
+      }
+    })
+  }
+
   return (
     <div className="app-header">
       <span style={{ display: 'none' }}>{apiRules.length}</span>
@@ -249,6 +289,15 @@ function Header(): JSX.Element {
         >
           <QrcodeOutlined style={{ marginLeft: 8, cursor: 'pointer', color: '#1677ff' }} />
         </Popover>
+        <Tooltip
+          title={caTrust ? strings.caInstalled : strings.caNotTrust + ', ' + strings.clickToTrust}
+        >
+          <SafetyCertificateTwoTone
+            twoToneColor={caTrust ? '#52c41a' : '#ff4d4f'}
+            style={{ marginLeft: 8, cursor: 'pointer' }}
+            onClick={() => trustCa()}
+          />
+        </Tooltip>
       </div>
       {!loggedIn ? (
         <Tooltip title={strings.signInTooltip} placement="bottom">
