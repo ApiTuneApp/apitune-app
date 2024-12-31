@@ -60,6 +60,25 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
     }
   }
 
+  const getBrowserName = (browserType: string) => {
+    switch (browserType.toLowerCase()) {
+      case 'chrome':
+        return 'Google Chrome'
+      case 'firefox':
+        return 'Mozilla Firefox'
+      case 'safari':
+        return 'Apple Safari'
+      case 'edge':
+        return 'Microsoft Edge'
+      case 'msedge':
+        return 'Microsoft Edge'
+      case 'brave':
+        return 'Brave'
+      default:
+        return browserType
+    }
+  }
+
   return (
     <Modal title={strings.launchBrowser} open={open} onCancel={onClose} footer={null} width={400}>
       <Space direction="vertical" style={{ width: '100%' }}>
@@ -68,12 +87,13 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
           {browsers.map((browser) => (
             <Button
               key={browser.path}
+              size="small"
               icon={getBrowserIcon(browser.type)}
               onClick={() => launchBrowser(browser)}
               loading={loading}
               className="browser-button"
             >
-              {browser.name}
+              {getBrowserName(browser.type)}
             </Button>
           ))}
         </div>
