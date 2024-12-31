@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Button, Space, Typography } from 'antd'
-import { ChromeOutlined, GlobalOutlined } from '@ant-design/icons'
-import { strings } from '@renderer/services/localization'
 import { Browser } from '@shared/contract'
+import { strings } from '@renderer/services/localization'
 import './browser-launcher.less'
+import chromeIcon from '@renderer/assets/browsers/chrome.svg'
+import firefoxIcon from '@renderer/assets/browsers/firefox.svg'
+import safariIcon from '@renderer/assets/browsers/safari.svg'
+import edgeIcon from '@renderer/assets/browsers/edge.svg'
+import braveIcon from '@renderer/assets/browsers/brave.svg'
+import defaultIcon from '@renderer/assets/browsers/default.svg'
 
 const { Text } = Typography
 
@@ -39,9 +44,19 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
   const getBrowserIcon = (browserType: string) => {
     switch (browserType.toLowerCase()) {
       case 'chrome':
-        return <ChromeOutlined />
+        return <img src={chromeIcon} alt="Chrome" className="browser-icon" />
+      case 'firefox':
+        return <img src={firefoxIcon} alt="Firefox" className="browser-icon" />
+      case 'safari':
+        return <img src={safariIcon} alt="Safari" className="browser-icon" />
+      case 'msedge':
+        return <img src={edgeIcon} alt="Edge" className="browser-icon" />
+      case 'edge':
+        return <img src={edgeIcon} alt="Edge" className="browser-icon" />
+      case 'brave':
+        return <img src={braveIcon} alt="Brave" className="browser-icon" />
       default:
-        return <GlobalOutlined />
+        return <img src={defaultIcon} alt="Browser" className="browser-icon" />
     }
   }
 

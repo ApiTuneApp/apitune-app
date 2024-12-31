@@ -459,7 +459,7 @@ api.example.com`}
           <Form.Item label={strings.language}>
             <Radio.Group onChange={handleLanguageChange} value={language}>
               <Radio value={'en'}>English</Radio>
-              <Radio value={'zh'}>文</Radio>
+              <Radio value={'zh'}>中文</Radio>
             </Radio.Group>
           </Form.Item>
 
