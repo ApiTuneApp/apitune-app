@@ -44,6 +44,7 @@ import {
   updateRuntimeRules,
   updateSettingData
 } from './storage'
+import { getAvailableBrowsers, startBrowser } from './browser-launcher'
 
 const APP_SITE_URL = import.meta.env.VITE_SITE_URL
 
@@ -1130,6 +1131,14 @@ app.whenReady().then(() => {
         })
       })
     })
+  })
+
+  ipcMain.handle(RenderEvent.GetAvailableBrowsers, async () => {
+    return getAvailableBrowsers()
+  })
+
+  ipcMain.handle(RenderEvent.LaunchBrowser, async (_, browserType: string) => {
+    return startBrowser(browserType, DefaultSettingData.port)
   })
 
   // const dataPath = Storage.getDataPath()

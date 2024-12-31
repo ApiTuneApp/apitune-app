@@ -15,7 +15,8 @@ import {
   SyncInfo,
   PrintItem,
   Subscription,
-  UpdateSettingsParams
+  UpdateSettingsParams,
+  Browser
 } from '../shared/contract'
 
 // Custom APIs for renderer
@@ -147,6 +148,12 @@ const api = {
   },
   updateSettings: (params: UpdateSettingsParams) => {
     return ipcRenderer.invoke(RenderEvent.UpdateSettings, params)
+  },
+  getAvailableBrowsers: (): Promise<Browser[]> => {
+    return ipcRenderer.invoke(RenderEvent.GetAvailableBrowsers)
+  },
+  launchBrowser: (browserType: string): Promise<void> => {
+    return ipcRenderer.invoke(RenderEvent.LaunchBrowser, browserType)
   }
 }
 
