@@ -1,3 +1,31 @@
+## v1.0.2 (2024-12-31)
+
+### 🎉 New Features
+
+* Add browser launcher for better user experience
+
+### 🐛 Bug Fixes
+
+* Fix chinese translation issue
+
+
+## v1.0.1 (2024-12-27)
+
+### 🎉 New Features
+
+* Added HTTPS decrypt domain management functionality
+* Added redo and undo support for better user experience
+* Added download progress notification
+
+### 🔨 Improvements
+
+* Updated dependencies for better performance and security
+* Enhanced UI components for better user interaction
+* Enhanced settings page with pricing information and localization support
+* Enhanced subscription validation and state management system
+* Improved server-side logging and monitoring
+* Improved HTTPS handling and server logging capabilities
+
 ## v0.0.19 (2024-12-12)
 
 ### 🎉 New Features
