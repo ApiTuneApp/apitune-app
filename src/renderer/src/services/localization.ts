@@ -230,7 +230,10 @@ export const strings = new LocalizedStrings({
     fullscreen: 'Fullscreen',
     columns: 'Columns',
     insertSnippet: 'Click to insert this snippet',
-    clearAllTestResults: 'Clear all test results'
+    clearAllTestResults: 'Clear all test results',
+    connectBrowser: 'Connect Browser',
+    launchBrowser: 'Launch Browser',
+    selectBrowserToLaunch: 'Select a browser to launch with proxy settings'
   },
   zh: {
     close: '关闭',
@@ -274,7 +277,7 @@ export const strings = new LocalizedStrings({
     path: '路径',
     status: '状态',
     matchedRules: '匹配规则',
-    method: '方���',
+    method: '方法',
     cannotPreview: '无法预览此类型，您可以在响应body中查看结果',
     general: '概要',
     requestUrl: '请求 URL',
@@ -315,7 +318,7 @@ export const strings = new LocalizedStrings({
     groupEnabled: '分组是否启用',
     updatedOn: '更新时间',
     actions: '操作',
-    ruleName: '规则���',
+    ruleName: '规则名称',
     description: '描述',
     ruleEnabled: '规则是否启用',
     myWorkspace: '我的工作区',
@@ -452,6 +455,9 @@ export const strings = new LocalizedStrings({
     fullscreen: '全屏',
     columns: '自定义列',
     insertSnippet: '点击插入此代码片段',
-    clearAllTestResults: '清除所有测试结果'
+    clearAllTestResults: '清除所有测试结果',
+    connectBrowser: '连接浏览器',
+    launchBrowser: '启动浏览器',
+    selectBrowserToLaunch: '选择一个浏览器以使用代理设置启动'
   }
 })

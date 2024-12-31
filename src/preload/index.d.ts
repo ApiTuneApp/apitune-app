@@ -14,7 +14,8 @@ import {
   PrintItem,
   SyncInfo,
   Subscription,
-  UpdateSettingsParams
+  UpdateSettingsParams,
+  Browser
 } from 'src/shared/contract'
 
 type onProxyLogCallback = (log: Log) => void
@@ -74,6 +75,8 @@ declare global {
       saveRules: (rules: ApiRules) => Promise<IpcResult>
       updateHttpsDecryptDomains: (domains: string[]) => Promise<IpcResult>
       updateSettings: (params: UpdateSettingsParams) => Promise<IpcResult>
+      getAvailableBrowsers: () => Promise<Browser[]>
+      launchBrowser: (browserType: string) => Promise<void>
     }
   }
 }

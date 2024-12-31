@@ -38,7 +38,9 @@ export enum RenderEvent {
   SetSubscription = 'setSubscription',
   SaveRules = 'saveRules',
   UpdateHttpsDecryptDomains = 'updateHttpsDecryptDomains',
-  UpdateSettings = 'updateSettings'
+  UpdateSettings = 'updateSettings',
+  GetAvailableBrowsers = 'get-available-browsers',
+  LaunchBrowser = 'launch-browser'
 }
 
 export enum MainEvent {
@@ -343,4 +345,10 @@ export interface UndoRedoPatch {
 export interface UpdateSettingsParams {
   autoHandleCORS?: boolean
   corsConfig?: string
+}
+
+export interface Browser {
+  name: string
+  type: string
+  path: string
 }

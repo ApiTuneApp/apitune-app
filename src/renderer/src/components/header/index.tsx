@@ -19,6 +19,7 @@ import {
   QrcodeOutlined,
   SafetyCertificateTwoTone
 } from '@ant-design/icons'
+import BrowserLauncher from '@renderer/components/browser-launcher'
 import * as authService from '@renderer/services/auth'
 import * as dbService from '@renderer/services/db'
 import { strings } from '@renderer/services/localization'
@@ -50,6 +51,7 @@ function Header(): JSX.Element {
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [ip, setIp] = useState<string>('')
   const [syncingStatus, setSyncingStatus] = useState<boolean>(false)
+  const [showBrowserLauncher, setShowBrowserLauncher] = useState(false)
 
   useEffect(() => {
     window.api.ca('status').then((res) => {
@@ -300,18 +302,29 @@ function Header(): JSX.Element {
         </Tooltip>
       </div>
       {!loggedIn ? (
-        <Tooltip title={strings.signInTooltip} placement="bottom">
-          <Button type="primary" onClick={handleSignIn}>
-            {strings.signIn}
+        <div className="header-right">
+          <Button onClick={() => setShowBrowserLauncher(true)} style={{ marginRight: 8 }}>
+            {strings.connectBrowser}
           </Button>
-        </Tooltip>
+          <Tooltip title={strings.signInTooltip} placement="bottom">
+            <Button type="primary" onClick={handleSignIn}>
+              {strings.signIn}
+            </Button>
+          </Tooltip>
+        </div>
       ) : (
-        <Dropdown menu={{ items: profileMenu }}>
-          <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }}>
-            {user.name?.[0]?.toUpperCase()}
-          </Avatar>
-        </Dropdown>
+        <div className="header-right">
+          <Button onClick={() => setShowBrowserLauncher(true)} style={{ marginRight: 8 }}>
+            {strings.connectBrowser}
+          </Button>
+          <Dropdown menu={{ items: profileMenu }}>
+            <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }}>
+              {user.name?.[0]?.toUpperCase()}
+            </Avatar>
+          </Dropdown>
+        </div>
       )}
+      <BrowserLauncher open={showBrowserLauncher} onClose={() => setShowBrowserLauncher(false)} />
     </div>
   )
 }
