@@ -24,7 +24,14 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
   useEffect(() => {
     if (open) {
       window.api.getAvailableBrowsers().then((browsers) => {
-        setBrowsers(browsers)
+        setBrowsers(
+          browsers.filter(
+            (browser, index, self) =>
+              // Filter out IE and remove duplicates based on name
+              browser.name.toLowerCase() !== 'ie' &&
+              index === self.findIndex((b) => b.name === browser.name)
+          )
+        )
       })
     }
   }, [open])

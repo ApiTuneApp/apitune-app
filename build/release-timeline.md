@@ -1,3 +1,13 @@
+## v1.0.3
+
+### 🎉 New Features
+
+* Support open log file
+
+### 🐛 Bug Fixes
+
+* Remove duplicate browsers and filter out IE from browser launcher
+
 ## v1.0.2 (2024-12-31)
 
 ### 🎉 New Features
