@@ -13,7 +13,8 @@ import {
   Tooltip,
   Typography,
   Switch,
-  Modal
+  Modal,
+  Divider
 } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
@@ -278,6 +279,10 @@ options = {
     })
   }
 
+  const openLogFile = () => {
+    window.api.openLogFile()
+  }
+
   return (
     <div className="app-page page-settings">
       <Typography.Title level={4} style={{ marginBottom: 20 }}>
@@ -463,7 +468,7 @@ api.example.com`}
             </Radio.Group>
           </Form.Item>
 
-          <Space direction="vertical">
+          <Space>
             <Button onClick={checkForUpdate} loading={checkingUpdate}>
               {strings.checkUpdate}
             </Button>
@@ -471,6 +476,7 @@ api.example.com`}
               {strings.curVersion} {packageJson.version}
             </Text>
           </Space>
+          <Button onClick={openLogFile}>{strings.openLogFile}</Button>
         </Space>
       </Form>
     </div>

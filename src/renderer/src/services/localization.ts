@@ -233,7 +233,8 @@ export const strings = new LocalizedStrings({
     clearAllTestResults: 'Clear all test results',
     connectBrowser: 'Connect Browser',
     launchBrowser: 'Launch Browser',
-    selectBrowserToLaunch: 'Select a browser to launch with proxy settings'
+    selectBrowserToLaunch: 'Select a browser to launch with proxy settings',
+    openLogFile: 'Open Log File'
   },
   zh: {
     close: '关闭',
@@ -458,6 +459,7 @@ export const strings = new LocalizedStrings({
     clearAllTestResults: '清除所有测试结果',
     connectBrowser: '连接浏览器',
     launchBrowser: '启动浏览器',
-    selectBrowserToLaunch: '选择一个浏览器以使用代理设置启动'
+    selectBrowserToLaunch: '选择一个浏览器以使用代理设置启动',
+    openLogFile: '打开日志文件'
   }
 })

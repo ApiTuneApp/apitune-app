@@ -40,7 +40,8 @@ export enum RenderEvent {
   UpdateHttpsDecryptDomains = 'updateHttpsDecryptDomains',
   UpdateSettings = 'updateSettings',
   GetAvailableBrowsers = 'get-available-browsers',
-  LaunchBrowser = 'launch-browser'
+  LaunchBrowser = 'launch-browser',
+  OpenLogFile = 'open-log-file'
 }
 
 export enum MainEvent {

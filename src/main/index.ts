@@ -1141,6 +1141,24 @@ app.whenReady().then(() => {
     return startBrowser(browserType, DefaultSettingData.port)
   })
 
+  ipcMain.handle(RenderEvent.OpenLogFile, () => {
+    return new Promise((resolve) => {
+      try {
+        const logFile = log.transports.file.getFile()
+        shell.openPath(logFile.path)
+        resolve({
+          status: EventResultStatus.Success
+        })
+      } catch (error) {
+        log.error('[OpenLogFile] Failed to open log file:', error)
+        resolve({
+          status: EventResultStatus.Error,
+          error: 'Failed to open log file'
+        })
+      }
+    })
+  })
+
   // const dataPath = Storage.getDataPath()
   // log.debug('datapath =>> ', dataPath)
 

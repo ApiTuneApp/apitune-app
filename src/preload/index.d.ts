@@ -77,6 +77,7 @@ declare global {
       updateSettings: (params: UpdateSettingsParams) => Promise<IpcResult>
       getAvailableBrowsers: () => Promise<Browser[]>
       launchBrowser: (browserType: string) => Promise<void>
+      openLogFile: () => Promise<void>
     }
   }
 }

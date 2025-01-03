@@ -154,6 +154,9 @@ const api = {
   },
   launchBrowser: (browserType: string): Promise<void> => {
     return ipcRenderer.invoke(RenderEvent.LaunchBrowser, browserType)
+  },
+  openLogFile: (): Promise<void> => {
+    return ipcRenderer.invoke(RenderEvent.OpenLogFile)
   }
 }
 
