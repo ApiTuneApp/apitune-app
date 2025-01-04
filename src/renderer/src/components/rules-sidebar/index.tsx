@@ -31,6 +31,7 @@ import {
 } from '@shared/utils'
 
 import type { MenuProps, TreeDataNode, TreeProps } from 'antd'
+import { useSettingStore } from '@renderer/store/setting'
 type RuleTreeDataNode = TreeDataNode & {
   rule: RuleGroup | RuleData
 }
@@ -170,6 +171,9 @@ function RulesSidebar(): JSX.Element {
   const [editGroupId, setEditGroupId] = React.useState<string | null>(null)
   const ruleSidebarExpandedKeys = useUxStore((state) => state.ruleSidebarExpandedKeys)
   const setRuleSidebarExpandedKeys = useUxStore((state) => state.setRuleSidebarExpandedKeys)
+
+  // call useSettingStore to trigger rerender when localization is changed
+  const { language } = useSettingStore((state) => state)
 
   const isProUser = checkSubscriptionActive(subscription)
   const canUndo = undoRedoStack.undo.length > 0

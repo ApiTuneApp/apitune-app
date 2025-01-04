@@ -7,6 +7,8 @@
 ### 🐛 Bug Fixes
 
 * Remove duplicate browsers and filter out IE from browser launcher
+* Header styles fix
+
 
 ## v1.0.2 (2024-12-31)
 
