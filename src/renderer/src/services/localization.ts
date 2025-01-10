@@ -234,7 +234,13 @@ export const strings = new LocalizedStrings({
     connectBrowser: 'Connect Browser',
     launchBrowser: 'Launch Browser',
     selectBrowserToLaunch: 'Select a browser to launch with proxy settings',
-    openLogFile: 'Open Log File'
+    openLogFile: 'Open Log File',
+    connectProxy: 'Connect Proxy',
+    systemWideProxy: 'System-wide Proxy',
+    systemWideProxyHint: 'Enable proxy for all system traffic',
+    systemProxyEnabled: 'System proxy enabled',
+    systemProxyDisabled: 'System proxy disabled',
+    systemProxyError: 'Failed to update system proxy'
   },
   zh: {
     close: '关闭',
@@ -460,6 +466,12 @@ export const strings = new LocalizedStrings({
     connectBrowser: '连接浏览器',
     launchBrowser: '启动浏览器',
     selectBrowserToLaunch: '选择一个浏览器以使用代理设置启动',
-    openLogFile: '打开日志文件'
+    openLogFile: '打开日志文件',
+    connectProxy: '连接代理',
+    systemWideProxy: '系统代理',
+    systemWideProxyHint: '为所有系统流量启用代理',
+    systemProxyEnabled: '系统代理已启用',
+    systemProxyDisabled: '系统代理已禁用',
+    systemProxyError: '更新系统代理失败'
   }
 })

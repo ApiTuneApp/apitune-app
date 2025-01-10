@@ -41,7 +41,8 @@ export enum RenderEvent {
   UpdateSettings = 'updateSettings',
   GetAvailableBrowsers = 'get-available-browsers',
   LaunchBrowser = 'launch-browser',
-  OpenLogFile = 'open-log-file'
+  OpenLogFile = 'open-log-file',
+  UpdateSystemWideProxy = 'updateSystemWideProxy'
 }
 
 export enum MainEvent {
@@ -233,6 +234,7 @@ export interface SettingStorage {
   httpsDecryptDomains?: string[]
   autoHandleCORS: boolean
   corsConfig?: string
+  systemWideProxy?: boolean
 }
 
 export type ApiRuleItem = RuleGroup | RuleData
@@ -346,6 +348,7 @@ export interface UndoRedoPatch {
 export interface UpdateSettingsParams {
   autoHandleCORS?: boolean
   corsConfig?: string
+  systemWideProxy?: boolean
 }
 
 export interface Browser {

@@ -50,7 +50,8 @@ export let DefaultSettingData: SettingStorage = {
   theme: 'system',
   language: 'en',
   autoHandleCORS: false,
-  corsConfig: ''
+  corsConfig: '',
+  systemWideProxy: false
 }
 
 export function initSettingData() {

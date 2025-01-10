@@ -304,7 +304,7 @@ function Header(): JSX.Element {
       {!loggedIn ? (
         <div className="header-right">
           <Button onClick={() => setShowBrowserLauncher(true)} style={{ marginRight: 8 }}>
-            {strings.connectBrowser}
+            {strings.connectProxy}
           </Button>
           <Tooltip title={strings.signInTooltip} placement="bottom">
             <Button type="primary" onClick={handleSignIn}>
@@ -315,7 +315,7 @@ function Header(): JSX.Element {
       ) : (
         <div className="header-right">
           <Button onClick={() => setShowBrowserLauncher(true)} style={{ marginRight: 8 }}>
-            {strings.connectBrowser}
+            {strings.connectProxy}
           </Button>
           <Dropdown menu={{ items: profileMenu }}>
             <Avatar src={getAvatarUrl(user)} style={{ cursor: 'pointer' }}>
