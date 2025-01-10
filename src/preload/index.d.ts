@@ -78,6 +78,7 @@ declare global {
       getAvailableBrowsers: () => Promise<Browser[]>
       launchBrowser: (browserType: string) => Promise<void>
       openLogFile: () => Promise<void>
+      launchTerminal: () => Promise<void>
     }
   }
 }

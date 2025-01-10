@@ -240,7 +240,12 @@ export const strings = new LocalizedStrings({
     systemWideProxyHint: 'Enable proxy for all system traffic',
     systemProxyEnabled: 'System proxy enabled',
     systemProxyDisabled: 'System proxy disabled',
-    systemProxyError: 'Failed to update system proxy'
+    systemProxyError: 'Failed to update system proxy',
+    terminal: 'Terminal',
+    terminalProxyHint: 'Launch a new terminal with proxy environment variables set',
+    launchTerminal: 'Launch Terminal',
+    terminalLaunched: 'Terminal launched with proxy settings',
+    terminalLaunchError: 'Failed to launch terminal'
   },
   zh: {
     close: '关闭',
@@ -472,6 +477,11 @@ export const strings = new LocalizedStrings({
     systemWideProxyHint: '为所有系统流量启用代理',
     systemProxyEnabled: '系统代理已启用',
     systemProxyDisabled: '系统代理已禁用',
-    systemProxyError: '更新系统代理失败'
+    systemProxyError: '更新系统代理失败',
+    terminal: '终端',
+    terminalProxyHint: '启动一个带有代理环境变量的新终端',
+    launchTerminal: '启动终端',
+    terminalLaunched: '已启动带代理设置的终端',
+    terminalLaunchError: '启动终端失败'
   }
 })

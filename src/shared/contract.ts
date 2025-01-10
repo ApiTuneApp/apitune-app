@@ -42,7 +42,8 @@ export enum RenderEvent {
   GetAvailableBrowsers = 'get-available-browsers',
   LaunchBrowser = 'launch-browser',
   OpenLogFile = 'open-log-file',
-  UpdateSystemWideProxy = 'updateSystemWideProxy'
+  UpdateSystemWideProxy = 'updateSystemWideProxy',
+  LaunchTerminal = 'launch-terminal'
 }
 
 export enum MainEvent {

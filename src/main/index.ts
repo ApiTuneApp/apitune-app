@@ -44,7 +44,7 @@ import {
   updateRuntimeRules,
   updateSettingData
 } from './storage'
-import { getAvailableBrowsers, startBrowser } from './browser-launcher'
+import { getAvailableBrowsers, startBrowser, launchTerminal } from './browser-launcher'
 import { enableSystemProxy, disableSystemProxy, isSystemProxyEnabled } from './system-proxy'
 
 const APP_SITE_URL = import.meta.env.VITE_SITE_URL
@@ -1174,6 +1174,11 @@ app.whenReady().then(() => {
         })
       }
     })
+  })
+
+  // Register IPC handlers
+  ipcMain.handle(RenderEvent.LaunchTerminal, () => {
+    return launchTerminal(config.port)
   })
 
   // const dataPath = Storage.getDataPath()

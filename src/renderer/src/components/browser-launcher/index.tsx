@@ -9,7 +9,12 @@ import safariIcon from '@renderer/assets/browsers/safari.svg'
 import edgeIcon from '@renderer/assets/browsers/edge.svg'
 import braveIcon from '@renderer/assets/browsers/brave.svg'
 import defaultIcon from '@renderer/assets/browsers/default.svg'
-import { GlobalOutlined, SafetyCertificateOutlined, DesktopOutlined } from '@ant-design/icons'
+import {
+  GlobalOutlined,
+  SafetyCertificateOutlined,
+  DesktopOutlined,
+  CodeOutlined
+} from '@ant-design/icons'
 
 const { Text, Title } = Typography
 
@@ -78,6 +83,17 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
         message.error(res.error || strings.systemProxyError)
       }
     })
+  }
+
+  const launchTerminal = async () => {
+    try {
+      await window.api.launchTerminal()
+      message.success(strings.terminalLaunched)
+      onClose()
+    } catch (error) {
+      console.error('Failed to launch terminal:', error)
+      message.error(strings.terminalLaunchError)
+    }
   }
 
   const getBrowserIcon = (browserType: string) => {
@@ -162,6 +178,22 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
             checkedChildren={strings.enabled}
             unCheckedChildren={strings.disabled}
           />
+        </Space>
+      )
+    },
+    {
+      key: 'terminal',
+      label: (
+        <span>
+          <CodeOutlined /> {strings.terminal}
+        </span>
+      ),
+      children: (
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Text type="secondary">{strings.terminalProxyHint}</Text>
+          <Button type="primary" icon={<CodeOutlined />} onClick={launchTerminal}>
+            {strings.launchTerminal}
+          </Button>
         </Space>
       )
     }

@@ -157,6 +157,9 @@ const api = {
   },
   openLogFile: (): Promise<void> => {
     return ipcRenderer.invoke(RenderEvent.OpenLogFile)
+  },
+  launchTerminal: (): Promise<void> => {
+    return ipcRenderer.invoke(RenderEvent.LaunchTerminal)
   }
 }
 
