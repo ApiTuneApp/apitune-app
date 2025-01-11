@@ -23,12 +23,27 @@ export function enableSystemProxy(port: number = config.port): void {
         execSync(`networksetup -setwebproxy "Wi-Fi" 127.0.0.1 ${port}`)
         execSync(`networksetup -setsecurewebproxy "Wi-Fi" 127.0.0.1 ${port}`)
         break
-      case 'win32':
-        // Enable system proxy for Windows
-        execSync(
-          `netsh winhttp set proxy proxy-server="http=127.0.0.1:${port};https=127.0.0.1:${port}"`
-        )
+      case 'win32': {
+        try {
+          // Set WinINet proxy
+          execSync(
+            `reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyServer /t REG_SZ /d "127.0.0.1:${port}" /f`
+          )
+          execSync(
+            `reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f`
+          )
+          // Optional: Add IE refresh if needed
+          // await refreshIESettings()
+
+          // Keep WinHTTP proxy if needed
+          execSync(`netsh winhttp set proxy proxy-server="127.0.0.1:${port}" bypass-list="<local>"`)
+        } catch (err) {
+          throw new Error(
+            'Failed to set Windows proxy. Please ensure you have administrator privileges.'
+          )
+        }
         break
+      }
       case 'linux':
         // Enable system proxy for Linux (GNOME)
         execSync(`gsettings set org.gnome.system.proxy mode 'manual'`)
@@ -55,10 +70,19 @@ export function disableSystemProxy(): void {
         execSync('networksetup -setwebproxystate "Wi-Fi" off')
         execSync('networksetup -setsecurewebproxystate "Wi-Fi" off')
         break
-      case 'win32':
-        // Disable system proxy for Windows
-        execSync('netsh winhttp reset proxy')
+      case 'win32': {
+        try {
+          // Disable WinINet proxy
+          execSync(
+            `reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f`
+          )
+          // Reset WinHTTP proxy
+          execSync('netsh winhttp reset proxy')
+        } catch (err) {
+          throw new Error('Failed to disable Windows proxy. Please run as administrator.')
+        }
         break
+      }
       case 'linux':
         // Disable system proxy for Linux (GNOME)
         execSync('gsettings set org.gnome.system.proxy mode "none"')
