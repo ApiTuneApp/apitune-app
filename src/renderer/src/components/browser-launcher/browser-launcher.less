@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .browser-button {
@@ -11,10 +11,39 @@
   height: 40px;
   display: flex;
   align-items: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateX(4px);
+  }
 
   .browser-icon {
     width: 16px;
     height: 16px;
     margin-right: 8px;
   }
+}
+
+.ant-tabs-content {
+  margin-top: 8px;
+}
+
+.ant-modal-body {
+  padding: 24px 24px 12px;
+}
+
+.ant-tabs-nav {
+  margin-bottom: 16px !important;
+}
+
+.ant-tabs-tab {
+  padding: 8px 0 !important;
+
+  .anticon {
+    margin-right: 8px;
+  }
+}
+
+.ant-space-vertical {
+  width: 100%;
 }

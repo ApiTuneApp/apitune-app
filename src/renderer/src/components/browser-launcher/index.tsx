@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Button, Space, Typography } from 'antd'
-import { Browser } from '@shared/contract'
+import { Modal, Button, Space, Typography, Divider, Switch, Tooltip, message, Tabs } from 'antd'
+import { Browser, EventResultStatus } from '@shared/contract'
 import { strings } from '@renderer/services/localization'
 import './browser-launcher.less'
 import chromeIcon from '@renderer/assets/browsers/chrome.svg'
@@ -9,8 +9,14 @@ import safariIcon from '@renderer/assets/browsers/safari.svg'
 import edgeIcon from '@renderer/assets/browsers/edge.svg'
 import braveIcon from '@renderer/assets/browsers/brave.svg'
 import defaultIcon from '@renderer/assets/browsers/default.svg'
+import {
+  GlobalOutlined,
+  SafetyCertificateOutlined,
+  DesktopOutlined,
+  CodeOutlined
+} from '@ant-design/icons'
 
-const { Text } = Typography
+const { Text, Title } = Typography
 
 interface BrowserLauncherProps {
   open: boolean
@@ -20,6 +26,7 @@ interface BrowserLauncherProps {
 export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps): JSX.Element {
   const [browsers, setBrowsers] = useState<Browser[]>([])
   const [loading, setLoading] = useState(false)
+  const [systemProxyEnabled, setSystemProxyEnabled] = useState(false)
 
   useEffect(() => {
     if (open) {
@@ -27,7 +34,6 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
         setBrowsers(
           browsers.filter(
             (browser, index, self) =>
-              // Filter out IE and remove duplicates based on name
               browser.name.toLowerCase() !== 'ie' &&
               index === self.findIndex((b) => b.name === browser.name)
           )
@@ -45,6 +51,48 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
       console.error('Failed to launch browser:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleSystemProxyChange = (checked: boolean) => {
+    window.api.updateSettings({ systemWideProxy: checked }).then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        setSystemProxyEnabled(checked)
+        message.success(checked ? strings.systemProxyEnabled : strings.systemProxyDisabled)
+      } else {
+        message.error(strings.systemProxyError)
+      }
+    })
+  }
+
+  const handleTrustCA = () => {
+    window.api.ca('trust').then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        message.success(strings.caInstalled)
+      } else {
+        message.error(res.error || strings.systemProxyError)
+      }
+    })
+  }
+
+  const handleExportCA = () => {
+    window.api.ca('export').then((res) => {
+      if (res.status === EventResultStatus.Success) {
+        message.success(strings.copied)
+      } else {
+        message.error(res.error || strings.systemProxyError)
+      }
+    })
+  }
+
+  const launchTerminal = async () => {
+    try {
+      await window.api.launchTerminal()
+      message.success(strings.terminalLaunched)
+      onClose()
+    } catch (error) {
+      console.error('Failed to launch terminal:', error)
+      message.error(strings.terminalLaunchError)
     }
   }
 
@@ -86,25 +134,74 @@ export default function BrowserLauncher({ open, onClose }: BrowserLauncherProps)
     }
   }
 
+  const items = [
+    {
+      key: 'browser',
+      label: (
+        <span>
+          <DesktopOutlined /> {strings.connectBrowser}
+        </span>
+      ),
+      children: (
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Text type="secondary">{strings.selectBrowserToLaunch}</Text>
+          <div className="browser-list">
+            {browsers.map((browser) => (
+              <Button
+                key={browser.path}
+                size="small"
+                icon={getBrowserIcon(browser.type)}
+                onClick={() => launchBrowser(browser)}
+                loading={loading}
+                className="browser-button"
+              >
+                {getBrowserName(browser.type)}
+              </Button>
+            ))}
+          </div>
+        </Space>
+      )
+    },
+    {
+      key: 'system',
+      label: (
+        <span>
+          <GlobalOutlined /> {strings.systemWideProxy}
+        </span>
+      ),
+      children: (
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Text type="secondary">{strings.systemWideProxyHint}</Text>
+          <Switch
+            checked={systemProxyEnabled}
+            onChange={handleSystemProxyChange}
+            checkedChildren={strings.enabled}
+            unCheckedChildren={strings.disabled}
+          />
+        </Space>
+      )
+    },
+    {
+      key: 'terminal',
+      label: (
+        <span>
+          <CodeOutlined /> {strings.terminal}
+        </span>
+      ),
+      children: (
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Text type="secondary">{strings.terminalProxyHint}</Text>
+          <Button type="primary" icon={<CodeOutlined />} onClick={launchTerminal}>
+            {strings.launchTerminal}
+          </Button>
+        </Space>
+      )
+    }
+  ]
+
   return (
-    <Modal title={strings.launchBrowser} open={open} onCancel={onClose} footer={null} width={400}>
-      <Space direction="vertical" style={{ width: '100%' }}>
-        <Text type="secondary">{strings.selectBrowserToLaunch}</Text>
-        <div className="browser-list">
-          {browsers.map((browser) => (
-            <Button
-              key={browser.path}
-              size="small"
-              icon={getBrowserIcon(browser.type)}
-              onClick={() => launchBrowser(browser)}
-              loading={loading}
-              className="browser-button"
-            >
-              {getBrowserName(browser.type)}
-            </Button>
-          ))}
-        </div>
-      </Space>
+    <Modal title={strings.connectProxy} open={open} onCancel={onClose} footer={null} width={500}>
+      <Tabs items={items} defaultActiveKey="browser" />
     </Modal>
   )
 }

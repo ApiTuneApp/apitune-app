@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { AppTheme, SettingStorage } from '@shared/contract'
+import { AppTheme, SettingStorage, EventResultStatus } from '@shared/contract'
 
 type State = {
   port: SettingStorage['port']

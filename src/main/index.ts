@@ -44,7 +44,8 @@ import {
   updateRuntimeRules,
   updateSettingData
 } from './storage'
-import { getAvailableBrowsers, startBrowser } from './browser-launcher'
+import { getAvailableBrowsers, startBrowser, launchTerminal } from './browser-launcher'
+import { enableSystemProxy, disableSystemProxy, isSystemProxyEnabled } from './system-proxy'
 
 const APP_SITE_URL = import.meta.env.VITE_SITE_URL
 
@@ -143,7 +144,11 @@ autoUpdater.on('download-progress', async (progressObj) => {
   updateProgress(progress)
 })
 
-initSettingData()
+const init = async () => {
+  await initSettingData()
+  DefaultSettingData.systemWideProxy = isSystemProxyEnabled()
+}
+init()
 
 // TODO: handle default port is in use
 initServer(DefaultSettingData.port)
@@ -1123,14 +1128,26 @@ app.whenReady().then(() => {
     })
   })
 
-  ipcMain.handle(RenderEvent.UpdateSettings, (event, params: UpdateSettingsParams) => {
-    return new Promise((resolve) => {
-      updateSettingData(params, () => {
-        resolve({
-          status: EventResultStatus.Success
-        })
-      })
-    })
+  ipcMain.handle(RenderEvent.UpdateSettings, async (_, params: UpdateSettingsParams) => {
+    try {
+      if (typeof params.systemWideProxy !== 'undefined') {
+        if (params.systemWideProxy) {
+          enableSystemProxy(DefaultSettingData.port)
+        } else {
+          disableSystemProxy()
+        }
+      }
+      updateSettingData(params)
+      return {
+        status: EventResultStatus.Success
+      }
+    } catch (error: any) {
+      log.error('[Settings] Failed to update settings:', error)
+      return {
+        status: EventResultStatus.Error,
+        error: error?.message || 'Failed to update settings'
+      }
+    }
   })
 
   ipcMain.handle(RenderEvent.GetAvailableBrowsers, async () => {
@@ -1159,6 +1176,11 @@ app.whenReady().then(() => {
     })
   })
 
+  // Register IPC handlers
+  ipcMain.handle(RenderEvent.LaunchTerminal, () => {
+    return launchTerminal(config.port)
+  })
+
   // const dataPath = Storage.getDataPath()
   // log.debug('datapath =>> ', dataPath)
 
@@ -1181,6 +1203,17 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
+  }
+})
+
+// Add cleanup when app quits
+app.on('will-quit', () => {
+  if (DefaultSettingData.systemWideProxy) {
+    try {
+      disableSystemProxy()
+    } catch (error) {
+      log.error('[Quit] Failed to disable system proxy:', error)
+    }
   }
 })
 

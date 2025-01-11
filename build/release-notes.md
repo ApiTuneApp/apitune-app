@@ -2,8 +2,7 @@
 
 ### 🎉 New Features
 
-* Add browser launcher for better user experience
+* implement system-wide proxy settings management and UI integration
+* add terminal launch functionality with proxy settings for cross-platform support
 
 ### 🐛 Bug Fixes
-
-* Fix chinese translation issue
