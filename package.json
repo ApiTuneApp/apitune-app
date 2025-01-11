@@ -1,6 +1,6 @@
 {
   "name": "apitune-app",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Effortlessly mock, hijack, and test API tool",
   "main": "./out/main/index.js",
   "author": "Jack Zhang",
