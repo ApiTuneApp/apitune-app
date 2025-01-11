@@ -32,11 +32,6 @@ export function enableSystemProxy(port: number = config.port): void {
           execSync(
             `reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f`
           )
-          // Optional: Add IE refresh if needed
-          // await refreshIESettings()
-
-          // Keep WinHTTP proxy if needed
-          execSync(`netsh winhttp set proxy proxy-server="127.0.0.1:${port}" bypass-list="<local>"`)
         } catch (err) {
           throw new Error(
             'Failed to set Windows proxy. Please ensure you have administrator privileges.'
@@ -76,8 +71,6 @@ export function disableSystemProxy(): void {
           execSync(
             `reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f`
           )
-          // Reset WinHTTP proxy
-          execSync('netsh winhttp reset proxy')
         } catch (err) {
           throw new Error('Failed to disable Windows proxy. Please run as administrator.')
         }
